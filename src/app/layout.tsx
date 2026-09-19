@@ -12,6 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Goodies",
   description: "A simple Next.js project with Tailwind CSS",
