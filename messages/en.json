@@ -187,6 +187,17 @@
     "copyright": "© {year} Goodies. All rights reserved.",
     "madeWithLove": "Made with love in the UAE"
   },
+  "MadeWithLoveSection": {
+    "eyebrow": "Our Story",
+    "title": "Made with Love, Just for You",
+    "description": "We’re a community of flavor lovers who enjoy trying new tastes every day. From creamy ice creams to crunchy freeze-dried candy and fresh dry fruits, our goodies are made with care. Quality, freshness, and fun guide everything we create. Whether you’re craving ice cream, candy, dry fruits, or freeze-dried snacks, we make every bite special. Our goal is to bring you joyful flavors, fresh ingredients, and goodies your whole family will love.",
+    "imageAlt": "Pastel ice cream cones on a soft pink and blue set",
+    "installTitle": "Install the Goodies app",
+    "installDescription": "Faster checkout, order tracking & offline browsing.",
+    "install": "Install",
+    "installed": "Installed",
+    "iosHint": "On iPhone or iPad, tap Share, then Add to Home Screen."
+  },
   "InstallPrompt": {
     "title": "Install Goodies",
     "description": "Add Goodies to your home screen for a faster, app-like experience.",

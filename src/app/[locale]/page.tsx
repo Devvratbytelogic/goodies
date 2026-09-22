@@ -1,5 +1,6 @@
 import BestSellerSection from "@/components/page-components/home/BestSellerSection";
 import CategorySection from "@/components/page-components/home/CategorySection";
+import MadeWithLoveSection from "@/components/page-components/home/MadeWithLoveSection";
 import MainBanner from "@/components/page-components/home/MainBanner";
 import NewArrivalsSection from "@/components/page-components/home/NewArrivalsSection";
 import TastyChoicesSection from "@/components/page-components/home/TastyChoicesSection";
@@ -16,6 +17,7 @@ export default function Home() {
         <TastyChoicesSection />
         <NewArrivalsSection />
         <WhyChooseSection />
+        <MadeWithLoveSection />
       </div>
     </>
   );

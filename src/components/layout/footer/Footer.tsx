@@ -53,9 +53,9 @@ const socialLinks: { key: "instagram" | "youtube" | "whatsapp"; href: string; ic
 ];
 
 const columnTitleClass =
-  "text-[11px] font-semibold uppercase tracking-[0.18em] text-accent";
+  "text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-deep";
 const footerLinkClass =
-  "text-sm text-white/75 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "text-sm text-muted transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export default function Footer() {
   const t = useTranslations("Footer");
@@ -63,13 +63,13 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto bg-[#111011] text-white">
-      <div className="container grid gap-10 py-10 sm:py-12 lg:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))] lg:gap-8 lg:py-14">
-        <div className="max-w-sm">
+    <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface">
+      <div className="container grid gap-10 py-10 sm:grid-cols-2 sm:py-12 xl:grid-cols-4 lg:gap-8 lg:py-14">
+        <div>
           <Link
             href={getHomeRoutePath()}
             aria-label={tHeader("brandHome")}
-            className="inline-flex rounded-2xl bg-white p-1.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            className="inline-flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
           >
             <ImageComponent
               src="/logo/logo.webp"
@@ -77,11 +77,11 @@ export default function Footer() {
               width={160}
               height={160}
               sizes="72px"
-              className="h-14 w-auto"
+              className="h-16 w-auto"
             />
           </Link>
-          <p className="mt-4 text-sm font-medium text-white/90">{t("tagline")}</p>
-          <p className="mt-2 text-sm leading-relaxed text-white/65">{t("description")}</p>
+          <p className="mt-4 text-sm font-medium text-heading">{t("tagline")}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{t("description")}</p>
 
           <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
           <ul className="mt-3 flex items-center gap-2.5">
@@ -92,9 +92,9 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t(key)}
-                  className="flex size-10 items-center justify-center rounded-full bg-white/8 text-white transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="flex size-10 items-center justify-center rounded-full bg-background text-primary shadow-[0_4px_12px_rgba(15,23,42,0.06)] ring-1 ring-border/70 transition-colors hover:bg-primary hover:text-primary-foreground hover:ring-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
-                  <Icon aria-hidden className="size-4.5" />
+                  <Icon aria-hidden className="size-4" />
                 </a>
               </li>
             ))}
@@ -139,7 +139,7 @@ export default function Footer() {
                 href={`mailto:${EMAIL}`}
                 className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
               >
-                <LuMail aria-hidden className="size-4 shrink-0 text-accent" />
+                <LuMail aria-hidden className="size-4 shrink-0 text-primary" />
                 {EMAIL}
               </a>
             </li>
@@ -148,23 +148,23 @@ export default function Footer() {
                 href={`tel:${PHONE_HREF}`}
                 className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
               >
-                <LuPhone aria-hidden className="size-4 shrink-0 text-accent" />
+                <LuPhone aria-hidden className="size-4 shrink-0 text-primary" />
                 {PHONE_LABEL}
               </a>
             </li>
-            <li className="inline-flex items-center gap-2.5 text-sm text-white/75">
-              <LuMapPin aria-hidden className="size-4 shrink-0 text-accent" />
+            <li className="inline-flex items-center gap-2.5 text-sm text-muted">
+              <LuMapPin aria-hidden className="size-4 shrink-0 text-primary" />
               {t("location")}
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="container flex flex-col items-center justify-between gap-2 py-4 text-center text-xs text-white/55 sm:flex-row sm:text-start">
+      <div className="bg-accent-deep text-accent-foreground">
+        <div className="container flex flex-col items-center justify-between gap-2 py-3.5 text-center text-xs sm:flex-row sm:text-start">
           <p>{t("copyright", { year })}</p>
           <p className="inline-flex items-center gap-1.5">
-            <LuHeart aria-hidden className="size-3.5 fill-current text-primary" />
+            <LuHeart aria-hidden className="size-3.5 fill-current" />
             {t("madeWithLove")}
           </p>
         </div>

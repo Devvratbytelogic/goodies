@@ -76,8 +76,7 @@ function BrandLogo() {
         width={1000}
         height={1000}
         preload
-        sizes="96px"
-        className="h-16 w-auto lg:h-20"
+        className="h-16! w-auto lg:h-20!"
       />
     </Link>
   );
