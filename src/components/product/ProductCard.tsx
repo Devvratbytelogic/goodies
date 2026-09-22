@@ -3,13 +3,29 @@ import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getProductRoutePath } from "@/utils/routes";
 
+export type ProductCategoryKey = "fruits" | "vegetables" | "iceCream" | "candy";
+
+export type ProductNameKey =
+  | "coconut"
+  | "sourStrawberry"
+  | "mixedVegetables"
+  | "sweetStrawberry"
+  | "vanillaMangoIcy"
+  | "orangeMangoIcy"
+  | "blueberryVanillaIcy"
+  | "strawberryVanillaIcy"
+  | "pureMangoIceCream"
+  | "mangoWaffle"
+  | "chocoBrowniesIcy"
+  | "strawberryCashew";
+
 export type ProductCardItem = {
   slug: string;
   image: string;
-  categoryKey: "fruits" | "vegetables";
-  nameKey: "coconut" | "sourStrawberry" | "mixedVegetables" | "sweetStrawberry";
+  categoryKey: ProductCategoryKey;
+  nameKey: ProductNameKey;
   priceFrom: number;
-  priceTo: number;
+  priceTo?: number;
   isNew?: boolean;
 };
 
@@ -21,10 +37,11 @@ function formatAedAmount(amount: number) {
 }
 
 export default function ProductCard({ product }: { product: ProductCardItem }) {
-  const t = useTranslations("BestSellerSection");
+  const t = useTranslations("ProductCard");
   const name = t(product.nameKey);
   const priceFrom = formatAedAmount(product.priceFrom);
-  const priceTo = formatAedAmount(product.priceTo);
+  const priceTo = product.priceTo ? formatAedAmount(product.priceTo) : undefined;
+  const hasRange = Boolean(priceTo && product.priceTo !== product.priceFrom);
 
   return (
     <article className="h-full overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
@@ -58,8 +75,17 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
             {name}
           </h3>
           <p className="mt-1.5 text-sm font-semibold text-price">
-            <span className="sr-only">{t("priceRangeLabel", { from: priceFrom, to: priceTo })}</span>
-            <span aria-hidden>{t("priceRange", { from: priceFrom, to: priceTo })}</span>
+            {hasRange && priceTo ? (
+              <>
+                <span className="sr-only">{t("priceRangeLabel", { from: priceFrom, to: priceTo })}</span>
+                <span aria-hidden>{t("priceRange", { from: priceFrom, to: priceTo })}</span>
+              </>
+            ) : (
+              <>
+                <span className="sr-only">{t("priceLabel", { amount: priceFrom })}</span>
+                <span aria-hidden>{t("price", { amount: priceFrom })}</span>
+              </>
+            )}
           </p>
         </div>
       </Link>

@@ -67,17 +67,37 @@
   "BestSellerSection": {
     "title": "الأكثر مبيعًا",
     "seeAll": "عرض الكل",
-    "new": "جديد",
     "previous": "المنتجات السابقة",
-    "next": "المنتجات التالية",
+    "next": "المنتجات التالية"
+  },
+  "NewArrivalsSection": {
+    "title": "وصل حديثًا",
+    "seeAll": "عرض الكل",
+    "previous": "المنتجات السابقة",
+    "next": "المنتجات التالية"
+  },
+  "ProductCard": {
+    "new": "جديد",
+    "price": "{amount} د.إ",
+    "priceLabel": "السعر: {amount} د.إ",
     "priceRange": "{from} – {to} د.إ",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to} د.إ",
     "fruits": "فواكه",
     "vegetables": "خضروات",
+    "iceCream": "آيس كريم",
+    "candy": "حلوى",
     "coconut": "جوز الهند مقرقش",
     "sourStrawberry": "فراولة حامضة بدون سكر مقرقش",
     "mixedVegetables": "مشكل خضار مقرقش",
-    "sweetStrawberry": "فراولة حلوة مقرقشة"
+    "sweetStrawberry": "فراولة حلوة مقرقشة",
+    "vanillaMangoIcy": "آيس كريم الفانيلا مع المانغو الطبيعية مقرقش",
+    "orangeMangoIcy": "آيس كريم البرتقال والمانغو مع قطع برتقال حقيقية",
+    "blueberryVanillaIcy": "آيس كريم البلوبيري فانيلا مع قطع بلوبيري حقيقية",
+    "strawberryVanillaIcy": "آيس كريم فراولة وفانيلا مع قطع فراولة حقيقية مقرقش",
+    "pureMangoIceCream": "آيس كريم المانجا الطبيعي مقرقش",
+    "mangoWaffle": "وافل المانغو مقرقش",
+    "chocoBrowniesIcy": "آيس كريم شوكولا براونيز مقرقش",
+    "strawberryCashew": "فراولة بالكاجو مقرقش"
   },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",

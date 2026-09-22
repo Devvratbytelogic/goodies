@@ -67,17 +67,37 @@
   "BestSellerSection": {
     "title": "Best Sellers",
     "seeAll": "See All",
-    "new": "New",
     "previous": "Previous products",
-    "next": "Next products",
+    "next": "Next products"
+  },
+  "NewArrivalsSection": {
+    "title": "New Arrivals",
+    "seeAll": "See All",
+    "previous": "Previous products",
+    "next": "Next products"
+  },
+  "ProductCard": {
+    "new": "New",
+    "price": "AED {amount}",
+    "priceLabel": "Price: AED {amount}",
     "priceRange": "AED {from} – {to}",
     "priceRangeLabel": "Price range: AED {from} through {to}",
     "fruits": "Fruits",
     "vegetables": "Vegetables",
+    "iceCream": "Ice Cream",
+    "candy": "Candy",
     "coconut": "Crunchy Coconut Snack",
     "sourStrawberry": "Strawberry Crunchy Sour Snack",
     "mixedVegetables": "Mixed Crunchy Vegetables",
-    "sweetStrawberry": "Crunchy Sweet Strawberry Snack"
+    "sweetStrawberry": "Crunchy Sweet Strawberry Snack",
+    "vanillaMangoIcy": "Natural Vanilla Mango Icy",
+    "orangeMangoIcy": "Orange Mango Icy with Real Fruits",
+    "blueberryVanillaIcy": "Blueberry Vanilla Icy",
+    "strawberryVanillaIcy": "Strawberry Vanilla Icy",
+    "pureMangoIceCream": "Pure Mango Ice Cream",
+    "mangoWaffle": "Crunchy Mango Waffle Snack",
+    "chocoBrowniesIcy": "Crunchy Choco Brownies Icy",
+    "strawberryCashew": "Crunchy Strawberry Cashew Snack"
   },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",

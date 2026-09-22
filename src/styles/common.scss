@@ -6,7 +6,7 @@
   @apply py-4 sm:py-8 lg:py-12;
 }
 
-.best-seller-swiper {
+.product-swiper {
   .swiper-slide {
     height: auto;
   }
@@ -35,7 +35,6 @@
   }
 }
 
-.best-seller-prev.swiper-button-lock,
-.best-seller-next.swiper-button-lock {
+.product-slider-nav.swiper-button-lock {
   display: none;
 }
