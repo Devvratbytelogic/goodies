@@ -74,10 +74,10 @@ export default function Footer() {
             <ImageComponent
               src="/logo/logo.webp"
               alt="Goodies"
-              width={160}
-              height={160}
-              sizes="72px"
-              className="h-16 w-auto"
+              width={1100}
+              height={1100}
+              // sizes="72px"
+              className="h-30! w-auto"
             />
           </Link>
           <p className="mt-4 text-sm font-medium text-heading">{t("tagline")}</p>
