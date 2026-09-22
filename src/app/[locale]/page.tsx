@@ -3,6 +3,7 @@ import CategorySection from "@/components/page-components/home/CategorySection";
 import MainBanner from "@/components/page-components/home/MainBanner";
 import NewArrivalsSection from "@/components/page-components/home/NewArrivalsSection";
 import TastyChoicesSection from "@/components/page-components/home/TastyChoicesSection";
+import WhyChooseSection from "@/components/page-components/home/WhyChooseSection";
 
 export default function Home() {
 
@@ -14,6 +15,7 @@ export default function Home() {
         <BestSellerSection />
         <TastyChoicesSection />
         <NewArrivalsSection />
+        <WhyChooseSection />
       </div>
     </>
   );

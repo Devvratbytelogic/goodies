@@ -76,6 +76,18 @@
     "previous": "المنتجات السابقة",
     "next": "المنتجات التالية"
   },
+  "WhyChooseSection": {
+    "eyebrow": "لماذا تختار Goodies",
+    "title": "صُنع بحب، خصيصًا لك",
+    "deliveryTitle": "توصيل سريع",
+    "deliveryDescription": "توصيل خلال يوم إلى يومين في كل الإمارات",
+    "qualityTitle": "جودة فاخرة",
+    "qualityDescription": "مكونات طازجة مختارة بعناية",
+    "giftingTitle": "جاهز للإهداء",
+    "giftingDescription": "تغليف أنيق يناسب كل مناسبة",
+    "familiesTitle": "محبوب لدى العائلات",
+    "familiesDescription": "آلاف العملاء السعداء"
+  },
   "TastyChoicesSection": {
     "eyebrow": "من الشجرة إلى القرمشة",
     "title": "خيارات لذيذة لا تنتهي",
@@ -150,6 +162,30 @@
   "NotFound": {
     "title": "الصفحة غير موجودة",
     "description": "الصفحة التي تبحث عنها غير موجودة."
+  },
+  "Footer": {
+    "tagline": "حلويات صغيرة، ابتسامات كبيرة",
+    "description": "حلويات مجففة بالتجميد صُنعت بحب في الإمارات — نكهات مبهجة تناسب كل الرغبات.",
+    "followUs": "تابعنا",
+    "instagram": "إنستغرام",
+    "youtube": "يوتيوب",
+    "whatsapp": "واتساب",
+    "shop": "المتجر",
+    "allProducts": "كل المنتجات",
+    "fruits": "فواكه",
+    "iceCream": "آيس كريم",
+    "vegetables": "خضروات",
+    "candy": "حلوى",
+    "boxDeals": "عروض الصناديق",
+    "quickLinks": "روابط سريعة",
+    "home": "الرئيسية",
+    "aboutUs": "من نحن",
+    "wishlist": "المفضلة",
+    "contactUs": "اتصل بنا",
+    "contact": "تواصل معنا",
+    "location": "دبي، الإمارات",
+    "copyright": "© {year} Goodies. جميع الحقوق محفوظة.",
+    "madeWithLove": "صُنع بحب في الإمارات"
   },
   "InstallPrompt": {
     "title": "تثبيت Goodies",

@@ -76,6 +76,18 @@
     "previous": "Previous products",
     "next": "Next products"
   },
+  "WhyChooseSection": {
+    "eyebrow": "Why Choose Goodies",
+    "title": "Made with Love, Just for You",
+    "deliveryTitle": "Fast Delivery",
+    "deliveryDescription": "1–2 days delivery across UAE",
+    "qualityTitle": "Premium Quality",
+    "qualityDescription": "Carefully selected fresh ingredients",
+    "giftingTitle": "Gift Ready",
+    "giftingDescription": "Beautiful packaging for every occasion",
+    "familiesTitle": "Loved By Families",
+    "familiesDescription": "Thousands of happy customers"
+  },
   "TastyChoicesSection": {
     "eyebrow": "From orchard to crunch",
     "title": "So Many Tasty Choices",
@@ -150,6 +162,30 @@
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist."
+  },
+  "Footer": {
+    "tagline": "Little treats, big smiles",
+    "description": "Delightful freeze-dried treats and candies made with love in the UAE — joyful flavours for every craving.",
+    "followUs": "Follow us",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "whatsapp": "WhatsApp",
+    "shop": "Shop",
+    "allProducts": "All products",
+    "fruits": "Fruits",
+    "iceCream": "Ice cream",
+    "vegetables": "Vegetables",
+    "candy": "Candy",
+    "boxDeals": "Box deals",
+    "quickLinks": "Quick links",
+    "home": "Home",
+    "aboutUs": "About us",
+    "wishlist": "Wishlist",
+    "contactUs": "Contact us",
+    "contact": "Contact",
+    "location": "Dubai, UAE",
+    "copyright": "© {year} Goodies. All rights reserved.",
+    "madeWithLove": "Made with love in the UAE"
   },
   "InstallPrompt": {
     "title": "Install Goodies",
