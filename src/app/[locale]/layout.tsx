@@ -118,7 +118,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <Header />
           <InstallPrompt />
-          {children}
+          <main>
+            {children}
+          </main>
           <Footer />
         </NextIntlClientProvider>
       </body>

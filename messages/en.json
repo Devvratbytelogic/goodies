@@ -19,6 +19,35 @@
     "en": "English",
     "ar": "العربية"
   },
+  "Header": {
+    "announcementDelivery": "Delivery within 1–2 days across the UAE",
+    "announcementMadeWithLove": "Made with love in the UAE",
+    "brandHome": "Goodies, go to homepage",
+    "primaryNavigation": "Primary",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "openSearch": "Open search",
+    "closeSearch": "Close search",
+    "searchPlaceholder": "Search for your favourite treats…",
+    "searchSubmit": "Search",
+    "account": "Account",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "cartLabel": "{count, plural, =0 {Cart, empty} one {Cart, # item} other {Cart, # items}}",
+    "wishlistLabel": "{count, plural, =0 {Wishlist, empty} one {Wishlist, # item} other {Wishlist, # items}}",
+    "shopAll": "Shop all treats",
+    "toggleCategories": "Show {section} categories",
+    "tagline": "Little treats, big smiles",
+    "switchLanguage": "Switch language to {language}"
+  },
+  "ShopMenu": {
+    "freezeDriedCandy": "Freeze dried candy",
+    "freezeDriedFruits": "Freeze dried fruits",
+    "chocolate": "Chocolate & bars",
+    "giftBoxes": "Gift boxes",
+    "bundles": "Party bundles"
+  },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",
     "title": "Goodies",
