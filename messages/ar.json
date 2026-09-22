@@ -48,6 +48,15 @@
     "giftBoxes": "علب الهدايا",
     "bundles": "باقات الحفلات"
   },
+  "CategorySection": {
+    "title": "تسوّق حسب التصنيف",
+    "seeAll": "عرض الكل",
+    "fruits": "فواكه",
+    "iceCream": "آيس كريم",
+    "vegetables": "خضروات",
+    "candy": "حلوى",
+    "boxDeals": "عروض علب Goodies"
+  },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",
     "title": "Goodies",

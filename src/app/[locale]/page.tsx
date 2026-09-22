@@ -1,12 +1,14 @@
-import { useTranslations } from "next-intl";
+import CategorySection from "@/components/page-components/home/CategorySection";
 import MainBanner from "@/components/page-components/home/MainBanner";
 
 export default function Home() {
-  const t = useTranslations("HomePage");
 
   return (
     <>
-      <MainBanner />
+      <div className="">
+        <MainBanner />
+        <CategorySection />
+      </div>
     </>
   );
 }

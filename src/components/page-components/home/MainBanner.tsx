@@ -10,7 +10,6 @@ export default function MainBanner() {
         height={1080}
         preload
         sizes="100vw"
-        className="h-auto w-full"
       />
     </section>
   );

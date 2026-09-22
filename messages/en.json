@@ -48,6 +48,15 @@
     "giftBoxes": "Gift boxes",
     "bundles": "Party bundles"
   },
+  "CategorySection": {
+    "title": "Shop by Category",
+    "seeAll": "See All",
+    "fruits": "Fruits",
+    "iceCream": "Ice Cream",
+    "vegetables": "Vegetables",
+    "candy": "Candy",
+    "boxDeals": "Goodies Box Deals"
+  },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",
     "title": "Goodies",

@@ -44,7 +44,7 @@ export default function ImageComponent({
         <Image
             alt={alt || "Image unavailable"}
             src={resolvedSrc}
-            className={[objectFitClass, className].filter(Boolean).join(" ")}
+            className={`${objectFitClass} h-full w-full ${className}`.trim()}
             // The fallback is a local SVG; skip the optimizer for it so it
             // always renders even if the original request failed upstream.
             unoptimized={isShowingFallback ? true : unoptimized}
