@@ -102,7 +102,7 @@ export function DesktopNav() {
 
               <div
                 id={`header-menu-${item.key}`}
-                className={`absolute start-0 top-full z-50 pt-3 transition duration-200 ${
+                className={`absolute inset-s-0 top-full z-50 pt-3 transition duration-200 ${
                   isOpen
                     ? "visible translate-y-0 opacity-100"
                     : "invisible -translate-y-1 opacity-0"

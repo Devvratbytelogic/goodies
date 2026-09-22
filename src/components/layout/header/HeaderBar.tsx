@@ -68,7 +68,7 @@ function BrandLogo() {
     <Link
       href={getHomeRoutePath()}
       aria-label={t("brandHome")}
-      className="inline-flex shrink-0 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+      className="flex w-fit shrink-0 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
     >
       <ImageComponent
         src="/logo/logo.webp"
@@ -156,7 +156,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
           </div>
 
           {/* Desktop bar */}
-          <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 py-4 lg:grid">
+          <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 py-2 lg:grid">
             <div className="justify-self-start">
               <BrandLogo />
             </div>
