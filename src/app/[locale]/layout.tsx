@@ -3,10 +3,11 @@ import { Geist, Geist_Mono, Noto_Sans_Arabic } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/header";
+import { Header } from "@/components/layout/header/Header";
 import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
 import "../../styles/globals.css";
+import Footer from "@/components/layout/footer/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,7 @@ export function generateStaticParams() {
 export const revalidate = 120; // in seconds
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+  themeColor: "#d60751",
   viewportFit: "cover",
 };
 
@@ -63,6 +61,10 @@ export async function generateMetadata({
     },
     description,
     category: "shopping",
+    icons: {
+      icon: [{ url: "/logo/logo.webp", type: "image/webp" }],
+      apple: [{ url: "/logo/logo.webp", type: "image/webp" }],
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
@@ -117,6 +119,7 @@ export default async function LocaleLayout({
           <Header />
           <InstallPrompt />
           {children}
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

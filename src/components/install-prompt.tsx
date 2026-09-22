@@ -79,12 +79,12 @@ export function InstallPrompt() {
       role="dialog"
       aria-labelledby="install-prompt-title"
       aria-describedby="install-prompt-description"
-      className="fixed bottom-4 left-4 z-50 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-zinc-200 bg-white p-4 pt-5 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
+      className="fixed bottom-4 left-4 z-50 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-border bg-background p-4 pt-5 shadow-lg"
     >
       <button
         type="button"
         onClick={handleDismiss}
-        className="absolute top-2 right-2 rounded-full p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+        className="absolute top-2 right-2 rounded-full p-1.5 text-icon-muted hover:bg-primary-soft hover:text-primary"
         aria-label={t("close")}
       >
         <svg
@@ -101,13 +101,13 @@ export function InstallPrompt() {
         <div className="space-y-1">
           <p
             id="install-prompt-title"
-            className="text-sm font-medium text-zinc-950 dark:text-zinc-50"
+            className="text-sm font-medium text-heading"
           >
             {t("title")}
           </p>
           <p
             id="install-prompt-description"
-            className="text-sm text-zinc-600 dark:text-zinc-400"
+            className="text-sm text-muted-foreground"
           >
             {isIos ? t("iosHint") : t("description")}
           </p>
@@ -116,7 +116,7 @@ export function InstallPrompt() {
           <button
             type="button"
             onClick={handleInstall}
-            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
             {t("install")}
           </button>
