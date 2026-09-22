@@ -18,7 +18,7 @@ import MobileMenu from "./MobileMenu";
 import { SearchField } from "./SearchField";
 
 const actionClass =
-  "relative flex size-10 items-center justify-center rounded-full text-icon-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 type HeaderBarProps = {
   cartCount: number;

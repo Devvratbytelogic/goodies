@@ -50,7 +50,7 @@ export function SearchField({
     >
       <LuSearch
         aria-hidden
-        className="pointer-events-none absolute start-4 size-5 text-icon-muted transition-colors group-focus-within:text-primary"
+        className="pointer-events-none absolute start-4 size-5 text-accent-deep transition-colors group-focus-within:text-primary"
       />
       <input
         ref={inputRef}
