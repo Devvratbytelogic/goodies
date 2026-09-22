@@ -76,6 +76,17 @@
     "previous": "Previous products",
     "next": "Next products"
   },
+  "TastyChoicesSection": {
+    "eyebrow": "From orchard to crunch",
+    "title": "So Many Tasty Choices",
+    "description": "Discover freeze-dried treats made to satisfy every craving — from creamy ice creams and colorful candies to crunchy snacks and gift-ready boxes. Fresh flavour, joyful bites, something special for everyone.",
+    "shopNow": "Shop Now",
+    "imageAlt": "From orchard to crunch: picked, washed, freeze dried, and packed",
+    "natural": "100% natural",
+    "freezeDried": "Freeze-dried goodness",
+    "kidApproved": "Loved by all ages",
+    "giftReady": "Perfect for gifting"
+  },
   "ProductCard": {
     "new": "New",
     "price": "AED {amount}",
