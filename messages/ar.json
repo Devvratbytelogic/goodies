@@ -56,5 +56,12 @@
   "NotFound": {
     "title": "الصفحة غير موجودة",
     "description": "الصفحة التي تبحث عنها غير موجودة."
+  },
+  "InstallPrompt": {
+    "title": "تثبيت Goodies",
+    "description": "أضف Goodies إلى الشاشة الرئيسية لتجربة أسرع تشبه التطبيق.",
+    "install": "تثبيت",
+    "close": "إغلاق",
+    "iosHint": "على iPhone أو iPad، اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية."
   }
 }

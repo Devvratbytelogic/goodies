@@ -56,5 +56,12 @@
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist."
+  },
+  "InstallPrompt": {
+    "title": "Install Goodies",
+    "description": "Add Goodies to your home screen for a faster, app-like experience.",
+    "install": "Install",
+    "close": "Close",
+    "iosHint": "On iPhone or iPad, tap Share, then Add to Home Screen."
   }
 }

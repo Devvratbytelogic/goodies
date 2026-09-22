@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Arabic } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
+import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
 import "../../styles/globals.css";
 
@@ -28,6 +29,14 @@ export function generateStaticParams() {
 }
 export const revalidate = 120; // in seconds
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  viewportFit: "cover",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -40,13 +49,40 @@ export async function generateMetadata({
   }
 
   const t = await getTranslations({ locale, namespace: "Metadata" });
+  const title = t("title");
+  const description = t("description");
 
   return {
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+    ),
+    applicationName: title,
     title: {
-      default: t("title"),
-      template: `%s · ${t("title")}`,
+      default: title,
+      template: `%s · ${title}`,
     },
-    description: t("description"),
+    description,
+    category: "shopping",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title,
+    },
+    other: {
+      "apple-mobile-web-app-capable": "yes",
+    },
+    openGraph: {
+      type: "website",
+      siteName: title,
+      title,
+      description,
+      locale: locale === "ar" ? "ar_AR" : "en_US",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
     alternates: {
       languages: {
         en: "/",
@@ -79,6 +115,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           <Header />
+          <InstallPrompt />
           {children}
         </NextIntlClientProvider>
       </body>
