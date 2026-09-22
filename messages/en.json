@@ -1,0 +1,60 @@
+{
+  "Metadata": {
+    "title": "Goodies",
+    "description": "A simple Next.js storefront with Tailwind CSS and locale-based routing."
+  },
+  "Nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "aboutUs": "About us",
+    "contactUs": "Contact us",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "product": "Product",
+    "productCategory": "Category",
+    "checkout": "Checkout"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "HomePage": {
+    "eyebrow": "Next.js + Tailwind CSS",
+    "title": "Goodies",
+    "description": "A simple Next.js App Router project with Tailwind CSS v4 and locale-based routing.",
+    "edit": "Edit <file>src/app/[locale]/page.tsx</file> to get started.",
+    "badgeNext": "Next.js 16",
+    "badgeTailwind": "Tailwind CSS v4",
+    "badgeTypeScript": "TypeScript",
+    "badgeI18n": "i18n"
+  },
+  "ShopPage": {
+    "title": "Shop"
+  },
+  "AboutUsPage": {
+    "title": "About us"
+  },
+  "ContactUsPage": {
+    "title": "Contact us"
+  },
+  "CartPage": {
+    "title": "Cart"
+  },
+  "WishlistPage": {
+    "title": "Wishlist"
+  },
+  "ProductPage": {
+    "title": "Product"
+  },
+  "ProductCategoryPage": {
+    "title": "Product category"
+  },
+  "CheckoutClassicPage": {
+    "title": "Checkout"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist."
+  }
+}

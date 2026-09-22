@@ -1,0 +1,60 @@
+{
+  "Metadata": {
+    "title": "Goodies",
+    "description": "متجر إلكتروني بسيط مبني على Next.js و Tailwind CSS مع توجيه حسب اللغة."
+  },
+  "Nav": {
+    "home": "الرئيسية",
+    "shop": "المتجر",
+    "aboutUs": "من نحن",
+    "contactUs": "اتصل بنا",
+    "cart": "السلة",
+    "wishlist": "المفضلة",
+    "product": "المنتج",
+    "productCategory": "التصنيف",
+    "checkout": "إتمام الشراء"
+  },
+  "LocaleSwitcher": {
+    "label": "اللغة",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "HomePage": {
+    "eyebrow": "Next.js + Tailwind CSS",
+    "title": "Goodies",
+    "description": "مشروع بسيط على Next.js App Router مع Tailwind CSS v4 وتوجيه حسب اللغة.",
+    "edit": "عدّل ملف <file>src/app/[locale]/page.tsx</file> للبدء.",
+    "badgeNext": "Next.js 16",
+    "badgeTailwind": "Tailwind CSS v4",
+    "badgeTypeScript": "TypeScript",
+    "badgeI18n": "i18n"
+  },
+  "ShopPage": {
+    "title": "المتجر"
+  },
+  "AboutUsPage": {
+    "title": "من نحن"
+  },
+  "ContactUsPage": {
+    "title": "اتصل بنا"
+  },
+  "CartPage": {
+    "title": "السلة"
+  },
+  "WishlistPage": {
+    "title": "المفضلة"
+  },
+  "ProductPage": {
+    "title": "المنتج"
+  },
+  "ProductCategoryPage": {
+    "title": "تصنيف المنتج"
+  },
+  "CheckoutClassicPage": {
+    "title": "إتمام الشراء"
+  },
+  "NotFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة."
+  }
+}

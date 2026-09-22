@@ -1,25 +1,8 @@
 import type { NextConfig } from "next";
-import { withSerwist } from "@serwist/turbopack";
+import createNextIntlPlugin from "next-intl/plugin";
 
-const nextConfig: NextConfig = {
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
-  async headers() {
-    return [
-      {
-        source: "/serwist/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=0, must-revalidate",
-          },
-        ],
-      },
-    ];
-  },
-};
+const nextConfig: NextConfig = {};
 
-export default withSerwist(nextConfig);
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);
