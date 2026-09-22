@@ -19,6 +19,13 @@
     "en": "English",
     "ar": "العربية"
   },
+  "BottomNav": {
+    "label": "التنقل للجوال",
+    "home": "الرئيسية",
+    "shop": "المتجر",
+    "favorites": "المفضلة",
+    "account": "الحساب"
+  },
   "Header": {
     "announcementDelivery": "التوصيل خلال يوم إلى يومين في جميع أنحاء الإمارات",
     "announcementMadeWithLove": "صُنع بحب في الإمارات",
@@ -57,6 +64,21 @@
     "candy": "حلوى",
     "boxDeals": "عروض علب Goodies"
   },
+  "BestSellerSection": {
+    "title": "الأكثر مبيعًا",
+    "seeAll": "عرض الكل",
+    "new": "جديد",
+    "previous": "المنتجات السابقة",
+    "next": "المنتجات التالية",
+    "priceRange": "{from} – {to} د.إ",
+    "priceRangeLabel": "نطاق السعر: من {from} إلى {to} د.إ",
+    "fruits": "فواكه",
+    "vegetables": "خضروات",
+    "coconut": "جوز الهند مقرقش",
+    "sourStrawberry": "فراولة حامضة بدون سكر مقرقش",
+    "mixedVegetables": "مشكل خضار مقرقش",
+    "sweetStrawberry": "فراولة حلوة مقرقشة"
+  },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",
     "title": "Goodies",
@@ -81,6 +103,9 @@
   },
   "WishlistPage": {
     "title": "المفضلة"
+  },
+  "AccountPage": {
+    "title": "الحساب"
   },
   "ProductPage": {
     "title": "المنتج"

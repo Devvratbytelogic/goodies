@@ -5,3 +5,37 @@
 .section_y_space{
   @apply py-4 sm:py-8 lg:py-12;
 }
+
+.best-seller-swiper {
+  .swiper-slide {
+    height: auto;
+  }
+
+  .swiper-pagination {
+    position: relative;
+    margin-top: 1rem;
+  }
+
+  .swiper-pagination-bullet {
+    background: var(--primary);
+    opacity: 0.25;
+    transition: width 0.2s ease, opacity 0.2s ease;
+  }
+
+  .swiper-pagination-bullet-active {
+    width: 1rem;
+    border-radius: 999px;
+    opacity: 1;
+  }
+
+  @media (min-width: 1024px) {
+    .swiper-pagination {
+      display: none;
+    }
+  }
+}
+
+.best-seller-prev.swiper-button-lock,
+.best-seller-next.swiper-button-lock {
+  display: none;
+}

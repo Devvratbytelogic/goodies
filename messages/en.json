@@ -19,6 +19,13 @@
     "en": "English",
     "ar": "العربية"
   },
+  "BottomNav": {
+    "label": "Mobile",
+    "home": "Home",
+    "shop": "Shop",
+    "favorites": "Favorites",
+    "account": "Account"
+  },
   "Header": {
     "announcementDelivery": "Delivery within 1–2 days across the UAE",
     "announcementMadeWithLove": "Made with love in the UAE",
@@ -57,6 +64,21 @@
     "candy": "Candy",
     "boxDeals": "Goodies Box Deals"
   },
+  "BestSellerSection": {
+    "title": "Best Sellers",
+    "seeAll": "See All",
+    "new": "New",
+    "previous": "Previous products",
+    "next": "Next products",
+    "priceRange": "AED {from} – {to}",
+    "priceRangeLabel": "Price range: AED {from} through {to}",
+    "fruits": "Fruits",
+    "vegetables": "Vegetables",
+    "coconut": "Crunchy Coconut Snack",
+    "sourStrawberry": "Strawberry Crunchy Sour Snack",
+    "mixedVegetables": "Mixed Crunchy Vegetables",
+    "sweetStrawberry": "Crunchy Sweet Strawberry Snack"
+  },
   "HomePage": {
     "eyebrow": "Next.js + Tailwind CSS",
     "title": "Goodies",
@@ -81,6 +103,9 @@
   },
   "WishlistPage": {
     "title": "Wishlist"
+  },
+  "AccountPage": {
+    "title": "Account"
   },
   "ProductPage": {
     "title": "Product"

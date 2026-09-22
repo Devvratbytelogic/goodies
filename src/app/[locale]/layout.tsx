@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header/Header";
 import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
 import "../../styles/globals.css";
+import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
 
 const geistSans = Geist({
@@ -122,6 +123,7 @@ export default async function LocaleLayout({
             {children}
           </main>
           <Footer />
+          <BottomNav />
         </NextIntlClientProvider>
       </body>
     </html>
