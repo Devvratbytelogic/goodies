@@ -7,7 +7,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath, navItems } from "./navigation";
 
 const itemClass =
-  "relative inline-flex items-center gap-1.5 px-3.5 py-2 text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "relative inline-flex items-center gap-1.5 px-3.5 py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function DesktopNav() {
   const t = useTranslations("Nav");
@@ -49,7 +49,7 @@ export function DesktopNav() {
       aria-label={tHeader("primaryNavigation")}
       className="justify-self-center"
     >
-      <ul className="flex items-center gap-1">
+      <ul className="flex items-center gap-2">
         {navItems.map((item) => {
           const active = isActivePath(pathname, item.href);
           const isOpen = openKey === item.key;
