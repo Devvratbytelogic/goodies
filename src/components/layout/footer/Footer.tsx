@@ -4,6 +4,7 @@ import { FaInstagram, FaWhatsapp, FaYoutube } from "react-icons/fa6";
 import { LuHeart, LuMail, LuMapPin, LuPhone } from "react-icons/lu";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import { EMAIL, PHONE_HREF, PHONE_LABEL, WHATSAPP_URL } from "@/constants/contact";
 import {
   getAboutUsRoutePath,
   getContactUsRoutePath,
@@ -12,10 +13,6 @@ import {
   getShopRoutePath,
   getWishlistRoutePath,
 } from "@/utils/routes";
-
-const EMAIL = "Shremzeina@gmail.com";
-const PHONE_HREF = "+971589700754";
-const PHONE_LABEL = "+971 58 970 0754";
 
 const shopLinks = [
   { key: "allProducts" as const, href: getShopRoutePath() },
@@ -47,7 +44,7 @@ const socialLinks: { key: "instagram" | "youtube" | "whatsapp"; href: string; ic
   },
   {
     key: "whatsapp",
-    href: `https://wa.me/${PHONE_HREF}`,
+    href: WHATSAPP_URL,
     icon: FaWhatsapp,
   },
 ];

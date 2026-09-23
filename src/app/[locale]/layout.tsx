@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header/Header";
 import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
 import "../../styles/globals.css";
+import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
 import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
 
@@ -124,6 +125,7 @@ export default async function LocaleLayout({
           </main>
           <Footer />
           <BottomNav />
+          <WhatsAppFloatingButton />
         </NextIntlClientProvider>
       </body>
     </html>
