@@ -70,7 +70,7 @@ export default function ProductSlider({
         dir={isRtl ? "rtl" : "ltr"}
         modules={[Navigation, Pagination, A11y]}
         className="product-swiper"
-        slidesPerView={2}
+        slidesPerView={1.8}
         spaceBetween={10}
         watchOverflow
         grabCursor

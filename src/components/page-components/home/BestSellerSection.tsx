@@ -45,7 +45,7 @@ export default function BestSellerSection() {
   return (
     <ProductSlider
       id="best-sellers"
-      variant="decorated"
+      // variant="decorated"
       title={t("title")}
       seeAllLabel={t("seeAll")}
       previousLabel={t("previous")}

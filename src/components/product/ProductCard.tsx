@@ -57,7 +57,7 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
             height={800}
             objectFit="contain"
             sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 22vw"
-            className="p-3 sm:p-4"
+            // className="p-3 sm:p-4"
           />
 
           {product.isNew ? (
