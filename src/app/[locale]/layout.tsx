@@ -124,7 +124,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           <Header />
-          <InstallPrompt />
+          {/* <InstallPrompt /> */}
           <main className="flex-1">
             {children}
           </main>
