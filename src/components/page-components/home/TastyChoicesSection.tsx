@@ -43,11 +43,9 @@ export default function TastyChoicesSection() {
         >
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-20"
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.22]"
             style={{
-              backgroundImage:
-                "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
-              backgroundSize: "18px 18px",
+              backgroundImage: "url(/images/home/tasty-choices-pattern.webp)",
             }}
           />
 

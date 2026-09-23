@@ -64,8 +64,13 @@ export async function generateMetadata({
     description,
     category: "shopping",
     icons: {
-      icon: [{ url: "/logo/logo.webp", type: "image/webp" }],
-      apple: [{ url: "/logo/logo.webp", type: "image/webp" }],
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      ],
+      apple: [
+        { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
     },
     appleWebApp: {
       capable: true,
