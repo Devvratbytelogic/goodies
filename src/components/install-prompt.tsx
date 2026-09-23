@@ -8,7 +8,30 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-const STORAGE_KEY = "goodies-pwa-install-dismissed";
+const STORAGE_KEY = "goodies-pwa-install-dismissed-until";
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+function isInstallPromptDismissed() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return false;
+    }
+
+    const until = Number(raw);
+    return Number.isFinite(until) && Date.now() < until;
+  } catch {
+    return false;
+  }
+}
+
+function dismissInstallPromptForOneDay() {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, String(Date.now() + ONE_DAY_MS));
+  } catch {
+    // Ignore private-mode or quota failures and still hide the prompt.
+  }
+}
 
 function isIosDevice() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
@@ -30,7 +53,7 @@ export function InstallPrompt() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (isStandaloneDisplay() || window.localStorage.getItem(STORAGE_KEY) === "1") {
+    if (isStandaloneDisplay()) {
       return;
     }
 
@@ -39,13 +62,17 @@ export function InstallPrompt() {
 
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
+      if (isInstallPromptDismissed()) {
+        return;
+      }
+
       setDeferredPrompt(event as BeforeInstallPromptEvent);
       setVisible(true);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
 
-    if (ios) {
+    if (ios && !isInstallPromptDismissed()) {
       setVisible(true);
     }
 
@@ -70,7 +97,8 @@ export function InstallPrompt() {
   }
 
   function handleDismiss() {
-    window.localStorage.setItem(STORAGE_KEY, "1");
+    dismissInstallPromptForOneDay();
+    setDeferredPrompt(null);
     setVisible(false);
   }
 

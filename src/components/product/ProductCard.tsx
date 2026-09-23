@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import AddToCartButton from "@/components/product/AddToCartButton";
 import { getProductRoutePath } from "@/utils/routes";
 
 export type ProductCategoryKey = "fruits" | "vegetables" | "iceCream" | "candy";
@@ -44,10 +45,10 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
   const hasRange = Boolean(priceTo && product.priceTo !== product.priceFrom);
 
   return (
-    <article className="h-full overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
       <Link
         href={getProductRoutePath(product.slug)}
-        className="flex h-full flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="flex flex-1 flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         <div className="relative aspect-square overflow-hidden bg-surface">
           <ImageComponent
@@ -55,7 +56,7 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
             alt={name}
             width={800}
             height={800}
-            objectFit="contain"
+            objectFit="cover"
             sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 22vw"
             // className="p-3 sm:p-4"
           />
@@ -67,7 +68,7 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
           ) : null}
         </div>
 
-        <div className="flex flex-1 flex-col px-3 pb-3 pt-2.5 sm:px-4 sm:pb-4 sm:pt-3">
+        <div className="flex flex-1 flex-col px-3 pt-2.5 sm:px-4 sm:pt-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
             {t(product.categoryKey)}
           </p>
@@ -89,6 +90,9 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
           </p>
         </div>
       </Link>
+      <div className="px-3 pt-3 pb-3 sm:px-4 sm:pb-4">
+        <AddToCartButton slug={product.slug} name={name} />
+      </div>
     </article>
   );
 }

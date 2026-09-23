@@ -30,14 +30,10 @@ type BottomNavProps = {
 };
 
 function CountBadge({ count }: { count: number }) {
-  if (count <= 0) {
-    return null;
-  }
-
   return (
     <span
       aria-hidden
-      className="absolute -top-1 inset-e-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-semibold leading-none text-primary-foreground ring-2 ring-background"
+      className="absolute -top-1.5 -inset-e-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-semibold leading-none text-primary-foreground ring-2 ring-background"
     >
       {count > 99 ? "99+" : count}
     </span>

@@ -106,6 +106,7 @@
     "priceLabel": "السعر: {amount} د.إ",
     "priceRange": "{from} – {to} د.إ",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to} د.إ",
+    "addToCart": "أضف إلى السلة",
     "fruits": "فواكه",
     "vegetables": "خضروات",
     "iceCream": "آيس كريم",

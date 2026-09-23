@@ -83,7 +83,7 @@ export default function ProductSlider({
           480: { slidesPerView: 1.7, spaceBetween: 12 },
           640: { slidesPerView: 2.2, spaceBetween: 16 },
           768: { slidesPerView: 2.7, spaceBetween: 16 },
-          1024: { slidesPerView: 4, spaceBetween: 20 },
+          1024: { slidesPerView: 4, spaceBetween: 16 },
         }}
       >
         {products.map((product) => (

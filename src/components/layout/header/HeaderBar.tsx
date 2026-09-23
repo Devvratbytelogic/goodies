@@ -25,8 +25,8 @@ type HeaderBarProps = {
   wishlistCount: number;
 };
 
-function CountBadge({ count }: { count: number }) {
-  if (count <= 0) {
+function CountBadge({ count, showZero = false }: { count: number; showZero?: boolean }) {
+  if (count <= 0 && !showZero) {
     return null;
   }
 
@@ -45,18 +45,20 @@ function ActionLink({
   label,
   icon: Icon,
   count = 0,
+  showZero = false,
   className = "",
 }: {
   href: string;
   label: string;
   icon: IconType;
   count?: number;
+  showZero?: boolean;
   className?: string;
 }) {
   return (
     <Link href={href} aria-label={label} className={`${actionClass} ${className}`}>
       <Icon aria-hidden className="size-5.5" />
-      <CountBadge count={count} />
+      <CountBadge count={count} showZero={showZero} />
     </Link>
   );
 }
@@ -148,6 +150,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
                 label={t("cartLabel", { count: cartCount })}
                 icon={LuShoppingCart}
                 count={cartCount}
+                showZero
                 className="-me-2"
               />
             </div>
@@ -189,6 +192,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
                 label={t("cartLabel", { count: cartCount })}
                 icon={LuShoppingCart}
                 count={cartCount}
+                showZero
               />
 
               <span aria-hidden className="mx-2 h-6 w-px bg-border/70" />
