@@ -1,6 +1,7 @@
 import BestSellerSection from "@/components/page-components/home/BestSellerSection";
 import CategorySection from "@/components/page-components/home/CategorySection";
-import MadeWithLoveSection from "@/components/page-components/home/MadeWithLoveSection";
+import InstallAppBanner from "@/components/page-components/home/InstallAppBanner";
+// import MadeWithLoveSection from "@/components/page-components/home/MadeWithLoveSection";
 import MainBanner from "@/components/page-components/home/MainBanner";
 import NewArrivalsSection from "@/components/page-components/home/NewArrivalsSection";
 import TastyChoicesSection from "@/components/page-components/home/TastyChoicesSection";
@@ -17,7 +18,12 @@ export default function Home() {
         <TastyChoicesSection />
         <NewArrivalsSection />
         <WhyChooseSection />
-        <MadeWithLoveSection />
+        {/* <MadeWithLoveSection /> */}
+        <div className="container">
+          <div className="mx-auto max-w-xl sm:max-w-2xl lg:max-w-3xl mb-6">
+            <InstallAppBanner />
+          </div>
+        </div>
       </div>
     </>
   );

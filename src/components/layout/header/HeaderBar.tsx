@@ -113,19 +113,23 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-xl">
         <div className="container">
           {/* Mobile bar */}
           <div className="grid grid-cols-3 items-center py-2.5 lg:hidden">
             <button
               type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-label={t("openMenu")}
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`${actionClass} -ms-2 justify-self-start`}
+              className={`${actionClass} -ms-2 justify-self-start ${menuOpen ? "bg-primary-soft text-primary" : ""}`}
             >
-              <LuMenu aria-hidden className="size-6" />
+              {menuOpen ? (
+                <LuX aria-hidden className="size-6" />
+              ) : (
+                <LuMenu aria-hidden className="size-6" />
+              )}
             </button>
 
             <div className="justify-self-center">
@@ -147,11 +151,6 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
                 className="-me-2"
               />
             </div>
-          </div>
-
-          {/* Mobile search */}
-          <div className="pb-3 lg:hidden">
-            <SearchField />
           </div>
 
           {/* Desktop bar */}
@@ -218,7 +217,19 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
         </div>
       </header>
 
-      {/* <MobileMenu /> */}
+      {/* Mobile search sits outside the sticky header so it scrolls away naturally. */}
+      <div className="bg-background/85 lg:hidden ">
+        <div className="container pb-3">
+          <SearchField />
+        </div>
+      </div>
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
+      />
     </>
   );
 }
