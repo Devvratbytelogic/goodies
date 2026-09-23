@@ -22,6 +22,7 @@ type ProductSliderProps = {
   previousLabel: string;
   nextLabel: string;
   products: ProductCardItem[];
+  variant?: "default" | "decorated";
 };
 
 export default function ProductSlider({
@@ -31,14 +32,16 @@ export default function ProductSlider({
   previousLabel,
   nextLabel,
   products,
+  variant = "default",
 }: ProductSliderProps) {
   const locale = useLocale();
   const isRtl = locale === "ar";
   const prevClass = `${id}-prev`;
   const nextClass = `${id}-next`;
+  const isDecorated = variant === "decorated";
 
-  return (
-    <section className="container section_y_space">
+  const content = (
+    <>
       <div className="mb-4 flex items-center justify-between sm:mb-6">
         <h2 className="text-xl font-bold text-heading sm:text-2xl">{title}</h2>
 
@@ -89,6 +92,38 @@ export default function ProductSlider({
           </SwiperSlide>
         ))}
       </Swiper>
+    </>
+  );
+
+  return (
+    <section className="container section_y_space">
+      {isDecorated ? (
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-primary-soft/55 via-background to-[#f7f1e6]/45 px-3 py-6 ring-1 ring-black/4 sm:rounded-4xl sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-s-24 -top-24 size-64 rounded-full bg-primary/15 blur-3xl sm:size-80"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-s-8 -top-8 size-24 rounded-full border-10 border-primary/20 sm:size-32 sm:border-12"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-e-20 -bottom-20 size-56 rounded-full bg-accent/20 blur-3xl sm:size-72"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-e-10 -bottom-10 size-28 rounded-full border-12 border-accent/30 sm:size-36 sm:border-14"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-e-16 top-1/2 size-3 -translate-y-1/2 rounded-full bg-primary/30 sm:size-4"
+          />
+          <div className="relative">{content}</div>
+        </div>
+      ) : (
+        content
+      )}
     </section>
   );
 }

@@ -77,6 +77,7 @@ export default function NewArrivalsSection() {
   return (
     <ProductSlider
       id="new-arrivals"
+      variant="decorated"
       title={t("title")}
       seeAllLabel={t("seeAll")}
       previousLabel={t("previous")}
