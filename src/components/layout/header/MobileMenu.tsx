@@ -210,8 +210,9 @@ export default function MobileMenu({
               <ImageComponent
                 src="/logo/logo.webp"
                 alt="Goodies"
-                width={1000}
-                height={1000}
+                width={112}
+                height={112}
+                sizes="56px"
                 className="h-14! w-auto"
               />
             </Link>

@@ -75,8 +75,9 @@ function BrandMark({ logoClassName }: { logoClassName: string }) {
       <ImageComponent
         src="/logo/logo.webp"
         alt="Goodies"
-        width={1100}
-        height={1100}
+        width={240}
+        height={240}
+        sizes="120px"
         className={logoClassName}
       />
     </Link>
@@ -185,8 +186,9 @@ function MobileFooter() {
             <ImageComponent
               src="/logo/logo.webp"
               alt="Goodies"
-              width={300}
-              height={300}
+              width={192}
+              height={192}
+              sizes="96px"
               className="size-full scale-[1.12] object-cover"
             />
           </Link>

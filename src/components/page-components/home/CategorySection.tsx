@@ -48,9 +48,10 @@ export default function CategorySection() {
             <ImageComponent
               src={category.image}
               alt={t(category.key)}
-              width={1000}
-              height={1000}
+              width={887}
+              height={444}
               objectFit="cover"
+              sizes="(max-width: 1024px) 48vw, 40vw"
             />
           </Link>
         ))}
@@ -63,9 +64,10 @@ export default function CategorySection() {
         <ImageComponent
           src="/images/home/cat5.webp"
           alt={t("boxDeals")}
-          width={1000}
-          height={1000}
+          width={887}
+          height={444}
           objectFit="cover"
+          sizes="(max-width: 1024px) 96vw, 80vw"
         />
       </Link>
     </section>

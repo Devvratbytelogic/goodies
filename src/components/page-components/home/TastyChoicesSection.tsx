@@ -41,12 +41,15 @@ export default function TastyChoicesSection() {
           dir={locale === "ar" ? "rtl" : "ltr"}
           className="relative flex flex-col justify-center px-5 py-7 text-primary-foreground sm:px-8 sm:py-10 lg:px-12"
         >
-          <div
+          <ImageComponent
+            src="/images/home/tasty-choices-pattern.webp"
+            alt=""
+            width={800}
+            height={533}
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-[0.22]"
-            style={{
-              backgroundImage: "url(/images/home/tasty-choices-pattern.webp)",
-            }}
+            objectFit="cover"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="pointer-events-none absolute inset-0 opacity-[0.22]"
           />
 
           <div className="relative">

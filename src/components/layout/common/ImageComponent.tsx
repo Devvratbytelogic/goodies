@@ -1,66 +1,44 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image, { type ImageProps } from "next/image";
 
-/** Shown whenever `src` is missing/empty or the image fails to load. */
-const DEFAULT_FALLBACK_SRC = "/images/image-fallback.svg";
-
-type ImageComponentProps = ImageProps & {
-    /** Optional shorthand for object-fit, appended to `className`. */
-    objectFit?: "cover" | "contain";
-    /** Overrides the default fallback image used on load/path errors. */
-    fallbackSrc?: string;
+type ImageComponentProps = Omit<ImageProps, "alt" | "src" | "sizes" | "quality"> & {
+  src: ImageProps["src"];
+  /** Empty string is allowed for decorative images. */
+  alt: string;
+  /**
+   * The width the image actually occupies on screen.
+   * Example: a half-width photo uses `"(max-width: 1024px) 100vw, 50vw"`.
+   * A 56px logo uses `"56px"`.
+   */
+  sizes: string;
+  objectFit?: "cover" | "contain";
+  /** 65 for the one large hero. 75 for everything else. */
+  quality?: 65 | 75;
 };
 
 export default function ImageComponent({
-    className = "",
-    objectFit,
-    alt,
-    src,
-    fallbackSrc = DEFAULT_FALLBACK_SRC,
-    onError,
-    onLoad,
-    unoptimized,
-    ...props
+  className = "",
+  objectFit,
+  alt,
+  src,
+  sizes,
+  quality = 75,
+  ...props
 }: ImageComponentProps) {
-    const isSrcEmpty =
-        !src || (typeof src === "string" && src.trim().length === 0);
-    const [hasError, setHasError] = useState(isSrcEmpty);
+  if (typeof src === "string" && src.trim().length === 0) {
+    return null;
+  }
 
-    // Reset the error state whenever a new `src` is provided, so the
-    // component recovers once a valid path is passed in again.
-    useEffect(() => {
-        setHasError(isSrcEmpty);
-    }, [src, isSrcEmpty]);
+  const fitClass =
+    objectFit === "cover" ? "object-cover" : objectFit === "contain" ? "object-contain" : "";
 
-    const objectFitClass =
-        objectFit === "cover" ? "object-cover" : objectFit === "contain" ? "object-contain" : "";
-
-    const isShowingFallback = hasError || isSrcEmpty;
-    const resolvedSrc = isShowingFallback ? fallbackSrc : src;
-
-    return (
-        <Image
-            alt={alt || "Image unavailable"}
-            src={resolvedSrc}
-            className={`${objectFitClass} h-full w-full ${className}`.trim()}
-            // The fallback is a local SVG; skip the optimizer for it so it
-            // always renders even if the original request failed upstream.
-            unoptimized={isShowingFallback ? true : unoptimized}
-            onError={(event) => {
-                setHasError(true);
-                onError?.(event);
-            }}
-            onLoad={(event) => {
-                // Guard against a broken image that still "loads" with 0 size.
-                const img = event.currentTarget;
-                if (img.naturalWidth === 0 && img.naturalHeight === 0) {
-                    setHasError(true);
-                }
-                onLoad?.(event);
-            }}
-            {...props}
-        />
-    );
+  return (
+    <Image
+      {...props}
+      src={src}
+      alt={alt}
+      sizes={sizes}
+      quality={quality}
+      className={`${fitClass} h-full w-full ${className}`.trim()}
+    />
+  );
 }

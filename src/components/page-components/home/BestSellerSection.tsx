@@ -1,7 +1,7 @@
-"use client";
-
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import ProductSlider from "@/components/product/ProductSlider";
+
+const ProductSlider = dynamic(() => import("@/components/product/ProductSlider"));
 import type { ProductCardItem } from "@/components/product/ProductCard";
 
 const bestSellers: ProductCardItem[] = [

@@ -9,7 +9,6 @@ import ProductCard, { type ProductCardItem } from "@/components/product/ProductC
 import { getShopRoutePath } from "@/utils/routes";
 
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const navButtonClass =
@@ -73,7 +72,6 @@ export default function ProductSlider({
         slidesPerView={1.8}
         spaceBetween={10}
         watchOverflow
-        grabCursor
         navigation={{
           prevEl: `.${prevClass}`,
           nextEl: `.${nextClass}`,
@@ -96,9 +94,9 @@ export default function ProductSlider({
   );
 
   return (
-    <section className={`container section_y_space`}>
+    <section className="container section_y_space">
       {isDecorated ? (
-        <div className={`relative overflow-hidden rounded-3xl sm:rounded-4xl bg-linear-to-br from-primary-soft/55 via-background to-[#f7f1e6]/45 px-3 py-6 ring-1 ring-black/4 sm:px-6 sm:py-8 lg:px-8 lg:py-10`}>
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-primary-soft/55 via-background to-[#f7f1e6]/45 px-3 py-6 ring-1 ring-black/4 sm:rounded-4xl sm:px-6 sm:py-8 lg:px-8 lg:py-10">
           <div
             aria-hidden
             className="pointer-events-none absolute -inset-s-24 -top-24 size-64 rounded-full bg-primary/15 blur-3xl sm:size-80"

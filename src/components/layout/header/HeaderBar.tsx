@@ -75,9 +75,11 @@ function BrandLogo() {
       <ImageComponent
         src="/logo/logo.webp"
         alt="Goodies"
-        width={1000}
-        height={1000}
-        preload
+        width={160}
+        height={160}
+        loading="eager"
+        fetchPriority="low"
+        sizes="80px"
         className="h-16! w-auto lg:h-20!"
       />
     </Link>

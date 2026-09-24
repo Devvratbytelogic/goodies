@@ -6,9 +6,10 @@ export default function MainBanner() {
       <ImageComponent
         src="/images/home/main-banner1.webp"
         alt="Goodies banner"
-        width={1920}
-        height={1080}
+        width={1600}
+        height={900}
         preload
+        // quality={65}
         sizes="100vw"
       />
     </section>
