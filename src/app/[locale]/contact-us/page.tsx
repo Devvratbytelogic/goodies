@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { LuChevronRight, LuMail, LuMapPin, LuPhone } from "react-icons/lu";
+import { LuMail, LuMapPin, LuPhone } from "react-icons/lu";
+import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import ContactForm from "@/components/page-components/contact/ContactForm";
-import { Link } from "@/i18n/navigation";
 import { EMAIL, PHONE_HREF, PHONE_LABEL } from "@/constants/contact";
 import { getHomeRoutePath } from "@/utils/routes";
 
@@ -59,24 +59,13 @@ export default async function ContactUsPage() {
         />
 
         <div className="container relative z-10 flex min-h-80 flex-col justify-end py-8 sm:min-h-96 sm:py-10 lg:min-h-112 lg:py-14">
-          <nav aria-label={t("breadcrumb")}>
-            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-white/80">
-              <li>
-                <Link
-                  href={getHomeRoutePath()}
-                  className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  {nav("home")}
-                </Link>
-              </li>
-              <li aria-hidden className="flex items-center text-white/60">
-                <LuChevronRight className="size-3.5 rtl:-scale-x-100" />
-              </li>
-              <li className="font-medium text-white" aria-current="page">
-                {t("title")}
-              </li>
-            </ol>
-          </nav>
+          <Breadcrumbs
+            variant="hero"
+            items={[
+              { label: nav("home"), href: getHomeRoutePath() },
+              { label: t("title") },
+            ]}
+          />
 
           <h1 className="mt-4 max-w-3xl text-3xl font-bold tracking-tight text-white! text-balance drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] sm:text-4xl lg:text-5xl">
             {t("title")}

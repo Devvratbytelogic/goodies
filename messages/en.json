@@ -137,9 +137,11 @@
   "ShopPage": {
     "title": "Shop"
   },
+  "Breadcrumb": {
+    "label": "Breadcrumb"
+  },
   "AboutUsPage": {
     "title": "About us",
-    "breadcrumb": "Breadcrumb",
     "welcome": "Welcome to Goodies, where indulgence meets freshness! At Goodies, we’re passionate about blending the delightful world of candy, ice creams, fruits, and vegetables into a unique culinary experience. Our mission is to create a harmonious balance of sweetness and nutrition that not only satisfies your cravings but also nourishes your body. Whether you’re looking for a decadent treat or a healthy snack, we offer a diverse range of options that cater to every taste and preference.",
     "sourcing": "Our team is dedicated to sourcing the finest ingredients and crafting delicious products that reflect our commitment to quality and innovation. From vibrant fruit-infused candies and creamy ice creams to refreshing veggie snacks, every item on our menu is designed to bring joy to your taste buds while supporting a balanced lifestyle. Join us at Goodies and discover how we’re redefining the way you enjoy your favorite flavors.",
     "fusion": "At Goodies, we believe that the best experiences come from the perfect fusion of flavor and freshness. Our team of culinary experts and nutritionists work tirelessly to create recipes that combine the sweetest candies with the ripest fruits, the creamiest ice creams with the freshest vegetables. Our goal is to offer you products that not only tantalize your taste buds but also contribute to your well-being. We take pride in our commitment to using high-quality, natural ingredients, ensuring that every bite is as wholesome as it is delightful.",
@@ -147,7 +149,6 @@
   },
   "ContactUsPage": {
     "title": "Contact us",
-    "breadcrumb": "Breadcrumb",
     "getInTouch": "Get In Touch",
     "address": "Address",
     "addressValue": "UAE, Dubai",
@@ -168,7 +169,8 @@
     "title": "Cart"
   },
   "Wishlist": {
-    "add": "Add {name} to wishlist"
+    "add": "Add {name} to wishlist",
+    "label": "Add to wishlist"
   },
   "WishlistPage": {
     "title": "Wishlist"
@@ -177,7 +179,48 @@
     "title": "Account"
   },
   "ProductPage": {
-    "title": "Product"
+    "title": "Product",
+    "metaDescription": "Buy {name} from Goodies. {category}, made with love in the UAE.",
+    "viewGallery": "View full-screen image gallery",
+    "close": "Close",
+    "priceRangeLabel": "Price range: {from} through {to}",
+    "priceLabel": "Price: {amount}",
+    "currency": "Currency",
+    "size": "Size",
+    "small": "Small",
+    "medium": "Medium",
+    "clear": "Clear",
+    "quantity": "{name} quantity",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "addToCart": "Add to cart",
+    "buyNow": "Buy Now",
+    "added": "Added to cart",
+    "chooseSize": "Please choose a size",
+    "additionalInformation": "Additional information",
+    "reviews": "Reviews ({count})",
+    "weight": "Weight",
+    "weightValue": "N/A",
+    "productDetails": "Product Details",
+    "noReviews": "There are no reviews yet.",
+    "beFirst": "Be the first to review “{name}”",
+    "emailNotice": "Your email address will not be published. Required fields are marked *",
+    "yourRating": "Your rating",
+    "yourReview": "Your review",
+    "name": "Name",
+    "email": "Email",
+    "saveDetails": "Save my name, email, and website in this browser for the next time I comment.",
+    "star": "{count} of 5 stars",
+    "submit": "Submit",
+    "reviewThanks": "Thank you. Your review has been noted.",
+    "required": "This field is required",
+    "related": "Related products",
+    "tabbyBefore": "As low as",
+    "tabbyAfter": "or 4 interest-free payments.",
+    "month": "month",
+    "learnMore": "Learn more",
+    "tamaraRest": "/month for up to 4 months, no late fees!",
+    "moreOptions": "More options"
   },
   "ProductCategoryPage": {
     "title": "Product category"

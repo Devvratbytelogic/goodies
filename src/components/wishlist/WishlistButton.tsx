@@ -7,10 +7,16 @@ import { LuHeart } from "react-icons/lu";
 type WishlistButtonProps = {
   slug: string;
   name: string;
+  variant?: "icon" | "text";
   className?: string;
 };
 
-export default function WishlistButton({ slug, name, className = "" }: WishlistButtonProps) {
+export default function WishlistButton({
+  slug,
+  name,
+  variant = "icon",
+  className = "",
+}: WishlistButtonProps) {
   const t = useTranslations("Wishlist");
 
   function handleClick(event: MouseEvent<HTMLButtonElement>) {
@@ -19,12 +25,28 @@ export default function WishlistButton({ slug, name, className = "" }: WishlistB
     console.log("Wishlist", { slug, name });
   }
 
+  const shared = {
+    type: "button" as const,
+    "aria-label": t("add", { name }),
+    onPointerDown: (event: MouseEvent<HTMLButtonElement>) => event.stopPropagation(),
+    onClick: handleClick,
+  };
+
+  if (variant === "text") {
+    return (
+      <button
+        {...shared}
+        className={`inline-flex items-center gap-2.5 text-sm font-medium text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${className}`}
+      >
+        <LuHeart aria-hidden className="size-5" />
+        {t("label")}
+      </button>
+    );
+  }
+
   return (
     <button
-      type="button"
-      aria-label={t("add", { name })}
-      onPointerDown={(event) => event.stopPropagation()}
-      onClick={handleClick}
+      {...shared}
       className={`inline-flex size-8 items-center justify-center rounded-full bg-background/95 text-muted shadow-sm ring-1 ring-border/50 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${className}`}
     >
       <LuHeart aria-hidden className="size-4" />

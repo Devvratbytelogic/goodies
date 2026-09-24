@@ -3,33 +3,10 @@ import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import WishlistButton from "@/components/wishlist/WishlistButton";
+import type { ProductCardItem } from "@/data/products";
 import { getProductRoutePath } from "@/utils/routes";
 
-export type ProductCategoryKey = "fruits" | "vegetables" | "iceCream" | "candy";
-
-export type ProductNameKey =
-  | "coconut"
-  | "sourStrawberry"
-  | "mixedVegetables"
-  | "sweetStrawberry"
-  | "vanillaMangoIcy"
-  | "orangeMangoIcy"
-  | "blueberryVanillaIcy"
-  | "strawberryVanillaIcy"
-  | "pureMangoIceCream"
-  | "mangoWaffle"
-  | "chocoBrowniesIcy"
-  | "strawberryCashew";
-
-export type ProductCardItem = {
-  slug: string;
-  image: string;
-  categoryKey: ProductCategoryKey;
-  nameKey: ProductNameKey;
-  priceFrom: number;
-  priceTo?: number;
-  isNew?: boolean;
-};
+export type { ProductCardItem, ProductCategoryKey, ProductNameKey } from "@/data/products";
 
 function formatAedAmount(amount: number) {
   return amount.toLocaleString("en-US", {
