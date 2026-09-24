@@ -167,6 +167,9 @@
   "CartPage": {
     "title": "السلة"
   },
+  "Wishlist": {
+    "add": "أضف {name} إلى المفضلة"
+  },
   "WishlistPage": {
     "title": "المفضلة"
   },

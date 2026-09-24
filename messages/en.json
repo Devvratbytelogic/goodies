@@ -167,6 +167,9 @@
   "CartPage": {
     "title": "Cart"
   },
+  "Wishlist": {
+    "add": "Add {name} to wishlist"
+  },
   "WishlistPage": {
     "title": "Wishlist"
   },

@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import AddToCartButton from "@/components/product/AddToCartButton";
+import WishlistButton from "@/components/wishlist/WishlistButton";
 import { getProductRoutePath } from "@/utils/routes";
 
 export type ProductCategoryKey = "fruits" | "vegetables" | "iceCream" | "candy";
@@ -45,7 +46,12 @@ export default function ProductCard({ product }: { product: ProductCardItem }) {
   const hasRange = Boolean(priceTo && product.priceTo !== product.priceFrom);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
+      <WishlistButton
+        slug={product.slug}
+        name={name}
+        className="absolute inset-e-2.5 top-2.5 z-10 sm:inset-e-3 sm:top-3"
+      />
       <Link
         href={getProductRoutePath(product.slug)}
         className="flex flex-1 flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
