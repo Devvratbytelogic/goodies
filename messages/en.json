@@ -146,7 +146,23 @@
     "community": "We’re more than just a brand; we’re a community of flavor enthusiasts who value creativity and quality. Whether you’re a candy connoisseur, an ice cream lover, or someone who appreciates the benefits of fresh fruits and vegetables, Goodies has something special for you. Thank you for joining us on this delicious journey. We invite you to explore our range, experience our unique creations, and share in our passion for great food that’s both indulgent and nutritious."
   },
   "ContactUsPage": {
-    "title": "Contact us"
+    "title": "Contact us",
+    "breadcrumb": "Breadcrumb",
+    "getInTouch": "Get In Touch",
+    "address": "Address",
+    "addressValue": "UAE, Dubai",
+    "phone": "Phone",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "emailAddress": "Email Address",
+    "message": "Message",
+    "required": "This field is required",
+    "emailInvalid": "Enter a valid email address",
+    "phoneInvalid": "Enter a valid phone number",
+    "invalidText": "Letters, numbers, and basic punctuation only",
+    "tooLong": "This field is too long"
   },
   "CartPage": {
     "title": "Cart"
