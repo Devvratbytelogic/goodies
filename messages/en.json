@@ -135,7 +135,20 @@
     "badgeI18n": "i18n"
   },
   "ShopPage": {
-    "title": "Shop"
+    "title": "Shop",
+    "description": "Shop freeze-dried fruits, vegetables, candy, and ice cream from Goodies.",
+    "filters": "Filters",
+    "price": "Price",
+    "minPrice": "Minimum price",
+    "maxPrice": "Maximum price",
+    "categories": "Categories",
+    "allProducts": "All products",
+    "showing": "Showing {from}–{to} of {total} results",
+    "sortLabel": "Sort products",
+    "sortDefault": "Default sorting",
+    "sortPriceAsc": "Sort by price: low to high",
+    "sortPriceDesc": "Sort by price: high to low",
+    "sortLatest": "Sort by latest"
   },
   "Breadcrumb": {
     "label": "Breadcrumb"

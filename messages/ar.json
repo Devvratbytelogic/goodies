@@ -135,7 +135,20 @@
     "badgeI18n": "i18n"
   },
   "ShopPage": {
-    "title": "المتجر"
+    "title": "المتجر",
+    "description": "تسوّق الفواكه والخضروات والحلويات والآيس كريم المجففة بالتجميد من Goodies.",
+    "filters": "الفلاتر",
+    "price": "السعر",
+    "minPrice": "أقل سعر",
+    "maxPrice": "أعلى سعر",
+    "categories": "التصنيفات",
+    "allProducts": "كل المنتجات",
+    "showing": "عرض {from}–{to} من {total} نتيجة",
+    "sortLabel": "ترتيب المنتجات",
+    "sortDefault": "الترتيب الافتراضي",
+    "sortPriceAsc": "الترتيب حسب السعر: من الأقل إلى الأعلى",
+    "sortPriceDesc": "الترتيب حسب السعر: من الأعلى إلى الأقل",
+    "sortLatest": "الترتيب حسب الأحدث"
   },
   "Breadcrumb": {
     "label": "مسار التنقل"

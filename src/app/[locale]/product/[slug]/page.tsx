@@ -7,17 +7,9 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductPurchase from "@/components/product/ProductPurchase";
 import ProductTabs from "@/components/product/ProductTabs";
-import type { ProductCategoryKey } from "@/data/products";
-import { getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
+import { categorySlug, getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
 import { routing } from "@/i18n/routing";
 import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
-
-const categorySlug: Record<ProductCategoryKey, string> = {
-  fruits: "fruits",
-  vegetables: "vegetables",
-  iceCream: "ice-cream",
-  candy: "candy",
-};
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;

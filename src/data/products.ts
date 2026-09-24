@@ -1,5 +1,14 @@
 export type ProductCategoryKey = "fruits" | "vegetables" | "iceCream" | "candy";
 
+export const categorySlug: Record<ProductCategoryKey, string> = {
+  fruits: "fruits",
+  vegetables: "vegetables",
+  iceCream: "ice-cream",
+  candy: "candy",
+};
+
+export const shopCategoryOrder: ProductCategoryKey[] = ["candy", "fruits", "iceCream", "vegetables"];
+
 export type ProductNameKey =
   | "coconut"
   | "sourStrawberry"
@@ -200,6 +209,10 @@ export function getProductBySlug(slug: string) {
 
 export function getAllProductSlugs() {
   return catalog.map((item) => item.slug);
+}
+
+export function getCatalogProducts(): ProductCardItem[] {
+  return catalog.map(toCard);
 }
 
 export function getRelatedProducts(slug: string, limit = 4): ProductCardItem[] {
