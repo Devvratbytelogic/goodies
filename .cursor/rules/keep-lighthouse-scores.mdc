@@ -1,0 +1,29 @@
+---
+description: Never ship a change that drops Goodies below the Lighthouse floor
+alwaysApply: true
+---
+
+# Speed floor
+
+Live site: https://goodies-jade.vercel.app/
+
+Do not let any change, including a new tab, API, page, or dependency, drop these Lighthouse scores:
+
+- Performance: 99
+- Accessibility: 93
+- Best Practices: 100
+- SEO: 100
+
+If a requested change can slow the site, stop and warn before editing. Name the cost (extra JavaScript, a large image, a client component, a blocking request) and wait for approval.
+
+## Keep
+
+- Photos, banners, and logos go through `ImageComponent`. Pass `sizes`. `preload` only on the LCP hero. Quality 65 only for that hero, 75 elsewhere.
+- Do not add `<img>`, CSS `background-image` for large photos, or `unoptimized` images.
+- Do not load a library on the first screen unless it is code-split. No loop or autoplay that duplicates slides.
+- Arabic font loads only on `/ar`. Do not add an unused font.
+- Pages stay static. Do not add a client component, heavy dependency, or uncached fetch to the root layout without a warning.
+
+## Check
+
+Judge speed on a production build, not `next dev`. After a change that touches images, JavaScript, fonts, or data loading, say whether the Lighthouse floor is still safe.
