@@ -138,7 +138,12 @@
     "title": "Shop"
   },
   "AboutUsPage": {
-    "title": "About us"
+    "title": "About us",
+    "breadcrumb": "Breadcrumb",
+    "welcome": "Welcome to Goodies, where indulgence meets freshness! At Goodies, we’re passionate about blending the delightful world of candy, ice creams, fruits, and vegetables into a unique culinary experience. Our mission is to create a harmonious balance of sweetness and nutrition that not only satisfies your cravings but also nourishes your body. Whether you’re looking for a decadent treat or a healthy snack, we offer a diverse range of options that cater to every taste and preference.",
+    "sourcing": "Our team is dedicated to sourcing the finest ingredients and crafting delicious products that reflect our commitment to quality and innovation. From vibrant fruit-infused candies and creamy ice creams to refreshing veggie snacks, every item on our menu is designed to bring joy to your taste buds while supporting a balanced lifestyle. Join us at Goodies and discover how we’re redefining the way you enjoy your favorite flavors.",
+    "fusion": "At Goodies, we believe that the best experiences come from the perfect fusion of flavor and freshness. Our team of culinary experts and nutritionists work tirelessly to create recipes that combine the sweetest candies with the ripest fruits, the creamiest ice creams with the freshest vegetables. Our goal is to offer you products that not only tantalize your taste buds but also contribute to your well-being. We take pride in our commitment to using high-quality, natural ingredients, ensuring that every bite is as wholesome as it is delightful.",
+    "community": "We’re more than just a brand; we’re a community of flavor enthusiasts who value creativity and quality. Whether you’re a candy connoisseur, an ice cream lover, or someone who appreciates the benefits of fresh fruits and vegetables, Goodies has something special for you. Thank you for joining us on this delicious journey. We invite you to explore our range, experience our unique creations, and share in our passion for great food that’s both indulgent and nutritious."
   },
   "ContactUsPage": {
     "title": "Contact us"
