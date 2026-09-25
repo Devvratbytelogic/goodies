@@ -215,6 +215,18 @@ export function getCatalogProducts(): ProductCardItem[] {
   return catalog.map(toCard);
 }
 
+export function getCategorySlugs() {
+  return Object.values(categorySlug);
+}
+
+export function getCategoryKeyBySlug(slug: string) {
+  return (Object.keys(categorySlug) as ProductCategoryKey[]).find((key) => categorySlug[key] === slug);
+}
+
+export function getProductsByCategory(categoryKey: ProductCategoryKey): ProductCardItem[] {
+  return catalog.filter((item) => item.categoryKey === categoryKey).map(toCard);
+}
+
 export function getRelatedProducts(slug: string, limit = 4): ProductCardItem[] {
   const current = getProductBySlug(slug);
   if (!current) {

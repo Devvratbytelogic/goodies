@@ -236,7 +236,8 @@
     "moreOptions": "خيارات أكثر"
   },
   "ProductCategoryPage": {
-    "title": "تصنيف المنتج"
+    "title": "تصنيف المنتج",
+    "description": "تسوّق {category} من Goodies."
   },
   "CheckoutClassicPage": {
     "title": "إتمام الشراء"

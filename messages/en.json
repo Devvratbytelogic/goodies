@@ -236,7 +236,8 @@
     "moreOptions": "More options"
   },
   "ProductCategoryPage": {
-    "title": "Product category"
+    "title": "Product category",
+    "description": "Shop {category} from Goodies."
   },
   "CheckoutClassicPage": {
     "title": "Checkout"

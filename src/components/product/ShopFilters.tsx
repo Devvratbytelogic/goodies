@@ -17,26 +17,41 @@ type ShopFiltersProps = {
   allLabel: string;
   total: number;
   categories: ShopFilterCategory[];
+  activeCategoryId?: string;
 };
 
-function FilterList({ allLabel, total, categories }: Pick<ShopFiltersProps, "allLabel" | "total" | "categories">) {
+function FilterList({
+  allLabel,
+  total,
+  categories,
+  activeCategoryId,
+}: Pick<ShopFiltersProps, "allLabel" | "total" | "categories" | "activeCategoryId">) {
+  const allSelected = !activeCategoryId;
+
   return (
     <ul className="space-y-1">
-      <li className="flex items-center justify-between rounded-md bg-primary-soft px-3 py-2 text-sm font-semibold text-primary">
+      <li className={filterRowClassName(allSelected)}>
         <span>{allLabel}</span>
-        <span className="text-primary/70">{total}</span>
+        <span className={allSelected ? "text-primary/70" : "text-muted"}>{total}</span>
       </li>
-      {categories.map((category) => (
-        <li
-          key={category.id}
-          className="flex items-center justify-between rounded-md px-3 py-2 text-sm text-heading"
-        >
-          <span>{category.label}</span>
-          <span className="text-muted">{category.count}</span>
-        </li>
-      ))}
+      {categories.map((category) => {
+        const selected = category.id === activeCategoryId;
+
+        return (
+          <li key={category.id} className={filterRowClassName(selected)}>
+            <span>{category.label}</span>
+            <span className={selected ? "text-primary/70" : "text-muted"}>{category.count}</span>
+          </li>
+        );
+      })}
     </ul>
   );
+}
+
+function filterRowClassName(selected: boolean) {
+  return selected
+    ? "flex items-center justify-between rounded-md bg-primary-soft px-3 py-2 text-sm font-semibold text-primary"
+    : "flex items-center justify-between rounded-md px-3 py-2 text-sm text-heading";
 }
 
 export default function ShopFilters({
@@ -50,6 +65,7 @@ export default function ShopFilters({
   allLabel,
   total,
   categories,
+  activeCategoryId,
 }: ShopFiltersProps) {
   const price = (
     <ShopPriceFilter
@@ -60,7 +76,9 @@ export default function ShopFilters({
       max={maxPrice}
     />
   );
-  const categoriesList = <FilterList allLabel={allLabel} total={total} categories={categories} />;
+  const categoriesList = (
+    <FilterList allLabel={allLabel} total={total} categories={categories} activeCategoryId={activeCategoryId} />
+  );
 
   return (
     <aside>
