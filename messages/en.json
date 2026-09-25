@@ -179,7 +179,31 @@
     "tooLong": "This field is too long"
   },
   "CartPage": {
-    "title": "Cart"
+    "title": "Cart",
+    "description": "A sample Goodies cart with the same items for every visitor.",
+    "quantity": "Quantity",
+    "decrease": "Decrease quantity of {name}",
+    "increase": "Increase quantity of {name}",
+    "remove": "Remove {name}",
+    "empty": "Your cart is empty.",
+    "shop": "Continue shopping",
+    "summary": "Cart totals",
+    "coupons": "Coupons",
+    "couponOffers": "Available offers",
+    "couponSearch": "Search coupons",
+    "couponNone": "No coupons match your search.",
+    "apply": "Apply",
+    "applied": "Applied",
+    "couponPercent": "10% off your order",
+    "couponFixed": "AED 20 off your order",
+    "couponShipping": "Free shipping",
+    "couponLabel": "Coupon",
+    "removeCoupon": "Remove coupon",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingNote": "Flat rate",
+    "total": "Total",
+    "checkout": "Proceed to checkout"
   },
   "Wishlist": {
     "add": "Add {name} to wishlist",

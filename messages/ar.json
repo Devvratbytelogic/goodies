@@ -179,7 +179,31 @@
     "tooLong": "هذا الحقل طويل جدًا"
   },
   "CartPage": {
-    "title": "السلة"
+    "title": "السلة",
+    "description": "سلة Goodies نموذجية بنفس المنتجات لكل الزوار.",
+    "quantity": "الكمية",
+    "decrease": "إنقاص كمية {name}",
+    "increase": "زيادة كمية {name}",
+    "remove": "إزالة {name}",
+    "empty": "سلتك فارغة.",
+    "shop": "متابعة التسوق",
+    "summary": "إجمالي السلة",
+    "coupons": "القسائم",
+    "couponOffers": "عروض متاحة",
+    "couponSearch": "ابحث عن القسائم",
+    "couponNone": "لا توجد قسائم مطابقة.",
+    "apply": "تطبيق",
+    "applied": "مُطبَّقة",
+    "couponPercent": "خصم 10٪ على طلبك",
+    "couponFixed": "خصم 20 د.إ على طلبك",
+    "couponShipping": "شحن مجاني",
+    "couponLabel": "قسيمة",
+    "removeCoupon": "إزالة القسيمة",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "shippingNote": "سعر ثابت",
+    "total": "الإجمالي",
+    "checkout": "متابعة الدفع"
   },
   "Wishlist": {
     "add": "أضف {name} إلى المفضلة",
