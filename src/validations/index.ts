@@ -12,6 +12,41 @@ const requiredString = (required: string, max: number) =>
     .test("no-script", "invalidText", (value) => !value || !SCRIPT_PATTERN.test(value));
 const phoneString = (required: string, phoneInvalid: string) => Yup.string().trim().required(required).matches(/^[+]?[\d\s()-]{7,20}$/, phoneInvalid);
 const emailString = (required: string, emailInvalid: string) => Yup.string().trim().required(required).email(emailInvalid);
+const passwordString = () =>
+  Yup.string()
+    .required("required")
+    .min(8, "tooShort")
+    .matches(/[a-z]/, "lowercase")
+    .matches(/[A-Z]/, "uppercase")
+    .matches(/[0-9]/, "number")
+    .matches(/[^A-Za-z0-9]/, "special");
+
+export const loginValidationSchema = Yup.object({
+  email: emailString("required", "emailInvalid"),
+  password: passwordString(),
+});
+
+export const forgotValidationSchema = Yup.object({
+  email: emailString("required", "emailInvalid"),
+});
+
+export const otpValidationSchema = Yup.object({
+  code: Yup.string().required("required").matches(/^\d{6}$/, "invalid"),
+});
+
+export const resetPasswordValidationSchema = Yup.object({
+  password: passwordString(),
+  confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
+});
+
+export const registerValidationSchema = Yup.object({
+  firstName: requiredString("required", 40),
+  lastName: requiredString("required", 40),
+  email: emailString("required", "emailInvalid"),
+  phone: Yup.string().required("required").matches(/^\d{8,15}$/, "phoneInvalid"),
+  password: passwordString(),
+  confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
+});
 
 export const contactUsValidationSchema = Yup.object({
   firstName: requiredString("required", 40),

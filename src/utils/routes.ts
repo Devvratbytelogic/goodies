@@ -28,7 +28,7 @@ export function getWishlistRoutePath(): string {
 }
 
 export function getAccountRoutePath(): string {
-  return "/account";
+  return "/my-account/";
 }
 
 export function getCheckoutClassicRoutePath(): string {

@@ -18,6 +18,7 @@ type ModalOptions = {
   title: string;
   content: ReactNode;
   size?: ModalSize;
+  data?: unknown;
 };
 
 type ModalState = ModalOptions & {
@@ -28,6 +29,7 @@ type ModalState = ModalOptions & {
 type ModalContextValue = {
   openModal: (options: ModalOptions) => void;
   closeModal: () => void;
+  data?: unknown;
 };
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -52,11 +54,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const isOpen = modal !== null;
 
   function openModal(options: ModalOptions) {
+    const alreadyOpen = modal !== null && modal.phase !== "leave";
     const next: ModalState = {
       title: options.title,
       content: options.content,
       size: options.size ?? "md",
-      phase: prefersReducedMotion() ? "open" : "enter",
+      data: options.data,
+      phase: alreadyOpen || prefersReducedMotion() ? "open" : "enter",
     };
 
     setModal(next);
@@ -119,7 +123,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const shown = modal?.phase === "open";
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, data: modal?.data }}>
       {children}
       {modal ? (
         <div className="fixed inset-0 z-80 flex items-center justify-center p-4">
@@ -141,7 +145,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
                 type="button"
                 onClick={closeModal}
                 aria-label={t("close")}
-                className="-me-1 -mt-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="-me-4 -mt-4 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <LuX aria-hidden className="size-4" />
               </button>

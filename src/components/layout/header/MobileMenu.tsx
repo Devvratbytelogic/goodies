@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuChevronDown, LuHeart, LuShoppingCart, LuUser, LuX } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
+import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import {
   getAccountRoutePath,
@@ -77,27 +78,24 @@ function MenuItemLink({
   icon: Icon,
   active,
   onClose,
+  onSelect,
   ariaLabel,
   count = 0,
   fillIconWhenActive = false,
 }: {
-  href: string;
+  href?: string;
   label: string;
   icon: IconType;
   active: boolean;
   onClose: () => void;
+  onSelect?: () => void;
   ariaLabel?: string;
   count?: number;
   fillIconWhenActive?: boolean;
 }) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      aria-label={ariaLabel ?? label}
-      onClick={onClose}
-      className={`${itemClass} ${menuItemState(active)}`}
-    >
+  const className = `${itemClass} ${menuItemState(active)}`;
+  const content = (
+    <>
       <NavIndicator active={active} />
       <span className={`${iconWrapClass} relative`}>
         <Icon
@@ -113,7 +111,27 @@ function MenuItemLink({
           </span>
         ) : null}
       </span>
-      <span className="flex-1">{label}</span>
+      <span className="flex-1 text-start">{label}</span>
+    </>
+  );
+
+  if (onSelect) {
+    return (
+      <button type="button" aria-label={ariaLabel ?? label} onClick={onSelect} className={className}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href={href ?? getHomeRoutePath()}
+      aria-current={active ? "page" : undefined}
+      aria-label={ariaLabel ?? label}
+      onClick={onClose}
+      className={className}
+    >
+      {content}
     </Link>
   );
 }
@@ -127,6 +145,7 @@ export default function MobileMenu({
   const t = useTranslations("Nav");
   const tShop = useTranslations("ShopMenu");
   const tHeader = useTranslations("Header");
+  const openLogin = useOpenLogin();
   const pathname = usePathname();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
@@ -356,11 +375,19 @@ export default function MobileMenu({
                   return (
                     <li key={key}>
                       <MenuItemLink
-                        href={href}
+                        href={key === "account" ? undefined : href}
                         label={tHeader(key)}
                         icon={icon}
-                        active={active}
+                        active={key === "account" ? false : active}
                         onClose={onClose}
+                        onSelect={
+                          key === "account"
+                            ? () => {
+                                onClose();
+                                requestAnimationFrame(() => openLogin());
+                              }
+                            : undefined
+                        }
                         ariaLabel={ariaLabel}
                         count={count}
                         fillIconWhenActive={key === "wishlist"}

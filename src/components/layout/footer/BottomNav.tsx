@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuHeart, LuHouse, LuShoppingCart, LuStore, LuUser } from "react-icons/lu";
+import { useOpenLogin } from "@/components/auth/Login";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath } from "@/components/layout/header/navigation";
 import {
@@ -43,6 +44,7 @@ function CountBadge({ count }: { count: number }) {
 export function BottomNav({ cartCount = 0 }: BottomNavProps) {
   const t = useTranslations("BottomNav");
   const tHeader = useTranslations("Header");
+  const openLogin = useOpenLogin();
   const pathname = usePathname();
 
   return (
@@ -59,26 +61,41 @@ export function BottomNav({ cartCount = 0 }: BottomNavProps) {
                 ? tHeader("cartLabel", { count: cartCount })
                 : t(key);
 
+            const className = `flex h-full w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              active ? "text-primary" : "text-icon-muted hover:text-primary"
+            }`;
+            const icon = (
+              <>
+                <span className="relative">
+                  <Icon
+                    aria-hidden
+                    className={`size-5.5 ${active && key === "favorites" ? "fill-current" : ""}`}
+                  />
+                  {key === "cart" ? <CountBadge count={cartCount} /> : null}
+                </span>
+                <span>{t(key)}</span>
+              </>
+            );
+
+            if (key === "account") {
+              return (
+                <li key={key}>
+                  <button type="button" aria-label={label} onClick={openLogin} className={className}>
+                    {icon}
+                  </button>
+                </li>
+              );
+            }
+
             return (
               <li key={key}>
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
                   aria-label={label}
-                  className={`flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                    active
-                      ? "text-primary"
-                      : "text-icon-muted hover:text-primary"
-                  }`}
+                  className={className}
                 >
-                  <span className="relative">
-                    <Icon
-                      aria-hidden
-                      className={`size-5.5 ${active && key === "favorites" ? "fill-current" : ""}`}
-                    />
-                    {key === "cart" ? <CountBadge count={cartCount} /> : null}
-                  </span>
-                  <span>{t(key)}</span>
+                  {icon}
                 </Link>
               </li>
             );
