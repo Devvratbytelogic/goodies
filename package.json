@@ -12,6 +12,7 @@
     "boneyard-js": "^1.10.0",
     "country-state-city": "^3.2.1",
     "formik": "^2.4.9",
+    "moment": "^2.31.0",
     "next": "16.3.5",
     "next-intl": "^4.14.5",
     "react": "19.2.8",

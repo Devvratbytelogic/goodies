@@ -1,6 +1,10 @@
 import { getTranslations } from "next-intl/server";
-import { sampleOrders, type AccountOrderStatus } from "@/data/sampleAccount";
+import { sampleOrders, sampleUsedCoupons, type AccountOrderStatus } from "@/data/sampleAccount";
 import { getProductBySlug } from "@/data/products";
+
+export const orderTrackingSteps = ["placed", "processing", "shipped", "delivered"] as const;
+
+export type OrderTrackingStep = (typeof orderTrackingSteps)[number];
 
 export type AccountOrderLine = {
   slug: string;
@@ -10,10 +14,21 @@ export type AccountOrderLine = {
   price: number;
 };
 
+export type AccountOrderEvent = {
+  step: OrderTrackingStep;
+  at: string;
+};
+
 export type AccountOrder = {
   id: string;
   placedOn: string;
   status: AccountOrderStatus;
+  trackingNumber: string | null;
+  history: AccountOrderEvent[];
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  couponCode: string | null;
   total: number;
   lines: AccountOrderLine[];
 };
@@ -37,12 +52,27 @@ export async function getAccountOrders(): Promise<AccountOrder[]> {
       };
     });
 
+    const subtotal = lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
+    const coupon = sampleUsedCoupons.find((item) => item.orderId === order.id);
+    const discount = coupon?.discount ?? 0;
+
     return {
       id: order.id,
       placedOn: order.placedOn,
       status: order.status,
-      total: lines.reduce((sum, line) => sum + line.price * line.quantity, 0),
+      trackingNumber: order.trackingNumber,
+      history: order.history.map((event) => ({ step: event.step, at: event.at })),
+      subtotal,
+      shipping: order.shipping,
+      discount,
+      couponCode: coupon?.code ?? null,
+      total: subtotal - discount + order.shipping,
       lines,
     };
   });
+}
+
+export async function getAccountOrder(id: string) {
+  const orders = await getAccountOrders();
+  return orders.find((order) => order.id === id);
 }

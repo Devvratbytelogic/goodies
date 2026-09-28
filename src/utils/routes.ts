@@ -39,6 +39,10 @@ export function getAccountOrdersRoutePath(): string {
   return "/my-account/orders/";
 }
 
+export function getAccountOrderRoutePath(id: string): string {
+  return `/my-account/orders/${id}/`;
+}
+
 export function getAccountAddressRoutePath(): string {
   return "/my-account/address/";
 }
