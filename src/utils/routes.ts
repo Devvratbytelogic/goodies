@@ -31,6 +31,22 @@ export function getAccountRoutePath(): string {
   return "/my-account/";
 }
 
+export function getAccountProfileRoutePath(): string {
+  return "/my-account/profile/";
+}
+
+export function getAccountOrdersRoutePath(): string {
+  return "/my-account/orders/";
+}
+
+export function getAccountAddressRoutePath(): string {
+  return "/my-account/address/";
+}
+
+export function getAccountCouponsRoutePath(): string {
+  return "/my-account/coupons/";
+}
+
 export function getCheckoutClassicRoutePath(): string {
   return "/checkout-classic";
 }

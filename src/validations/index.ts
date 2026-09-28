@@ -39,6 +39,19 @@ export const resetPasswordValidationSchema = Yup.object({
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
 
+export const profileValidationSchema = Yup.object({
+  firstName: requiredString("required", 40),
+  lastName: requiredString("required", 40),
+  email: emailString("required", "emailInvalid"),
+  phone: phoneString("required", "phoneInvalid"),
+});
+
+export const changePasswordValidationSchema = Yup.object({
+  currentPassword: Yup.string().required("required"),
+  password: passwordString(),
+  confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
+});
+
 export const registerValidationSchema = Yup.object({
   firstName: requiredString("required", 40),
   lastName: requiredString("required", 40),
