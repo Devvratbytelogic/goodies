@@ -14,6 +14,9 @@
     "productCategory": "Category",
     "checkout": "Checkout"
   },
+  "Modal": {
+    "close": "Close"
+  },
   "LocaleSwitcher": {
     "label": "Language",
     "en": "English",

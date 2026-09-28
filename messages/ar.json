@@ -14,6 +14,9 @@
     "productCategory": "التصنيف",
     "checkout": "إتمام الشراء"
   },
+  "Modal": {
+    "close": "إغلاق"
+  },
   "LocaleSwitcher": {
     "label": "اللغة",
     "en": "English",
