@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "boneyard-js": "^1.10.0",
     "country-state-city": "^3.2.1",
     "formik": "^2.4.9",
     "next": "16.3.5",

@@ -210,7 +210,12 @@
     "label": "Add to wishlist"
   },
   "WishlistPage": {
-    "title": "Wishlist"
+    "title": "Wishlist",
+    "description": "A sample Goodies wishlist with the same saved items for every visitor.",
+    "count": "{count, plural, =0 {No saved items} one {# saved item} other {# saved items}}",
+    "empty": "Your wishlist is empty.",
+    "shop": "Continue shopping",
+    "remove": "Remove {name} from wishlist"
   },
   "AccountPage": {
     "title": "Account"
