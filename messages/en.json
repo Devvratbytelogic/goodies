@@ -223,6 +223,8 @@
     "title": "Shop",
     "description": "Shop freeze-dried fruits, vegetables, candy, and ice cream from Goodies.",
     "filters": "Filters",
+    "closeFilters": "Close filters",
+    "showResults": "Show results",
     "price": "Price",
     "minPrice": "Minimum price",
     "maxPrice": "Maximum price",

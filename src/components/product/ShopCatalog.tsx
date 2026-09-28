@@ -29,52 +29,47 @@ export default async function ShopCatalog({ title, breadcrumbs, products, active
       <Breadcrumbs className="mb-4" items={breadcrumbs} />
       <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
 
-      <div className="mt-6 grid items-start gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
-        <ShopFilters
-          filtersLabel={t("filters")}
-          priceTitle={t("price")}
-          minPriceLabel={t("minPrice")}
-          maxPriceLabel={t("maxPrice")}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          title={t("categories")}
-          allLabel={t("allProducts")}
-          total={catalog.length}
-          activeCategoryId={activeCategoryId}
-          categories={shopCategoryOrder.map((key) => ({
-            id: key,
-            label: cards(key),
-            count: catalog.filter((product) => product.categoryKey === key).length,
-          }))}
-        />
-
-        <div>
-          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted">
-              {t("showing", { from: count === 0 ? 0 : 1, to: count, total: count })}
-            </p>
-            <ShopSortSelect
-              id="shop-sort"
-              label={t("sortLabel")}
-              defaultValue="default"
-              options={[
-                { value: "default", label: t("sortDefault") },
-                { value: "latest", label: t("sortLatest") },
-                { value: "price-asc", label: t("sortPriceAsc") },
-                { value: "price-desc", label: t("sortPriceDesc") },
-              ]}
-            />
-          </div>
-
-          <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
-            {products.map((product) => (
-              <li key={product.slug}>
-                <ProductCard product={product} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <ShopFilters
+        filtersLabel={t("filters")}
+        closeFiltersLabel={t("closeFilters")}
+        showResultsLabel={t("showResults")}
+        priceTitle={t("price")}
+        minPriceLabel={t("minPrice")}
+        maxPriceLabel={t("maxPrice")}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        title={t("categories")}
+        allLabel={t("allProducts")}
+        total={catalog.length}
+        activeCategoryId={activeCategoryId}
+        showing={t("showing", { from: count === 0 ? 0 : 1, to: count, total: count })}
+        categories={shopCategoryOrder.map((key) => ({
+          id: key,
+          label: cards(key),
+          count: catalog.filter((product) => product.categoryKey === key).length,
+        }))}
+        sort={
+          <ShopSortSelect
+            id="shop-sort"
+            label={t("sortLabel")}
+            defaultValue="default"
+            options={[
+              { value: "default", label: t("sortDefault") },
+              { value: "latest", label: t("sortLatest") },
+              { value: "price-asc", label: t("sortPriceAsc") },
+              { value: "price-desc", label: t("sortPriceDesc") },
+            ]}
+          />
+        }
+      >
+        <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
+          {products.map((product) => (
+            <li key={product.slug}>
+              <ProductCard product={product} />
+            </li>
+          ))}
+        </ul>
+      </ShopFilters>
     </div>
   );
 }

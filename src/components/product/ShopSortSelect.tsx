@@ -19,7 +19,7 @@ export default function ShopSortSelect({ id, label, defaultValue, options }: Sho
       <select
         id={id}
         defaultValue={defaultValue}
-        className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="h-10 w-full max-w-full rounded-lg border border-border bg-background px-3 text-sm text-heading outline-none sm:w-56"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

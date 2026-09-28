@@ -75,15 +75,15 @@ export default function ShopPriceFilter({ title, minLabel, maxLabel, min, max }:
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <h3 className="text-sm font-bold text-heading!">{title}</h3>
-      <div dir="ltr" className="relative mt-4 h-4">
+      <div dir="ltr" className="relative mt-4 h-4 w-full max-w-full">
         <div className="pointer-events-none absolute inset-x-2 top-1/2 h-1 -translate-y-1/2 rounded-full bg-primary-soft" />
         <div
           className="pointer-events-none absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-primary"
           style={{
             left: `calc(0.5rem + (100% - 1rem) * ${lowPercent / 100})`,
-            width: `calc((100% - 1rem) * ${(highPercent - lowPercent) / 100})`,
+            right: `calc(0.5rem + (100% - 1rem) * ${(100 - highPercent) / 100})`,
           }}
         />
         <div
