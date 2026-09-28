@@ -20,3 +20,24 @@ export const contactUsValidationSchema = Yup.object({
   email: emailString("required", "emailInvalid"),
   message: requiredString("required", 500),
 });
+
+export const checkoutValidationSchema = (getStatesOfCountry: (countryCode: string) => readonly { isoCode: string }[]) =>
+  Yup.object({
+    firstName: requiredString("required", 40),
+    lastName: requiredString("required", 40),
+    country: Yup.string().trim().required("required"),
+    state: Yup.string()
+      .trim()
+      .test("state", "required", function validateState(value) {
+        const states = getStatesOfCountry(this.parent.country ?? "");
+        if (states.length === 0) {
+          return true;
+        }
+
+        return Boolean(value && states.some((state) => state.isoCode === value));
+      }),
+    city: requiredString("required", 80),
+    address: requiredString("required", 120),
+    phone: phoneString("required", "phoneInvalid"),
+    email: emailString("required", "emailInvalid"),
+  });
