@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   agentRules: false,
   allowedDevOrigins: ["192.168.1.13"],
   images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "goodies.plan-it.pro",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
     qualities: [65, 75],
     deviceSizes: [640, 750, 828, 1080, 1200, 1600],

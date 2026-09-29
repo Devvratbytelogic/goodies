@@ -1,3 +1,4 @@
+import { getHomePage } from "@/server";
 import BestSellerSection from "@/components/page-components/home/BestSellerSection";
 import CategorySection from "@/components/page-components/home/CategorySection";
 import InstallAppBanner from "@/components/page-components/home/InstallAppBanner";
@@ -7,13 +8,15 @@ import NewArrivalsSection from "@/components/page-components/home/NewArrivalsSec
 import TastyChoicesSection from "@/components/page-components/home/TastyChoicesSection";
 import WhyChooseSection from "@/components/page-components/home/WhyChooseSection";
 
-export default function Home() {
+export default async function Home() {
+  const homePage = await getHomePage();
+  // console.log('homePage ---------------->', homePage);
 
   return (
     <>
       <div className="">
-        <MainBanner />
-        <CategorySection />
+        <MainBanner banner={homePage?.home_page_banner} />
+        <CategorySection  />
         <BestSellerSection />
         <TastyChoicesSection />
         <NewArrivalsSection />

@@ -1,10 +1,10 @@
 import ImageComponent from "@/components/layout/common/ImageComponent";
 
-export default function MainBanner() {
+export default function MainBanner({ banner }: { banner: string | null }) {
   return (
     <section className="w-full">
       <ImageComponent
-        src="/images/home/main-banner1.webp"
+        src={banner ?? "/images/image-fallback.svg"}
         alt="Goodies banner"
         width={1600}
         height={900}
