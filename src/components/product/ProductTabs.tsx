@@ -6,12 +6,13 @@ import { LuStar } from "react-icons/lu";
 
 type ProductTabsProps = {
   name: string;
-  sizeSummary?: string;
+  weight?: number | null;
+  size?: string | null;
 };
 
 const ratings = [1, 2, 3, 4, 5] as const;
 
-export default function ProductTabs({ name, sizeSummary }: ProductTabsProps) {
+export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
   const t = useTranslations("ProductPage");
   const [tab, setTab] = useState<"details" | "reviews">("details");
   const [rating, setRating] = useState(0);
@@ -37,10 +38,9 @@ export default function ProductTabs({ name, sizeSummary }: ProductTabsProps) {
   }
 
   const tabClass = (selected: boolean) =>
-    `-mt-px border-t-[3px] py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-      selected
-        ? "rounded-b-md border-primary bg-accent px-5 font-bold text-white"
-        : "border-transparent px-1 font-semibold text-[#333333]"
+    `-mt-px border-t-[3px] py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected
+      ? "rounded-b-md border-primary bg-accent px-5 font-bold text-white"
+      : "border-transparent px-1 font-semibold text-[#333333]"
     }`;
 
   return (
@@ -90,9 +90,11 @@ export default function ProductTabs({ name, sizeSummary }: ProductTabsProps) {
               >
                 {t("weight")}
               </th>
-              <td className="border border-border px-4 py-3 text-foreground">{t("weightValue")}</td>
+              <td className="border border-border px-4 py-3 text-foreground">
+                {weight && weight > 0 ? `${weight} kg` : '-'}
+              </td>
             </tr>
-            {sizeSummary ? (
+            {size ? (
               <tr>
                 <th
                   scope="row"
@@ -100,7 +102,7 @@ export default function ProductTabs({ name, sizeSummary }: ProductTabsProps) {
                 >
                   {t("size")}
                 </th>
-                <td className="border border-border px-4 py-3 text-foreground">{sizeSummary}</td>
+                <td className="border border-border px-4 py-3 text-foreground capitalize">{size}</td>
               </tr>
             ) : null}
           </tbody>

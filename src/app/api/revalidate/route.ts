@@ -23,6 +23,10 @@ function targetFor(page: RequestPage) {
     return { tag: "home-page", paths: ["/", "/ar"] };
   }
 
+  if (name === "shop") {
+    return { tag: "all-product", paths: ["/shop", "/ar/shop"] };
+  }
+
   if (name === "product" && slug && !slug.includes("/") && !slug.includes("..")) {
     return {
       tag: `product:${slug}`,

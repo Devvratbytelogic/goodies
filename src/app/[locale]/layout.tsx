@@ -108,9 +108,9 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+  // if (!hasLocale(routing.locales, locale)) {
+  //   notFound();
+  // }
 
   return (
     <html
@@ -121,8 +121,8 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           <ModalProvider>
-            <Header />
             {/* <InstallPrompt /> */}
+            <Header />
             <main className="flex-1">
               {children}
             </main>

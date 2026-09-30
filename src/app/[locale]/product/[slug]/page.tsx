@@ -1,85 +1,96 @@
 import type { Metadata } from "next";
-import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
-import ProductPurchase from "@/components/product/ProductPurchase";
-import ProductTabs from "@/components/product/ProductTabs";
-import { categorySlug, getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
-import { routing } from "@/i18n/routing";
+import ProductSelection from "@/components/product/ProductSelection";
 import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
+import { getProduct, getProducts } from "@/server";
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getAllProductSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const products = (await getProducts()) ?? [];
+  return products.filter((item) => item.slug).map((item) => ({ slug: item.slug }));
+}
+
+function metaText(value?: string | null) {
+  const text = value?.trim();
+  return text || undefined;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { locale, slug } = await params;
-  const product = getProductBySlug(slug);
+  const { slug } = await params;
 
-  if (!product || !hasLocale(routing.locales, locale)) {
-    return {};
-  }
-
-  const t = await getTranslations({ locale, namespace: "ProductPage" });
-  const cards = await getTranslations({ locale, namespace: "ProductCard" });
-  const name = cards(product.nameKey);
+  const product = await getProduct(slug);
+  const title = metaText(product.meta_title) ?? product.title;
+  const description =
+    metaText(product.meta_description) ??
+    metaText(product.short_description) ??
+    metaText(product.description);
+  const image = metaText(product.og_image) ?? metaText(product.thumbnail);
+  const twitterImage = metaText(product.twitter_image) ?? image;
 
   return {
-    title: name,
-    description: t("metaDescription", { name, category: cards(product.categoryKey) }),
+    title,
+    description,
+    openGraph: {
+      title: metaText(product.og_title) ?? title,
+      description: metaText(product.og_description) ?? description,
+      images: image ? [image] : undefined,
+    },
+    twitter: {
+      card: twitterImage ? "summary_large_image" : "summary",
+      title: metaText(product.twitter_title) ?? title,
+      description: metaText(product.twitter_description) ?? description,
+      images: twitterImage ? [twitterImage] : undefined,
+    },
   };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
-
-  if (!product) {
-    notFound();
-  }
+  const product = await getProduct(slug);
 
   const t = await getTranslations("ProductPage");
-  const cards = await getTranslations("ProductCard");
   const nav = await getTranslations("Nav");
-  const name = cards(product.nameKey);
-  const category = cards(product.categoryKey);
-  const related = getRelatedProducts(product.slug);
-  const sizeSummary =
-    product.sizes.length > 0 ? product.sizes.map((size) => t(size.id)).join(", ") : undefined;
+  const name = product?.title ?? '';
+  const category = product?.categoryId?.name ?? '';
+  const categorySlug = product?.categoryId?.slug ?? '';
+  const isVariant = product?.is_variant;
+  const variant = product?.variant;
+  const variants = product?.variants ?? [];
+  const sizes = product?.sizes ?? [];
+  const related = product.related_products ?? [];
 
   return (
     <div className="container section_y_space">
+      {product.json_ld ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: product.json_ld }} />
+      ) : null}
       <Breadcrumbs
         className="mb-5"
         items={[
           { label: nav("home"), href: getHomeRoutePath() },
-          { label: category, href: getProductCategoryRoutePath(categorySlug[product.categoryKey]) },
+          { label: category, href: getProductCategoryRoutePath(categorySlug) },
           { label: name },
         ]}
       />
 
-      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-        <ProductGallery images={product.images} alt={name} />
-        <div>
-          <h1 className="text-2xl font-semibold text-primary!">{name}</h1>
-          <ProductPurchase
-            slug={product.slug}
-            name={name}
-            priceFrom={product.priceFrom}
-            priceTo={product.priceTo}
-            sizes={product.sizes}
-          />
-        </div>
-      </div>
-
-      <ProductTabs name={name} sizeSummary={sizeSummary} />
+      <ProductSelection
+        name={name}
+        slug={product.slug}
+        isVariant={isVariant}
+        variant={variant}
+        variants={variants}
+        sizes={sizes}
+        currencySymbol={product.pricing_context?.currency_symbol ?? ""}
+        weight={product.weight}
+      >
+        <ProductGallery images={[product.thumbnail ?? "", ...(product.images ?? [])]} alt={name} />
+      </ProductSelection>
 
       {related.length > 0 ? (
         <section className="mt-14" aria-labelledby="related-products">

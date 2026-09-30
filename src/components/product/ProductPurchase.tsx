@@ -1,190 +1,51 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { LuCheck, LuChevronDown, LuMinus, LuPlus } from "react-icons/lu";
+import { LuMinus, LuPlus } from "react-icons/lu";
 import AddToCartButton from "@/components/product/AddToCartButton";
+import CurrencySelect from "@/components/product/CurrencySelect";
 import BuyNowButton from "@/components/product/BuyNowButton";
-import type { ProductSize, ProductSizeId } from "@/data/products";
 import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useRouter } from "@/i18n/navigation";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
-
-type CurrencyCode = "AED" | "USD" | "EUR" | "SAR" | "QAR" | "KWD" | "OMR" | "BHD";
-
-type Currency = {
-  code: CurrencyCode;
-  rate: number;
-  symbol: string;
-  position: "prefix" | "suffix";
-};
-
-const currencies: Currency[] = [
-  { code: "AED", rate: 1, symbol: "د.إ", position: "suffix" },
-  { code: "USD", rate: 0.2723, symbol: "$", position: "prefix" },
-  { code: "EUR", rate: 0.2508, symbol: "€", position: "prefix" },
-  { code: "SAR", rate: 1.021, symbol: "ر.س", position: "suffix" },
-  { code: "QAR", rate: 0.991, symbol: "ر.ق", position: "suffix" },
-  { code: "KWD", rate: 0.0836, symbol: "د.ك", position: "suffix" },
-  { code: "OMR", rate: 0.1047, symbol: "ر.ع.", position: "suffix" },
-  { code: "BHD", rate: 0.1025, symbol: "د.ب", position: "suffix" },
-];
+import { SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
+import { formatAmount } from "@/utils/price";
 
 type ProductPurchaseProps = {
   slug: string;
   name: string;
-  priceFrom: number;
-  priceTo?: number;
-  sizes: ProductSize[];
+  isVariant: boolean;
+  variant: Variant;
+  variants: VariantsEntity[];
+  currencySymbol: string;
+  sizes: SizesEntity[];
+  sizeName: string | null;
+  onSizeChange: (sizeName: string | null) => void;
 };
 
-const flagClass = "h-3.5 w-5 shrink-0 overflow-hidden rounded-[2px] ring-1 ring-black/10";
-
-function CurrencyFlag({ code }: { code: CurrencyCode }) {
-  switch (code) {
-    case "AED":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#00732f" />
-          <rect y="4.67" width="20" height="4.66" fill="#fff" />
-          <rect y="9.33" width="20" height="4.67" fill="#000" />
-          <rect width="5.5" height="14" fill="#ff0000" />
-        </svg>
-      );
-    case "USD":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#bf0a30" />
-          <rect y="1.08" width="20" height="1.07" fill="#fff" />
-          <rect y="3.23" width="20" height="1.07" fill="#fff" />
-          <rect y="5.38" width="20" height="1.07" fill="#fff" />
-          <rect y="7.54" width="20" height="1.07" fill="#fff" />
-          <rect y="9.69" width="20" height="1.07" fill="#fff" />
-          <rect y="11.85" width="20" height="1.07" fill="#fff" />
-          <rect width="8.4" height="7.54" fill="#002868" />
-        </svg>
-      );
-    case "EUR":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#003399" />
-          <g fill="#fc0">
-            <circle cx="10" cy="2.2" r="0.55" />
-            <circle cx="12.7" cy="3.2" r="0.55" />
-            <circle cx="14.2" cy="5.4" r="0.55" />
-            <circle cx="13.6" cy="8" r="0.55" />
-            <circle cx="11.6" cy="9.8" r="0.55" />
-            <circle cx="8.4" cy="9.8" r="0.55" />
-            <circle cx="6.4" cy="8" r="0.55" />
-            <circle cx="5.8" cy="5.4" r="0.55" />
-            <circle cx="7.3" cy="3.2" r="0.55" />
-          </g>
-        </svg>
-      );
-    case "SAR":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#006c35" />
-          <rect x="4" y="3.2" width="12" height="1.1" fill="#fff" />
-          <rect x="6.2" y="5.4" width="7.6" height="1.1" fill="#fff" />
-          <path d="M10 6.2v4.2" stroke="#fff" strokeWidth="1.1" />
-        </svg>
-      );
-    case "QAR":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#8d1b3d" />
-          <path fill="#fff" d="M0 0h7.2l1.6 1.4L7.2 2.8l1.6 1.4L7.2 5.6l1.6 1.4L7.2 8.4l1.6 1.4L7.2 11.2 8.8 12.6 7.2 14H0z" />
-        </svg>
-      );
-    case "KWD":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#fff" />
-          <rect width="20" height="4.67" fill="#007a3d" />
-          <rect y="9.33" width="20" height="4.67" fill="#ce1126" />
-          <path fill="#000" d="M0 0l6.2 4.67L0 9.33V0z" />
-        </svg>
-      );
-    case "OMR":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#fff" />
-          <rect width="20" height="4.67" fill="#db161b" />
-          <rect y="9.33" width="20" height="4.67" fill="#008000" />
-          <rect width="5" height="14" fill="#db161b" />
-        </svg>
-      );
-    case "BHD":
-      return (
-        <svg viewBox="0 0 20 14" className={flagClass} aria-hidden>
-          <rect width="20" height="14" fill="#ce1126" />
-          <path fill="#fff" d="M0 0h7.4l1.8 1.75L7.4 3.5l1.8 1.75L7.4 7l1.8 1.75L7.4 10.5l1.8 1.75L7.4 14H0z" />
-        </svg>
-      );
-  }
-}
-
-function formatAmount(amount: number, currency: Currency) {
-  const value = (amount * currency.rate).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  return currency.position === "prefix" ? `${currency.symbol}${value}` : `${value}\u00a0${currency.symbol}`;
-}
-
-export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes }: ProductPurchaseProps) {
+export default function ProductPurchase({ slug, name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const router = useRouter();
-  const listId = useId();
-  const currencyRef = useRef<HTMLDivElement>(null);
-  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>("AED");
-  const [currencyOpen, setCurrencyOpen] = useState(false);
-  const [sizeId, setSizeId] = useState<ProductSizeId | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const currency = currencies.find((item) => item.code === currencyCode) ?? currencies[0];
-  const selectedSize = sizes.find((size) => size.id === sizeId);
-  const needsSize = sizes.length > 0 && !selectedSize;
-  const activePrice = selectedSize?.price ?? priceFrom;
-  const showRange = Boolean(priceTo && priceTo !== priceFrom && !selectedSize);
-
-  useEffect(() => {
-    if (!currencyOpen) {
-      return;
-    }
-
-    function onPointerDown(event: PointerEvent) {
-      if (!currencyRef.current?.contains(event.target as Node)) {
-        setCurrencyOpen(false);
-      }
-    }
-
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setCurrencyOpen(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [currencyOpen]);
+  const selectedVariant = variants.find((item) => item?.size === sizeName);
+  const price = selectedVariant?.price ?? variant?.price ?? 0;
+  const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
+  const needsSize = sizes.length > 0 && !sizeName;
+  const showRange = isVariant && !sizeName;
+  const showMaxPrice = !showRange && maxPrice > 0 && maxPrice !== price;
 
   function priceLabel() {
-    if (showRange && priceTo) {
+    if (showRange) {
       return t("priceRangeLabel", {
-        from: formatAmount(priceFrom, currency),
-        to: formatAmount(priceTo, currency),
+        from: formatAmount(price, currencySymbol),
+        to: formatAmount(maxPrice, currencySymbol),
       });
     }
 
-    return t("priceLabel", { amount: formatAmount(activePrice, currency) });
+    return t("priceLabel", { amount: formatAmount(price, currencySymbol) });
   }
 
   function addToCart() {
@@ -192,7 +53,7 @@ export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes 
       return;
     }
 
-    console.log("Add to cart", { slug, name, sizeId, quantity, currency: currency.code });
+    console.log("Add to cart", { slug, name, sizeName, quantity, currency: currencySymbol });
     setAdded(true);
   }
 
@@ -201,7 +62,7 @@ export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes 
       return;
     }
 
-    console.log("Buy now", { slug, name, sizeId, quantity, currency: currency.code });
+    console.log("Buy now", { slug, name, sizeName, quantity, currency: currencySymbol });
     router.push(getCheckoutClassicRoutePath());
   }
 
@@ -210,106 +71,58 @@ export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes 
       <p className="text-[22px] font-bold leading-9" aria-live="polite">
         <span className="sr-only">{priceLabel()}</span>
         <span aria-hidden className="text-price">
-          {showRange && priceTo ? (
+          {showRange ? (
             <>
-              <bdi>{formatAmount(priceFrom, currency)}</bdi>
+              <bdi>{formatAmount(price, currencySymbol)}</bdi>
               <span className="mx-1.5 font-bold text-heading">–</span>
-              <bdi>{formatAmount(priceTo, currency)}</bdi>
+              <bdi>{formatAmount(maxPrice, currencySymbol)}</bdi>
             </>
           ) : (
-            <bdi>{formatAmount(activePrice, currency)}</bdi>
+            <>
+              {showMaxPrice ? (
+                <bdi className="line-through text-muted-foreground me-1.5">{formatAmount(maxPrice, currencySymbol)}</bdi>
+              ) : null}
+              <bdi className="me-1.5">{formatAmount(price, currencySymbol)}</bdi>
+            </>
           )}
         </span>
       </p>
 
-      <div ref={currencyRef} className="relative mt-3 w-fit">
-        <button
-          type="button"
-          aria-label={t("currency")}
-          aria-haspopup="listbox"
-          aria-expanded={currencyOpen}
-          aria-controls={listId}
-          onClick={() => setCurrencyOpen((open) => !open)}
-          className={`inline-flex h-9 items-center gap-2 rounded-lg border bg-background px-2.5 text-sm font-semibold text-heading transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-            currencyOpen ? "border-primary" : "border-border hover:border-primary/40"
-          }`}
-        >
-          <CurrencyFlag code={currency.code} />
-          <span>{currency.code}</span>
-          <LuChevronDown
-            aria-hidden
-            className={`size-4 text-muted transition-transform ${currencyOpen ? "rotate-180" : ""}`}
-          />
-        </button>
-        {currencyOpen ? (
-          <ul
-            id={listId}
-            role="listbox"
-            aria-label={t("currency")}
-            className="absolute z-20 mt-1.5 max-h-60 min-w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-background py-1 shadow-md"
-          >
-            {currencies.map((item) => {
-              const selected = item.code === currency.code;
-              return (
-                <li key={item.code} role="presentation">
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={selected}
-                    onClick={() => {
-                      setCurrencyCode(item.code);
-                      setCurrencyOpen(false);
-                      setAdded(false);
-                    }}
-                    className={`flex w-full items-center gap-2 px-2.5 py-2 text-start text-sm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
-                      selected ? "bg-primary-soft font-semibold text-primary" : "text-heading hover:bg-surface"
-                    }`}
-                  >
-                    <CurrencyFlag code={item.code} />
-                    <span className="flex-1">{item.code}</span>
-                    {selected ? <LuCheck aria-hidden className="size-3.5" /> : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : null}
-      </div>
+      <CurrencySelect />
 
       {sizes.length > 0 ? (
         <div className="mt-5">
           <p className="text-sm font-semibold text-foreground">
             {t("size")}
-            {selectedSize ? <span className="text-primary">: {t(selectedSize.id)}</span> : null}
+            {sizeName ? <span className="text-primary">: {sizeName}</span> : null}
           </p>
           <div role="radiogroup" aria-label={t("size")} className="mt-2 flex flex-wrap items-center gap-2">
             {sizes.map((size) => {
-              const selected = size.id === sizeId;
+              const selected = size.name === sizeName;
               return (
                 <button
-                  key={size.id}
+                  key={size.name}
                   type="button"
                   role="radio"
                   aria-checked={selected}
                   onClick={() => {
-                    setSizeId(size.id);
+                    onSizeChange(size.name);
                     setAdded(false);
                   }}
-                  className={`min-h-10 min-w-16 rounded-md border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                    selected
-                      ? "border-primary bg-primary-soft text-primary"
-                      : "border-border bg-background text-heading hover:border-primary/40"
-                  }`}
+                  className={`min-h-10 min-w-16 rounded-md border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected
+                    ? "border-primary bg-primary-soft text-primary"
+                    : "border-border bg-background text-heading hover:border-primary/40"
+                    }`}
                 >
-                  {t(size.id)}
+                  {size.name}
                 </button>
               );
             })}
-            {selectedSize ? (
+            {sizeName ? (
               <button
                 type="button"
                 onClick={() => {
-                  setSizeId(null);
+                  onSizeChange(null);
                   setAdded(false);
                 }}
                 className="ms-1 text-sm text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -396,7 +209,7 @@ export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes 
       <div className="mt-4 space-y-3">
         <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-3 text-sm sm:px-4">
           <p className="text-foreground">
-            {t("tabbyBefore")} <strong>{formatAmount(activePrice / 4, currency)}/{t("month")}</strong>{" "}
+            {t("tabbyBefore")} <strong>{formatAmount(price / 4, currencySymbol)}/{t("month")}</strong>{" "}
             {t("tabbyAfter")} <span className="font-semibold text-[#2563eb]">{t("learnMore")}</span>
           </p>
           <span className="shrink-0 rounded-md bg-[#3cff7e] px-2 py-1 text-sm font-black tracking-tight text-black lowercase">
@@ -405,7 +218,7 @@ export default function ProductPurchase({ slug, name, priceFrom, priceTo, sizes 
         </div>
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-3 text-sm sm:px-4">
           <p className="text-foreground">
-            <strong>{formatAmount(activePrice / 4, currency)}</strong>
+            <strong>{formatAmount(price / 4, currencySymbol)}</strong>
             {t("tamaraRest")} <span className="underline">{t("moreOptions")}</span>
           </p>
           <span className="shrink-0 rounded-md bg-linear-to-r from-[#ff8a00] via-[#ff4d8d] to-[#7c3aed] px-2 py-1 text-sm font-bold text-white">
