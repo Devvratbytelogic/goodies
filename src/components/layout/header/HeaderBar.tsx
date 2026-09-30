@@ -5,9 +5,10 @@ import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuHeart, LuMenu, LuSearch, LuShoppingCart, LuUser, LuX } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
-import { getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
+import { getAccountRoutePath, getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
 import { DesktopNav } from "./DesktopNav";
 import { LocaleToggle } from "./LocaleToggle";
 import MobileMenu from "./MobileMenu";
@@ -84,6 +85,7 @@ function BrandLogo() {
 
 export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
   const t = useTranslations("Header");
+  const { token } = useAuth();
   const openLogin = useOpenLogin();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -179,9 +181,15 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
                 )}
               </button>
 
-              <button type="button" onClick={openLogin} aria-label={t("account")} className={actionClass}>
-                <LuUser aria-hidden className="size-5.5" />
-              </button>
+              {token ? (
+                <Link href={getAccountRoutePath()} aria-label={t("account")} className={actionClass}>
+                  <LuUser aria-hidden className="size-5.5" />
+                </Link>
+              ) : (
+                <button type="button" onClick={openLogin} aria-label={t("account")} className={actionClass}>
+                  <LuUser aria-hidden className="size-5.5" />
+                </button>
+              )}
               <ActionLink
                 href={getWishlistRoutePath()}
                 label={t("wishlistLabel", { count: wishlistCount })}

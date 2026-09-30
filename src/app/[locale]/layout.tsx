@@ -3,6 +3,7 @@ import { Geist, Noto_Sans_Arabic } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ModalProvider } from "@/components/layout/common/ModalProvider";
 import { Header } from "@/components/layout/header/Header";
 import { InstallPrompt } from "@/components/install-prompt";
@@ -120,16 +121,18 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
-          <ModalProvider>
-            {/* <InstallPrompt /> */}
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            <BottomNav />
-            <WhatsAppFloatingButton />
-          </ModalProvider>
+          <AuthProvider>
+            <ModalProvider>
+              {/* <InstallPrompt /> */}
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <BottomNav />
+              <WhatsAppFloatingButton />
+            </ModalProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

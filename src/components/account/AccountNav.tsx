@@ -5,6 +5,7 @@ import { LuHouse, LuLogOut, LuMapPin, LuPackage, LuTicket, LuUser } from "react-
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
 import { useAccountProfile } from "@/components/account/AccountProfileProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import {
   getAccountAddressRoutePath,
   getAccountCouponsRoutePath,
@@ -35,6 +36,7 @@ export default function AccountNav() {
   const router = useRouter();
   const pathname = normalize(usePathname());
   const { profile } = useAccountProfile();
+  const { logout } = useAuth();
   const initials = `${profile.firstName[0] ?? ""}${profile.lastName[0] ?? ""}`;
 
   return (
@@ -80,7 +82,10 @@ export default function AccountNav() {
         <div className="mt-2 border-t border-border pt-2">
           <button
             type="button"
-            onClick={() => router.push(getHomeRoutePath())}
+            onClick={() => {
+              logout();
+              router.push(getHomeRoutePath());
+            }}
             className="flex h-11 w-full items-center gap-3 rounded-xl px-2.5 text-sm font-medium text-heading transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface text-muted">

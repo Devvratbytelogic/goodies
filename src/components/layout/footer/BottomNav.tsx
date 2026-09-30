@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuHeart, LuHouse, LuShoppingCart, LuStore, LuUser } from "react-icons/lu";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenLogin } from "@/components/auth/Login";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath } from "@/components/layout/header/navigation";
@@ -44,6 +45,7 @@ function CountBadge({ count }: { count: number }) {
 export function BottomNav({ cartCount = 0 }: BottomNavProps) {
   const t = useTranslations("BottomNav");
   const tHeader = useTranslations("Header");
+  const { token } = useAuth();
   const openLogin = useOpenLogin();
   const pathname = usePathname();
 
@@ -77,7 +79,7 @@ export function BottomNav({ cartCount = 0 }: BottomNavProps) {
               </>
             );
 
-            if (key === "account") {
+            if (key === "account" && !token) {
               return (
                 <li key={key}>
                   <button type="button" aria-label={label} onClick={openLogin} className={className}>

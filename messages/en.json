@@ -34,7 +34,9 @@
     "lowercase": "Add a lowercase letter",
     "uppercase": "Add an uppercase letter",
     "number": "Add a number",
-    "special": "Add one special character"
+    "special": "Add one special character",
+    "submitting": "Logging in…",
+    "failed": "Could not log in. Check your email and password."
   },
   "Register": {
     "title": "Create account",

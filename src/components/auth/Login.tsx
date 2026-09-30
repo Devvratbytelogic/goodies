@@ -5,9 +5,12 @@ import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import type { InferType } from "yup";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenForgot } from "@/components/auth/Forgot";
 import { useOpenRegister } from "@/components/auth/Register";
 import { useModal } from "@/components/layout/common/ModalProvider";
+import { useRouter } from "@/i18n/navigation";
+import { getAccountRoutePath } from "@/utils/routes";
 import { loginValidationSchema } from "@/validations";
 
 type LoginValues = InferType<typeof loginValidationSchema>;
@@ -26,14 +29,27 @@ const labelClassName = "block text-[13px] font-semibold text-heading";
 export default function Login() {
   const t = useTranslations("Login");
   const { closeModal } = useModal();
+  const { login } = useAuth();
+  const router = useRouter();
   const openRegister = useOpenRegister();
   const openForgot = useOpenForgot();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const formik = useFormik<LoginValues>({
     initialValues,
     validationSchema: loginValidationSchema,
-    onSubmit: () => {
-      closeModal();
+    onSubmit: async (values, helpers) => {
+      setError("");
+
+      try {
+        await login(values.email.trim(), values.password);
+        closeModal();
+        router.push(getAccountRoutePath());
+      } catch (caught) {
+        setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
+      } finally {
+        helpers.setSubmitting(false);
+      }
     },
   });
 
@@ -103,11 +119,17 @@ export default function Login() {
           {t("forgot")}
         </button>
       </div>
+      {error ? (
+        <p role="alert" className="text-sm text-primary">
+          {error}
+        </p>
+      ) : null}
       <button
         type="submit"
-        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        disabled={formik.isSubmitting}
+        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
       >
-        {t("submit")}
+        {formik.isSubmitting ? t("submitting") : t("submit")}
       </button>
       <p className="text-center text-sm text-muted">
         {t("newHere")}{" "}

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuChevronDown, LuHeart, LuShoppingCart, LuUser, LuX } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import {
@@ -145,6 +146,7 @@ export default function MobileMenu({
   const t = useTranslations("Nav");
   const tShop = useTranslations("ShopMenu");
   const tHeader = useTranslations("Header");
+  const { token } = useAuth();
   const openLogin = useOpenLogin();
   const pathname = usePathname();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -375,13 +377,13 @@ export default function MobileMenu({
                   return (
                     <li key={key}>
                       <MenuItemLink
-                        href={key === "account" ? undefined : href}
+                        href={key === "account" && !token ? undefined : href}
                         label={tHeader(key)}
                         icon={icon}
-                        active={key === "account" ? false : active}
+                        active={key === "account" && !token ? false : active}
                         onClose={onClose}
                         onSelect={
-                          key === "account"
+                          key === "account" && !token
                             ? () => {
                                 onClose();
                                 requestAnimationFrame(() => openLogin());
