@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { LuCamera, LuEye, LuEyeOff, LuX } from "react-icons/lu";
 import type { InferType } from "yup";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useAccountProfile } from "@/components/account/AccountProfileProvider";
 import { changePasswordValidationSchema, profileValidationSchema } from "@/validations";
 
@@ -158,6 +159,7 @@ export default function ProfileForm() {
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className={labelClassName}>
             {t("firstName")}
+            <RequiredMark />
             <input
               name="firstName"
               autoComplete="given-name"
@@ -174,6 +176,7 @@ export default function ProfileForm() {
           </label>
           <label className={labelClassName}>
             {t("lastName")}
+            <RequiredMark />
             <input
               name="lastName"
               autoComplete="family-name"
@@ -328,6 +331,7 @@ function PasswordField({
   return (
     <label className={labelClassName}>
       {label}
+      <RequiredMark />
       <span className="relative mt-1 block">
         <input
           name={name}

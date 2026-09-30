@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
 import { useOpenLogin } from "@/components/auth/Login";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { forgotValidationSchema } from "@/validations";
@@ -39,6 +40,7 @@ export default function Forgot() {
       <p className="-mt-1 text-sm leading-relaxed text-muted">{t("subtitle")}</p>
       <label className={labelClassName}>
         {t("email")}
+        <RequiredMark />
         <input
           name="email"
           type="email"

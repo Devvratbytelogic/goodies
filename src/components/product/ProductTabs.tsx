@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { LuStar } from "react-icons/lu";
+import { RequiredMark } from "@/components/form/RequiredMark";
 
 type ProductTabsProps = {
   name: string;
@@ -129,9 +130,7 @@ export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
             <fieldset>
               <legend className="text-sm font-semibold text-heading">
                 {t("yourRating")}
-                <span aria-hidden className="text-primary">
-                  {" *"}
-                </span>
+                <RequiredMark />
               </legend>
               <div className="mt-2 flex gap-1" role="radiogroup" aria-label={t("yourRating")}>
                 {ratings.map((value) => {
@@ -162,9 +161,7 @@ export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
 
             <label className="block text-sm font-semibold text-heading">
               {t("yourReview")}
-              <span aria-hidden className="text-primary">
-                {" *"}
-              </span>
+              <RequiredMark />
               <textarea
                 name="review"
                 required
@@ -175,9 +172,7 @@ export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
 
             <label className="block text-sm font-semibold text-heading">
               {t("name")}
-              <span aria-hidden className="text-primary">
-                {" *"}
-              </span>
+              <RequiredMark />
               <input
                 name="name"
                 type="text"
@@ -189,9 +184,7 @@ export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
 
             <label className="block text-sm font-semibold text-heading">
               {t("email")}
-              <span aria-hidden className="text-primary">
-                {" *"}
-              </span>
+              <RequiredMark />
               <input
                 name="email"
                 type="email"

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import type { InferType } from "yup";
 import { useOpenLogin } from "@/components/auth/Login";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { resetPasswordValidationSchema } from "@/validations";
 
@@ -49,6 +50,7 @@ export default function ResetPassword() {
       <p className="-mt-1 text-sm leading-relaxed text-muted">{t("subtitle", { email: emailFromData(data) })}</p>
       <label className={labelClassName}>
         {t("password")}
+        <RequiredMark />
         <span className="relative mt-1 block">
           <input
             name="password"
@@ -79,6 +81,7 @@ export default function ResetPassword() {
       </label>
       <label className={labelClassName}>
         {t("confirmPassword")}
+        <RequiredMark />
         <span className="relative mt-1 block">
           <input
             name="confirmPassword"

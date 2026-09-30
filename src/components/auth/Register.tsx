@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import type { InferType } from "yup";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { registerValidationSchema } from "@/validations";
 import { useOpenLogin } from "@/components/auth/Login";
@@ -34,11 +35,18 @@ const PhoneField = dynamic(() => import("@/components/auth/PhoneField"), {
   loading: () => <div className={`${fieldClassName} mt-1`} aria-hidden />,
 });
 
+const RegisterLocation = dynamic(() => import("@/components/auth/RegisterLocation"), {
+  ssr: false,
+  loading: () => <div className="grid grid-cols-2 gap-3" aria-hidden />,
+});
+
 const initialValues: RegisterValues = {
   firstName: "",
   lastName: "",
   email: "",
   phone: "",
+  country: "AE",
+  state: "",
   password: "",
   confirmPassword: "",
 };
@@ -68,6 +76,7 @@ export default function Register() {
       <div className="grid grid-cols-2 gap-3">
         <label className={labelClassName}>
           {t("firstName")}
+          <RequiredMark />
           <input
             name="firstName"
             type="text"
@@ -87,6 +96,7 @@ export default function Register() {
         </label>
         <label className={labelClassName}>
           {t("lastName")}
+          <RequiredMark />
           <input
             name="lastName"
             type="text"
@@ -107,6 +117,7 @@ export default function Register() {
       </div>
       <label className={labelClassName}>
         {t("email")}
+        <RequiredMark />
         <input
           name="email"
           type="email"
@@ -126,6 +137,7 @@ export default function Register() {
       </label>
       <label className={labelClassName}>
         {t("phone")}
+        <RequiredMark />
         <PhoneField
           value={formik.values.phone}
           invalid={Boolean(fieldError("phone"))}
@@ -144,9 +156,32 @@ export default function Register() {
           </p>
         ) : null}
       </label>
+      <RegisterLocation
+        country={formik.values.country ?? ""}
+        state={formik.values.state ?? ""}
+        countryLabel={t("country")}
+        stateLabel={t("state")}
+        countryError={fieldError("country")}
+        stateError={fieldError("state")}
+        labelClassName={labelClassName}
+        onCountryChange={(country) => {
+          void formik.setFieldValue("country", country);
+          void formik.setFieldValue("state", "");
+        }}
+        onStateChange={(state) => {
+          void formik.setFieldValue("state", state);
+        }}
+        onCountryBlur={() => {
+          void formik.setFieldTouched("country", true);
+        }}
+        onStateBlur={() => {
+          void formik.setFieldTouched("state", true);
+        }}
+      />
       <div className="grid grid-cols-2 gap-3">
         <label className={labelClassName}>
           {t("password")}
+          <RequiredMark />
           <span className="relative mt-1 block">
             <input
               name="password"
@@ -177,6 +212,7 @@ export default function Register() {
         </label>
         <label className={labelClassName}>
           {t("confirmPassword")}
+          <RequiredMark />
           <span className="relative mt-1 block">
             <input
               name="confirmPassword"

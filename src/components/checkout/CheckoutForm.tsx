@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import { useLocale, useTranslations } from "next-intl";
 import Select, { type StylesConfig } from "react-select";
 import type { InferType } from "yup";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { sampleAddresses } from "@/data/sampleAddresses";
 import { Link } from "@/i18n/navigation";
 import { checkoutValidationSchema } from "@/validations";
@@ -110,14 +111,6 @@ const fieldClassName =
   "mt-1.5 h-11 w-full rounded-md border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-primary";
 
 const labelClassName = "block text-sm font-bold text-heading";
-
-function RequiredMark() {
-  return (
-    <span aria-hidden="true" className="text-primary">
-      {" *"}
-    </span>
-  );
-}
 
 function addressLocation(address: SavedAddress) {
   const countryName = Country.getCountryByCode(address.country)?.name;

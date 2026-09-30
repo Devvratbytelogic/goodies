@@ -3,6 +3,7 @@
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { contactUsValidationSchema } from "@/validations";
 
 type ContactFormValues = InferType<typeof contactUsValidationSchema>;
@@ -20,14 +21,6 @@ const fieldClassName =
   "mt-2 h-12 w-full rounded-2xl border border-border bg-background px-4 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-primary";
 
 const labelClassName = "block text-[13px] font-semibold text-heading";
-
-function RequiredMark() {
-  return (
-    <span aria-hidden="true" className="text-primary">
-      {" *"}
-    </span>
-  );
-}
 
 export default function ContactForm() {
   const t = useTranslations("ContactUsPage");

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import type { InferType } from "yup";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenForgot } from "@/components/auth/Forgot";
 import { useOpenRegister } from "@/components/auth/Register";
 import { useModal } from "@/components/layout/common/ModalProvider";
@@ -63,6 +64,7 @@ export default function Login() {
       <p className="-mt-1 text-sm leading-relaxed text-muted">{t("subtitle")}</p>
       <label className={labelClassName}>
         {t("email")}
+        <RequiredMark />
         <input
           name="email"
           type="email"
@@ -82,6 +84,7 @@ export default function Login() {
       </label>
       <label className={labelClassName}>
         {t("password")}
+        <RequiredMark />
         <span className="relative mt-1 block">
           <input
             name="password"

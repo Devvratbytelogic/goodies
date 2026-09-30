@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
 import { useOpenForgot } from "@/components/auth/Forgot";
+import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenResetPassword } from "@/components/auth/ResetPassword";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { otpValidationSchema } from "@/validations";
@@ -78,6 +79,7 @@ export default function OTPScreen() {
       <div>
         <p id="otp-label" className="text-[13px] font-semibold text-heading">
           {t("label")}
+          <RequiredMark />
         </p>
         <div className="mt-1 grid grid-cols-6 gap-2" role="group" aria-labelledby="otp-label">
           {digits.map((digit, index) => (

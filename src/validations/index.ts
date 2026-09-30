@@ -57,6 +57,19 @@ export const registerValidationSchema = Yup.object({
   lastName: requiredString("required", 40),
   email: emailString("required", "emailInvalid"),
   phone: Yup.string().required("required").matches(/^\d{8,15}$/, "phoneInvalid"),
+  country: Yup.string().trim().required("required"),
+  state: Yup.string()
+    .trim()
+    .test("state", "required", async function validateState(value) {
+      const country = this.parent.country ?? "";
+      if (!country) return true;
+
+      const { default: State } = await import("country-state-city/lib/state");
+      const states = State.getStatesOfCountry(country);
+      if (states.length === 0) return true;
+
+      return Boolean(value && states.some((state) => state.isoCode === value));
+    }),
   password: passwordString(),
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
