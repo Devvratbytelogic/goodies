@@ -5,8 +5,9 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { A11y, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Link } from "@/i18n/navigation";
-import ProductCard, { type ProductCardItem } from "@/components/product/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { getShopRoutePath } from "@/utils/routes";
+import { HomeProduct } from "@/server/types/Home";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -20,24 +21,17 @@ type ProductSliderProps = {
   seeAllLabel: string;
   previousLabel: string;
   nextLabel: string;
-  products: ProductCardItem[];
+  products: HomeProduct[];
   variant?: "default" | "decorated";
 };
 
-export default function ProductSlider({
-  id,
-  title,
-  seeAllLabel,
-  previousLabel,
-  nextLabel,
-  products,
-  variant = "default",
-}: ProductSliderProps) {
+export default function ProductSlider({ id, title, seeAllLabel, previousLabel, nextLabel, products, variant = "default" }: ProductSliderProps) {
   const locale = useLocale();
   const isRtl = locale === "ar";
   const prevClass = `${id}-prev`;
   const nextClass = `${id}-next`;
   const isDecorated = variant === "decorated";
+
 
   const content = (
     <>
@@ -84,11 +78,11 @@ export default function ProductSlider({
           1024: { slidesPerView: 4, spaceBetween: 16 },
         }}
       >
-        {products.map((product) => (
-          <SwiperSlide key={product.slug} className="h-auto!">
+        {products && products.length > 0 && products.map((product) => (
+          <SwiperSlide key={product._id} className="h-auto!">
             <ProductCard product={product} />
           </SwiperSlide>
-        ))}
+        )) || null}
       </Swiper>
     </>
   );

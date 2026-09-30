@@ -192,6 +192,7 @@
     "priceRange": "AED {from} – {to}",
     "priceRangeLabel": "Price range: AED {from} through {to}",
     "addToCart": "Add to cart",
+    "selectOption": "Select option",
     "fruits": "Fruits",
     "vegetables": "Vegetables",
     "iceCream": "Ice Cream",

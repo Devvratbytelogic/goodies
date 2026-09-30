@@ -3,6 +3,7 @@ import { LuChevronRight } from "react-icons/lu";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
+import { HomeCategory } from "@/server";
 
 type Category = {
   key: "fruits" | "iceCream" | "vegetables" | "candy";
@@ -12,19 +13,19 @@ type Category = {
   borderClass: string;
 };
 
-const categories: Category[] = [
-  { key: "fruits", slug: "fruits", image: "/images/home/cat1.webp", height: 290, borderClass: "border-[#e84a8a]" },
-  { key: "iceCream", slug: "ice-cream", image: "/images/home/cat2.webp", height: 295, borderClass: "border-[#9b7ed9]" },
-  { key: "vegetables", slug: "vegetables", image: "/images/home/cat3.webp", height: 291, borderClass: "border-[#2cb4c1]" },
-  { key: "candy", slug: "candy", image: "/images/home/cat4.webp", height: 295, borderClass: "border-[#f08a4b]" },
-];
+
 
 const cardClassName =
   "aspect-16/7 lg:aspect-16/5 block overflow-hidden rounded-lg border sm:rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export default function CategorySection() {
   const t = useTranslations("CategorySection");
-
+  const categories: Category[] = [
+    { key: "fruits", slug: "fruits", image: "/images/home/cat1.webp", height: 290, borderClass: "border-[#e84a8a]" },
+    { key: "iceCream", slug: "ice-cream", image: "/images/home/cat2.webp", height: 295, borderClass: "border-[#9b7ed9]" },
+    { key: "vegetables", slug: "vegetables", image: "/images/home/cat3.webp", height: 291, borderClass: "border-[#2cb4c1]" },
+    { key: "candy", slug: "candy", image: "/images/home/cat4.webp", height: 295, borderClass: "border-[#f08a4b]" },
+  ];
   return (
     <section className="container section_y_space">
       <div className="mb-4 flex items-center justify-between sm:mb-6">

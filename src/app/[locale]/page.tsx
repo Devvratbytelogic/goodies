@@ -10,16 +10,15 @@ import WhyChooseSection from "@/components/page-components/home/WhyChooseSection
 
 export default async function Home() {
   const homePage = await getHomePage();
-  // console.log('homePage ---------------->', homePage);
 
   return (
     <>
       <div className="">
         <MainBanner banner={homePage?.home_page_banner} />
         <CategorySection  />
-        <BestSellerSection />
+        <BestSellerSection bestSellers={homePage?.best_sellers ?? []} />
         <TastyChoicesSection />
-        <NewArrivalsSection />
+        <NewArrivalsSection newArrivals={homePage?.new_arrivals ?? []} />
         <WhyChooseSection />
         {/* <MadeWithLoveSection /> */}
         <div className="container">

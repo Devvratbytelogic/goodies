@@ -1,10 +1,10 @@
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { newArrivals } from "@/data/products";
+import { HomeProduct } from "@/server/types/Home";
 
 const ProductSlider = dynamic(() => import("@/components/product/ProductSlider"));
 
-export default function NewArrivalsSection() {
+export default function NewArrivalsSection({ newArrivals }: { newArrivals: HomeProduct[] }) {
   const t = useTranslations("NewArrivalsSection");
 
   return (
@@ -14,7 +14,7 @@ export default function NewArrivalsSection() {
       seeAllLabel={t("seeAll")}
       previousLabel={t("previous")}
       nextLabel={t("next")}
-      products={newArrivals}
+      products={newArrivals ?? []}
     />
   );
 }

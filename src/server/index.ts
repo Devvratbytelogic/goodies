@@ -18,7 +18,7 @@ async function getData<T>(path: string) {
 export const getHomePage = unstable_cache(
   () => getData<HomePageData>("/user/home-page"),
   ["home-page"],
-  { tags: ["home-page"], revalidate: 120 },
+  { tags: ["home-page"], revalidate: 600 }, // 10 minutes
 );
 
 export function getProduct<T = unknown>(slug: string) {

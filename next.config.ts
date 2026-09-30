@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "goodies.plan-it.pro",
       },
+      {
+        protocol: "http",
+        hostname: "*",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     qualities: [65, 75],
