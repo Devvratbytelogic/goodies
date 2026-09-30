@@ -27,6 +27,10 @@ function targetFor(page: RequestPage) {
     return { tag: "all-product", paths: ["/shop", "/ar/shop"] };
   }
 
+  if (name === "products") {
+    return { tag: "products", paths: [] };
+  }
+
   if (name === "product" && slug && !slug.includes("/") && !slug.includes("..")) {
     return {
       tag: `product:${slug}`,
