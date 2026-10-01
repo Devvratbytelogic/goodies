@@ -106,6 +106,7 @@ export interface PricingContext {
     applied_percentage: number;
     region: string;
     breakdown: BreakdownOrAttributes;
+    category: Category;
 }
 export interface Pagination {
     page: number;
@@ -117,4 +118,31 @@ export interface Filters {
     min_price?: null;
     max_price?: null;
     sort: string;
+}
+
+
+export interface Category {
+    _id: string;
+    name: string;
+    slug: string;
+    deletedAt?: null;
+    status: boolean;
+    parent_category?: null;
+    is_mega_menu: boolean;
+    image: string;
+    description?: null;
+    createdBy: string;
+    meta_title?: null;
+    meta_description?: null;
+    og_title?: null;
+    og_description?: null;
+    og_image?: null;
+    twitter_title?: null;
+    twitter_description?: null;
+    twitter_image?: null;
+    json_ld?: null;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    id: number;
 }
