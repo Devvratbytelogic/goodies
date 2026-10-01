@@ -14,6 +14,12 @@ type ShopCatalogProps = {
   page?: number;
   pageSize?: number;
   totalCount?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  priceFrom?: number;
+  priceTo?: number;
+  currencySymbol?: string;
+  sort?: string;
 };
 
 export default async function ShopCatalog({
@@ -24,6 +30,12 @@ export default async function ShopCatalog({
   page = 1,
   pageSize,
   totalCount,
+  minPrice,
+  maxPrice,
+  priceFrom,
+  priceTo,
+  currencySymbol,
+  sort,
 }: ShopCatalogProps) {
   const t = await getTranslations("ShopPage");
   const categoryList = (await getCategories()) ?? [];
@@ -43,10 +55,16 @@ export default async function ShopCatalog({
         closeFiltersLabel={t("closeFilters")}
         showResultsLabel={t("showResults")}
         priceTitle={t("price")}
+        removePriceLabel={t("removePrice")}
         minPriceLabel={t("minPrice")}
         maxPriceLabel={t("maxPrice")}
-        minPrice={15}
-        maxPrice={100}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        priceFrom={priceFrom}
+        priceTo={priceTo}
+        currencySymbol={currencySymbol}
+        sortLabel={sort === "newest" ? t("sortLatest") : sort === "low_to_high" ? t("sortPriceAsc") : sort === "high_to_low" ? t("sortPriceDesc") : undefined}
+        removeSortLabel={t("removeSort")}
         title={t("categories")}
         allLabel={t("allProducts")}
         total={total}
@@ -61,12 +79,12 @@ export default async function ShopCatalog({
           <ShopSortSelect
             id="shop-sort"
             label={t("sortLabel")}
-            defaultValue="default"
+            value={sort}
             options={[
-              { value: "default", label: t("sortDefault") },
-              { value: "latest", label: t("sortLatest") },
-              { value: "price-asc", label: t("sortPriceAsc") },
-              { value: "price-desc", label: t("sortPriceDesc") },
+              { value: "", label: t("sortDefault") },
+              { value: "newest", label: t("sortLatest") },
+              { value: "low_to_high", label: t("sortPriceAsc") },
+              { value: "high_to_low", label: t("sortPriceDesc") },
             ]}
           />
         }

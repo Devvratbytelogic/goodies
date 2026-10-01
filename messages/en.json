@@ -244,6 +244,8 @@
     "closeFilters": "Close filters",
     "showResults": "Show results",
     "price": "Price",
+    "removePrice": "Remove price filter",
+    "removeSort": "Remove sort",
     "minPrice": "Minimum price",
     "maxPrice": "Maximum price",
     "categories": "Categories",

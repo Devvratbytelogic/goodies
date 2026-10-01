@@ -244,6 +244,8 @@
     "closeFilters": "إغلاق الفلاتر",
     "showResults": "عرض النتائج",
     "price": "السعر",
+    "removePrice": "إزالة فلتر السعر",
+    "removeSort": "إزالة الترتيب",
     "minPrice": "أقل سعر",
     "maxPrice": "أعلى سعر",
     "categories": "التصنيفات",

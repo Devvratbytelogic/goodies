@@ -2,9 +2,11 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { LuSlidersHorizontal, LuX } from "react-icons/lu";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import ShopPriceFilter from "@/components/product/ShopPriceFilter";
 import { getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
+import { formatAmount } from "@/utils/price";
+import { shopSearchPath } from "@/utils/shopSearch";
 
 type ShopFilterCategory = {
   id: string;
@@ -17,10 +19,16 @@ type ShopFiltersProps = {
   closeFiltersLabel: string;
   showResultsLabel: string;
   priceTitle: string;
+  removePriceLabel: string;
   minPriceLabel: string;
   maxPriceLabel: string;
-  minPrice: number;
-  maxPrice: number;
+  minPrice?: number;
+  maxPrice?: number;
+  priceFrom?: number;
+  priceTo?: number;
+  currencySymbol?: string;
+  sortLabel?: string;
+  removeSortLabel: string;
   title: string;
   allLabel: string;
   total: number;
@@ -86,15 +94,30 @@ function FilterBody({
   maxPriceLabel,
   minPrice,
   maxPrice,
+  priceFrom,
+  priceTo,
+  currencySymbol,
   title,
   allLabel,
   total,
   categories,
   activeCategoryId,
-}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sort" | "children">) {
+}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sort" | "children" | "removePriceLabel" | "sortLabel" | "removeSortLabel">) {
   return (
     <div className="min-w-0 space-y-5 lg:space-y-8">
-      <ShopPriceFilter title={priceTitle} minLabel={minPriceLabel} maxLabel={maxPriceLabel} min={minPrice} max={maxPrice} />
+      {minPrice != null && maxPrice != null ? (
+        <ShopPriceFilter
+          key={`${priceFrom ?? minPrice}-${priceTo ?? maxPrice}`}
+          title={priceTitle}
+          minLabel={minPriceLabel}
+          maxLabel={maxPriceLabel}
+          min={minPrice}
+          max={maxPrice}
+          valueMin={priceFrom}
+          valueMax={priceTo}
+          currencySymbol={currencySymbol}
+        />
+      ) : null}
       <div>
         <h2 className="text-sm font-bold text-heading">{title}</h2>
         <div className="mt-3">
@@ -109,12 +132,25 @@ export default function ShopFilters({
   filtersLabel,
   closeFiltersLabel,
   showResultsLabel,
+  removePriceLabel,
+  removeSortLabel,
+  sortLabel,
   showing,
   sort,
   children,
   ...filters
 }: ShopFiltersProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const priceApplied = filters.priceFrom != null && filters.priceTo != null;
+  const priceLabel = priceApplied
+    ? `${formatAmount(filters.priceFrom ?? 0, filters.currencySymbol)} – ${formatAmount(filters.priceTo ?? 0, filters.currencySymbol)}`
+    : "";
+
+  function updateSearch(updates: Record<string, string | null>) {
+    router.push(shopSearchPath(pathname, window.location.search, updates), { scroll: false });
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -162,6 +198,36 @@ export default function ShopFilters({
               <div className="min-w-0 flex-1 sm:flex-none">{sort}</div>
             </div>
           </div>
+          {priceApplied || sortLabel ? (
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {priceApplied ? (
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => updateSearch({ min_price: null, max_price: null })}
+                    aria-label={`${removePriceLabel}, ${priceLabel}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <bdi>{priceLabel}</bdi>
+                    <LuX aria-hidden className="size-3.5" />
+                  </button>
+                </li>
+              ) : null}
+              {sortLabel ? (
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => updateSearch({ sort: null })}
+                    aria-label={`${removeSortLabel}, ${sortLabel}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    {sortLabel}
+                    <LuX aria-hidden className="size-3.5" />
+                  </button>
+                </li>
+              ) : null}
+            </ul>
+          ) : null}
           {children}
         </div>
       </div>

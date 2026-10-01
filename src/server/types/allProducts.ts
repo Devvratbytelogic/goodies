@@ -11,6 +11,8 @@ export interface AllProductsData {
     pagination: Pagination;
     filters: Filters;
     pricing_context: PricingContext;
+    lowest_price?: number;
+    highest_price?: number;
 }
 export interface AllProductsProduct {
     variant: Variant;
@@ -115,6 +117,4 @@ export interface Filters {
     min_price?: null;
     max_price?: null;
     sort: string;
-    lowest_price?: number;
-    highest_price?: number;
 }

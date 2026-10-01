@@ -28,10 +28,13 @@ export const getProducts = unstable_cache(
   { tags: ["products"], revalidate: 600 },
 );
 
-export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number) {
+export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number, sort?: string) {
   const query = new URLSearchParams({ page: String(page), limit: "20" });
-  if (minPrice != null) query.set("min_price", String(minPrice));
-  if (maxPrice != null) query.set("max_price", String(maxPrice));
+  if (minPrice != null && maxPrice != null) {
+    query.set("min_price", String(minPrice));
+    query.set("max_price", String(maxPrice));
+  }
+  if (sort) query.set("sort", sort);
 
   return unstable_cache(
     () => getData<AllProductsData>(`/user/all-product?${query}`),
