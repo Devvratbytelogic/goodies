@@ -85,20 +85,32 @@ export function DesktopNav() {
               onMouseEnter={() => setOpenKey(item.key)}
               onMouseLeave={() => setOpenKey(null)}
             >
-              <button
-                type="button"
-                aria-expanded={isOpen}
-                aria-controls={`header-menu-${item.key}`}
-                onClick={() => setOpenKey(isOpen ? null : item.key)}
-                className={`${itemClass} ${active || isOpen ? "text-primary" : "text-foreground hover:text-primary"}`}
+              <div
+                className={`relative inline-flex items-center ${active || isOpen ? "text-primary" : "text-foreground"}`}
               >
-                {t(item.key)}
-                <LuChevronDown
-                  aria-hidden
-                  className={`size-4 transition-transform duration-300 ${isOpen ? "-rotate-180" : ""}`}
-                />
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  onClick={() => setOpenKey(null)}
+                  className="inline-flex items-center py-2 ps-3.5 pe-1 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  {t(item.key)}
+                </Link>
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`header-menu-${item.key}`}
+                  aria-label={tHeader("toggleCategories", { section: t(item.key) })}
+                  onClick={() => setOpenKey(isOpen ? null : item.key)}
+                  className="inline-flex items-center py-2 pe-3.5 ps-0.5 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <LuChevronDown
+                    aria-hidden
+                    className={`size-4 transition-transform duration-300 ${isOpen ? "-rotate-180" : ""}`}
+                  />
+                </button>
                 {indicator}
-              </button>
+              </div>
 
               <div
                 id={`header-menu-${item.key}`}

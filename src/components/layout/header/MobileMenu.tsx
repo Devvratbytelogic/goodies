@@ -277,27 +277,37 @@ export default function MobileMenu({
 
                 return (
                   <li key={item.key}>
-                    <button
-                      type="button"
-                      aria-expanded={isExpanded}
-                      aria-controls={`mobile-menu-${item.key}`}
-                      onClick={() =>
-                        setExpandedKey(isExpanded ? null : item.key)
-                      }
-                      className={`${itemClass} ${menuItemState(highlighted)}`}
-                    >
-                      <NavIndicator active={highlighted} />
-                      <span className={iconWrapClass}>
-                        <item.icon aria-hidden className="size-4.5" />
-                      </span>
-                      <span className="flex-1 text-start">{t(item.key)}</span>
-                      <LuChevronDown
-                        aria-hidden
-                        className={`size-4 text-icon-muted transition-transform duration-300 ${
-                          isExpanded ? "-rotate-180 text-primary" : ""
-                        }`}
-                      />
-                    </button>
+                    <div className={`flex items-center rounded-xl ${menuItemState(highlighted)}`}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        onClick={onClose}
+                        className={`${itemClass} flex-1`}
+                      >
+                        <NavIndicator active={highlighted} />
+                        <span className={iconWrapClass}>
+                          <item.icon aria-hidden className="size-4.5" />
+                        </span>
+                        <span className="flex-1 text-start">{t(item.key)}</span>
+                      </Link>
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        aria-controls={`mobile-menu-${item.key}`}
+                        aria-label={tHeader("toggleCategories", { section: t(item.key) })}
+                        onClick={() =>
+                          setExpandedKey(isExpanded ? null : item.key)
+                        }
+                        className="me-1 flex size-10 shrink-0 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      >
+                        <LuChevronDown
+                          aria-hidden
+                          className={`size-4 text-icon-muted transition-transform duration-300 ${
+                            isExpanded ? "-rotate-180 text-primary" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
 
                     <div
                       id={`mobile-menu-${item.key}`}
