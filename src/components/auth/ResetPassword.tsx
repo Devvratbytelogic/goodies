@@ -8,6 +8,7 @@ import type { InferType } from "yup";
 import { useOpenLogin } from "@/components/auth/Login";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
+import { setNewPassword } from "@/server/auth";
 import { resetPasswordValidationSchema } from "@/validations";
 
 type ResetValues = InferType<typeof resetPasswordValidationSchema>;
@@ -18,25 +19,40 @@ const fieldClassName =
 
 const labelClassName = "block text-[13px] font-semibold text-heading";
 
-function emailFromData(data: unknown) {
-  if (!data || typeof data !== "object" || !("email" in data)) {
-    return "";
-  }
-
-  return typeof data.email === "string" ? data.email : "";
+function resetFromData(data: unknown) {
+  const record = data && typeof data === "object" ? data : {};
+  return {
+    email: "email" in record && typeof record.email === "string" ? record.email : "",
+    token: "token" in record && typeof record.token === "string" ? record.token : "",
+  };
 }
 
 export default function ResetPassword() {
   const t = useTranslations("ResetPassword");
-  const { closeModal, data } = useModal();
+  const { data } = useModal();
   const openLogin = useOpenLogin();
+  const { email, token } = resetFromData(data);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
   const formik = useFormik<ResetValues>({
     initialValues: { password: "", confirmPassword: "" },
     validationSchema: resetPasswordValidationSchema,
-    onSubmit: () => {
-      closeModal();
+    onSubmit: async (values, helpers) => {
+      setError("");
+
+      try {
+        const result = await setNewPassword(token, values.password, values.confirmPassword);
+        if (!result.ok) {
+          setError(result.message || t("failed"));
+          return;
+        }
+        openLogin();
+      } catch (caught) {
+        setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
+      } finally {
+        helpers.setSubmitting(false);
+      }
     },
   });
 
@@ -47,7 +63,7 @@ export default function ResetPassword() {
 
   return (
     <form noValidate onSubmit={formik.handleSubmit} className="grid gap-y-3 gap-4">
-      <p className="-mt-1 text-sm leading-relaxed text-muted">{t("subtitle", { email: emailFromData(data) })}</p>
+      <p className="-mt-1 text-sm leading-relaxed text-muted">{t("subtitle", { email })}</p>
       <label className={labelClassName}>
         {t("password")}
         <RequiredMark />
@@ -110,11 +126,17 @@ export default function ResetPassword() {
           </p>
         ) : null}
       </label>
+      {error ? (
+        <p role="alert" className="text-sm text-primary">
+          {error}
+        </p>
+      ) : null}
       <button
         type="submit"
-        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        disabled={formik.isSubmitting}
+        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
       >
-        {t("submit")}
+        {formik.isSubmitting ? t("submitting") : t("submit")}
       </button>
       <p className="text-center text-sm">
         <button
@@ -133,12 +155,12 @@ export function useOpenResetPassword() {
   const { openModal } = useModal();
   const t = useTranslations("ResetPassword");
 
-  return function openResetPassword(email: string) {
+  return function openResetPassword(email: string, token: string) {
     openModal({
       title: t("title"),
       size: "sm",
       content: <ResetPassword />,
-      data: { email },
+      data: { email, token },
     });
   };
 }

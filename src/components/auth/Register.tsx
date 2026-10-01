@@ -1,15 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
+import Country from "country-state-city/lib/country";
+import State from "country-state-city/lib/state";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import type { InferType } from "yup";
+import PhoneField from "@/components/auth/PhoneField";
+import RegisterLocation from "@/components/auth/RegisterLocation";
+import { useOpenLogin } from "@/components/auth/Login";
+import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
+import { registerAccount } from "@/server/auth";
 import { registerValidationSchema } from "@/validations";
-import { useOpenLogin } from "@/components/auth/Login";
 
 type RegisterValues = InferType<typeof registerValidationSchema>;
 type ValidationMessageKey =
@@ -30,16 +35,6 @@ const fieldClassName =
 
 const labelClassName = "block text-[13px] font-semibold text-heading";
 
-const PhoneField = dynamic(() => import("@/components/auth/PhoneField"), {
-  ssr: false,
-  loading: () => <div className={`${fieldClassName} mt-1`} aria-hidden />,
-});
-
-const RegisterLocation = dynamic(() => import("@/components/auth/RegisterLocation"), {
-  ssr: false,
-  loading: () => <div className="grid grid-cols-2 gap-3" aria-hidden />,
-});
-
 const initialValues: RegisterValues = {
   firstName: "",
   lastName: "",
@@ -53,15 +48,43 @@ const initialValues: RegisterValues = {
 
 export default function Register() {
   const t = useTranslations("Register");
-  const { closeModal } = useModal();
   const openLogin = useOpenLogin();
+  const openOtp = useOpenOtp();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const formik = useFormik<RegisterValues>({
     initialValues,
     validationSchema: registerValidationSchema,
-    onSubmit: () => {
-      closeModal();
+    onSubmit: async (values, helpers) => {
+      setError("");
+
+      try {
+        const countryCode = values.country ?? "";
+        const stateCode = values.state ?? "";
+        const result = await registerAccount({
+          name: values.firstName.trim(),
+          lastName: values.lastName.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          phoneCountryCode,
+          password: values.password,
+          country: Country.getCountryByCode(countryCode)?.name ?? "",
+          countryCode,
+          state: State.getStatesOfCountry(countryCode).find((item) => item.isoCode === stateCode)?.name ?? "",
+          stateCode,
+        });
+        if (!result.ok) {
+          setError(result.message || t("failed"));
+          return;
+        }
+        openOtp(values.email.trim(), "account");
+      } catch (caught) {
+        setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
+      } finally {
+        helpers.setSubmitting(false);
+      }
     },
   });
 
@@ -143,8 +166,9 @@ export default function Register() {
           invalid={Boolean(fieldError("phone"))}
           describedBy={fieldError("phone") ? "register-phone-error" : undefined}
           searchPlaceholder={t("searchCountry")}
-          onChange={(value) => {
+          onChange={(value, dialCode) => {
             void formik.setFieldValue("phone", value);
+            setPhoneCountryCode(dialCode);
           }}
           onBlur={() => {
             void formik.setFieldTouched("phone", true);
@@ -242,11 +266,17 @@ export default function Register() {
           ) : null}
         </label>
       </div>
+      {error ? (
+        <p role="alert" className="text-sm text-primary">
+          {error}
+        </p>
+      ) : null}
       <button
         type="submit"
-        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        disabled={formik.isSubmitting}
+        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
       >
-        {t("submit")}
+        {formik.isSubmitting ? t("submitting") : t("submit")}
       </button>
       <p className="text-center text-sm text-muted">
         {t("haveAccount")}{" "}

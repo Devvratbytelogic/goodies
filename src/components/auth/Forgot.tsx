@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
@@ -7,6 +8,7 @@ import { useOpenLogin } from "@/components/auth/Login";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { useModal } from "@/components/layout/common/ModalProvider";
+import { forgotPassword } from "@/server/auth";
 import { forgotValidationSchema } from "@/validations";
 
 type ForgotValues = InferType<typeof forgotValidationSchema>;
@@ -22,11 +24,25 @@ export default function Forgot() {
   const t = useTranslations("Forgot");
   const openLogin = useOpenLogin();
   const openOtp = useOpenOtp();
+  const [error, setError] = useState("");
   const formik = useFormik<ForgotValues>({
     initialValues: { email: "" },
     validationSchema: forgotValidationSchema,
-    onSubmit: (values) => {
-      openOtp(values.email);
+    onSubmit: async (values, helpers) => {
+      setError("");
+
+      try {
+        const result = await forgotPassword(values.email.trim());
+        if (!result.ok) {
+          setError(result.message || t("failed"));
+          return;
+        }
+        openOtp(values.email.trim(), "forgot");
+      } catch (caught) {
+        setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
+      } finally {
+        helpers.setSubmitting(false);
+      }
     },
   });
 
@@ -58,11 +74,17 @@ export default function Forgot() {
           </p>
         ) : null}
       </label>
+      {error ? (
+        <p role="alert" className="text-sm text-primary">
+          {error}
+        </p>
+      ) : null}
       <button
         type="submit"
-        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        disabled={formik.isSubmitting}
+        className="mt-1 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
       >
-        {t("submit")}
+        {formik.isSubmitting ? t("submitting") : t("submit")}
       </button>
       <p className="text-center text-sm text-muted">
         {t("remember")}{" "}

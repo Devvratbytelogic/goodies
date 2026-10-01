@@ -1,11 +1,15 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { resendCode, verifyCode, type VerifyType } from "@/server/auth";
 import { useOpenForgot } from "@/components/auth/Forgot";
 import { RequiredMark } from "@/components/form/RequiredMark";
+import { useOpenLogin } from "@/components/auth/Login";
+import { useOpenRegister } from "@/components/auth/Register";
 import { useOpenResetPassword } from "@/components/auth/ResetPassword";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { otpValidationSchema } from "@/validations";
@@ -18,26 +22,60 @@ const codeLength = 6;
 const digitClassName =
   "h-12 w-full rounded-xl border border-border bg-surface text-center text-sm font-normal text-foreground outline-none transition-colors focus:border-primary focus:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-primary";
 
-function emailFromData(data: unknown) {
-  if (!data || typeof data !== "object" || !("email" in data)) {
-    return "";
-  }
-
-  return typeof data.email === "string" ? data.email : "";
+function otpFromData(data: unknown): { email: string; type: VerifyType } {
+  const record = data && typeof data === "object" ? data : {};
+  const email = "email" in record && typeof record.email === "string" ? record.email : "";
+  const rawType = "type" in record ? record.type : "";
+  const type: VerifyType = rawType === "login" || rawType === "forgot" ? rawType : "account";
+  return { email, type };
 }
 
 export default function OTPScreen() {
   const t = useTranslations("OTP");
-  const { data } = useModal();
+  const { closeModal, data } = useModal();
+  const { startSession } = useAuth();
   const openForgot = useOpenForgot();
+  const openRegister = useOpenRegister();
+  const openLogin = useOpenLogin();
   const openResetPassword = useOpenResetPassword();
-  const email = emailFromData(data);
+  const { email, type } = otpFromData(data);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [notice, setNotice] = useState("");
+  const [resending, setResending] = useState(false);
   const formik = useFormik<OtpValues>({
     initialValues: { code: "" },
     validationSchema: otpValidationSchema,
-    onSubmit: () => {
-      openResetPassword(email);
+    onSubmit: async (values, helpers) => {
+      setErrorMessage("");
+      setNotice("");
+
+      try {
+        const result = await verifyCode(email, values.code, type);
+        if (!result.ok) {
+          setErrorMessage(result.message || t("failed"));
+          return;
+        }
+        const token = result.data?.token;
+
+        if (type === "forgot") {
+          if (!token) throw new Error(t("failed"));
+          openResetPassword(email, token);
+          return;
+        }
+
+        if (token) {
+          startSession(token);
+          closeModal();
+          return;
+        }
+
+        openLogin();
+      } catch (caught) {
+        setErrorMessage(caught instanceof Error && caught.message ? caught.message : t("failed"));
+      } finally {
+        helpers.setSubmitting(false);
+      }
     },
   });
 
@@ -70,6 +108,25 @@ export default function OTPScreen() {
   function onKeyDown(index: number, key: string) {
     if (key === "Backspace" && !digits[index] && index > 0) {
       inputs.current[index - 1]?.focus();
+    }
+  }
+
+  async function onResend() {
+    setErrorMessage("");
+    setNotice("");
+    setResending(true);
+
+    try {
+      const result = await resendCode(email);
+      if (!result.ok) {
+        setErrorMessage(result.message || t("failed"));
+        return;
+      }
+      setNotice(result.message || t("resent"));
+    } catch (caught) {
+      setErrorMessage(caught instanceof Error && caught.message ? caught.message : t("failed"));
+    } finally {
+      setResending(false);
     }
   }
 
@@ -109,16 +166,36 @@ export default function OTPScreen() {
           </p>
         ) : null}
       </div>
+      {notice ? (
+        <p role="status" className="text-sm text-heading">
+          {notice}
+        </p>
+      ) : null}
+      {errorMessage ? (
+        <p role="alert" className="text-sm text-primary">
+          {errorMessage}
+        </p>
+      ) : null}
       <button
         type="submit"
-        className="inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        disabled={formik.isSubmitting}
+        className="inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
       >
-        {t("submit")}
+        {formik.isSubmitting ? t("submitting") : t("submit")}
       </button>
       <p className="text-center text-sm">
         <button
           type="button"
-          onClick={openForgot}
+          onClick={onResend}
+          disabled={resending}
+          className="text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+        >
+          {resending ? t("resending") : t("resend")}
+        </button>
+        <span className="px-2 text-muted">·</span>
+        <button
+          type="button"
+          onClick={type === "forgot" ? openForgot : openRegister}
           className="text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {t("changeEmail")}
@@ -132,12 +209,12 @@ export function useOpenOtp() {
   const { openModal } = useModal();
   const t = useTranslations("OTP");
 
-  return function openOtp(email: string) {
+  return function openOtp(email: string, type: VerifyType) {
     openModal({
       title: t("title"),
       size: "sm",
       content: <OTPScreen />,
-      data: { email },
+      data: { email, type },
     });
   };
 }

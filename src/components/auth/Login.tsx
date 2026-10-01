@@ -10,8 +10,6 @@ import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenForgot } from "@/components/auth/Forgot";
 import { useOpenRegister } from "@/components/auth/Register";
 import { useModal } from "@/components/layout/common/ModalProvider";
-import { useRouter } from "@/i18n/navigation";
-import { getAccountRoutePath } from "@/utils/routes";
 import { loginValidationSchema } from "@/validations";
 
 type LoginValues = InferType<typeof loginValidationSchema>;
@@ -31,7 +29,6 @@ export default function Login() {
   const t = useTranslations("Login");
   const { closeModal } = useModal();
   const { login } = useAuth();
-  const router = useRouter();
   const openRegister = useOpenRegister();
   const openForgot = useOpenForgot();
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +42,6 @@ export default function Login() {
       try {
         await login(values.email.trim(), values.password);
         closeModal();
-        router.push(getAccountRoutePath());
       } catch (caught) {
         setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
       } finally {

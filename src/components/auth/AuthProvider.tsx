@@ -6,41 +6,15 @@ import Cookies from "js-cookie";
 const cookieName = "token";
 const userKey = "goodies-auth";
 
-export type AuthUser = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  photo: string | null;
-};
-
 type AuthContextValue = {
   token: string | null;
-  user: AuthUser | null;
   ready: boolean;
   login: (email: string, password: string) => Promise<void>;
+  startSession: (token: string) => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function readUser(): AuthUser | null {
-  try {
-    const saved = JSON.parse(localStorage.getItem(userKey) ?? "");
-    const user = saved?.email ? saved : saved?.user;
-    if (!user?.email) return null;
-
-    return {
-      id: user.id ?? "",
-      name: user.name ?? "",
-      email: user.email,
-      phone: user.phone ?? "",
-      photo: user.photo ?? null,
-    };
-  } catch {
-    return null;
-  }
-}
 
 const cookieOptions = {
   expires: 2,
@@ -51,14 +25,19 @@ const cookieOptions = {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    localStorage.removeItem(userKey);
     setToken(Cookies.get(cookieName) ?? null);
-    setUser(readUser());
     setReady(true);
   }, []);
+
+  function startSession(nextToken: string) {
+    localStorage.removeItem(userKey);
+    Cookies.set(cookieName, nextToken, cookieOptions);
+    setToken(nextToken);
+  }
 
   async function login(email: string, password: string) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
@@ -67,34 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
     const body = await response.json().catch(() => null);
-    const apiUser = body?.data?.user;
 
-    if (!response.ok || body?.success === false || !body?.data?.token || !apiUser) {
+    if (!response.ok || body?.success === false || !body?.data?.token) {
       throw new Error(body?.message || "Login failed");
     }
 
-    const next: AuthUser = {
-      id: apiUser._id ?? "",
-      name: apiUser.name ?? "",
-      email: apiUser.email ?? email,
-      phone: apiUser.phone_number ?? "",
-      photo: apiUser.profile_pic ?? null,
-    };
-
-    Cookies.set(cookieName, body.data.token, cookieOptions);
-    localStorage.setItem(userKey, JSON.stringify(next));
-    setToken(body.data.token);
-    setUser(next);
+    startSession(body.data.token);
   }
 
   function logout() {
     Cookies.remove(cookieName, { path: "/" });
     localStorage.removeItem(userKey);
     setToken(null);
-    setUser(null);
   }
 
-  return <AuthContext.Provider value={{ token, user, ready, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ token, ready, login, startSession, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

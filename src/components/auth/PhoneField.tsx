@@ -9,7 +9,7 @@ type PhoneFieldProps = {
   invalid: boolean;
   describedBy?: string;
   searchPlaceholder: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, dialCode: string) => void;
   onBlur: () => void;
 };
 
@@ -20,7 +20,7 @@ export default function PhoneField({ value, invalid, describedBy, searchPlacehol
         country="ae"
         preferredCountries={["ae", "sa", "om", "qa", "kw", "bh"]}
         value={value}
-        onChange={onChange}
+        onChange={(phone, country) => onChange(phone, "dialCode" in country ? country.dialCode : "")}
         onBlur={onBlur}
         countryCodeEditable={false}
         enableSearch
