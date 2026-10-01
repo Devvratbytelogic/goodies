@@ -115,4 +115,6 @@ export interface Filters {
     min_price?: null;
     max_price?: null;
     sort: string;
+    lowest_price?: number;
+    highest_price?: number;
 }

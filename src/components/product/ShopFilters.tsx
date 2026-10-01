@@ -144,7 +144,7 @@ export default function ShopFilters({
   return (
     <>
       <div className="mt-6 grid min-w-0 items-start gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
-        <aside className="hidden min-w-0 lg:block">
+        <aside className="hidden min-w-0 lg:sticky lg:top-24 lg:block">
           <FilterBody {...filters} />
         </aside>
         <div className="min-w-0">

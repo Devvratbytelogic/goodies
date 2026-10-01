@@ -11,12 +11,27 @@ type ShopCatalogProps = {
   breadcrumbs: BreadcrumbItem[];
   products: HomeProduct[];
   activeCategoryId?: string;
+  page?: number;
+  pageSize?: number;
+  totalCount?: number;
 };
 
-export default async function ShopCatalog({ title, breadcrumbs, products, activeCategoryId }: ShopCatalogProps) {
+export default async function ShopCatalog({
+  title,
+  breadcrumbs,
+  products,
+  activeCategoryId,
+  page = 1,
+  pageSize,
+  totalCount,
+}: ShopCatalogProps) {
   const t = await getTranslations("ShopPage");
   const categoryList = (await getCategories()) ?? [];
   const count = products.length;
+  const total = totalCount ?? count;
+  const size = pageSize ?? count;
+  const from = count === 0 ? 0 : (page - 1) * size + 1;
+  const to = count === 0 ? 0 : from + count - 1;
 
   return (
     <div className="container section_y_space">
@@ -34,9 +49,9 @@ export default async function ShopCatalog({ title, breadcrumbs, products, active
         maxPrice={100}
         title={t("categories")}
         allLabel={t("allProducts")}
-        total={products.length}
+        total={total}
         activeCategoryId={activeCategoryId}
-        showing={t("showing", { from: count === 0 ? 0 : 1, to: count, total: count })}
+        showing={t("showing", { from, to, total })}
         categories={categoryList.map((category) => ({
           id: category.slug,
           label: category.name,

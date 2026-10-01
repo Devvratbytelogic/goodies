@@ -28,11 +28,17 @@ export const getProducts = unstable_cache(
   { tags: ["products"], revalidate: 600 },
 );
 
-export const getAllProducts = unstable_cache(
-  () => getData<AllProductsData>("/user/all-product"), // used for shop and category page
-  ["all-product"],
-  { tags: ["all-product"], revalidate: 600 },
-);
+export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number) {
+  const query = new URLSearchParams({ page: String(page), limit: "20" });
+  if (minPrice != null) query.set("min_price", String(minPrice));
+  if (maxPrice != null) query.set("max_price", String(maxPrice));
+
+  return unstable_cache(
+    () => getData<AllProductsData>(`/user/all-product?${query}`),
+    ["all-product", query.toString()],
+    { tags: ["all-product"], revalidate: 600 },
+  )();
+}
 
 export const getCategories = unstable_cache(
   () => getData<HomeCategory[]>("/user/categories"),

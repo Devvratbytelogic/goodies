@@ -253,7 +253,10 @@
     "sortDefault": "Default sorting",
     "sortPriceAsc": "Sort by price: low to high",
     "sortPriceDesc": "Sort by price: high to low",
-    "sortLatest": "Sort by latest"
+    "sortLatest": "Sort by latest",
+    "pagination": "Pagination",
+    "previous": "Previous",
+    "next": "Next"
   },
   "Breadcrumb": {
     "label": "Breadcrumb"

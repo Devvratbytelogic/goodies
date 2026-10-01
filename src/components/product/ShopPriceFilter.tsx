@@ -164,7 +164,7 @@ export default function ShopPriceFilter({ title, minLabel, maxLabel, min, max }:
           onKeyDown={(event) => {
             if (event.key === "Enter") event.currentTarget.blur();
           }}
-          className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-2 text-center text-sm font-semibold text-price focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-2 text-center text-sm font-semibold text-price"
         />
       </div>
     </div>
