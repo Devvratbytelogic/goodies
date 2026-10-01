@@ -15,7 +15,7 @@ export default async function Home() {
     <>
       <div className="">
         <MainBanner banner={homePage?.home_page_banner} />
-        <CategorySection  />
+        <CategorySection categories={homePage?.categories ?? []} />
         <BestSellerSection bestSellers={homePage?.best_sellers ?? []} />
         <TastyChoicesSection />
         <NewArrivalsSection newArrivals={homePage?.new_arrivals ?? []} />

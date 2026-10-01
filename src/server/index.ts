@@ -6,12 +6,6 @@ import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
 
-export type HomeCategory = {
-  id: string;
-  name: string;
-  slug: string;
-  image?: string;
-};
 
 function productSlug(slug: string) {
   try {
@@ -55,5 +49,3 @@ export function getProduct(slug: string) {
     { tags: [`product:${decoded}`], revalidate: 120 },
   )();
 }
-
-export const getCategories = cache(() => getData<HomeCategory[]>("/user/categories"));
