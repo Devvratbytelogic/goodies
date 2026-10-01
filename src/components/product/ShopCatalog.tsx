@@ -3,25 +3,19 @@ import Breadcrumbs, { type BreadcrumbItem } from "@/components/layout/common/Bre
 import ProductCard from "@/components/product/ProductCard";
 import ShopFilters from "@/components/product/ShopFilters";
 import ShopSortSelect from "@/components/product/ShopSortSelect";
-import { getCatalogProducts, shopCategoryOrder, type ProductCardItem, type ProductCategoryKey } from "@/data/products";
+import { getCategories } from "@/server";
+import { HomeProduct } from "@/server/types/Home";
 
 type ShopCatalogProps = {
   title: string;
   breadcrumbs: BreadcrumbItem[];
-  products: ProductCardItem[];
-  activeCategoryId?: ProductCategoryKey;
+  products: HomeProduct[];
+  activeCategoryId?: string;
 };
 
 export default async function ShopCatalog({ title, breadcrumbs, products, activeCategoryId }: ShopCatalogProps) {
   const t = await getTranslations("ShopPage");
-  const cards = await getTranslations("ProductCard");
-  const catalog = getCatalogProducts();
-  const pricedProducts = products.length > 0 ? products : catalog;
-  const prices = pricedProducts.flatMap((product) =>
-    product.priceTo ? [product.priceFrom, product.priceTo] : [product.priceFrom],
-  );
-  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+  const categoryList = (await getCategories()) ?? [];
   const count = products.length;
 
   return (
@@ -36,17 +30,17 @@ export default async function ShopCatalog({ title, breadcrumbs, products, active
         priceTitle={t("price")}
         minPriceLabel={t("minPrice")}
         maxPriceLabel={t("maxPrice")}
-        minPrice={minPrice}
-        maxPrice={maxPrice}
+        minPrice={15}
+        maxPrice={100}
         title={t("categories")}
         allLabel={t("allProducts")}
-        total={catalog.length}
+        total={products.length}
         activeCategoryId={activeCategoryId}
         showing={t("showing", { from: count === 0 ? 0 : 1, to: count, total: count })}
-        categories={shopCategoryOrder.map((key) => ({
-          id: key,
-          label: cards(key),
-          count: catalog.filter((product) => product.categoryKey === key).length,
+        categories={categoryList.map((category) => ({
+          id: category.slug,
+          label: category.name,
+          count: category.count ?? 0,
         }))}
         sort={
           <ShopSortSelect
@@ -63,11 +57,15 @@ export default async function ShopCatalog({ title, breadcrumbs, products, active
         }
       >
         <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
-          {products.map((product) => (
+          {products.length > 0 ? products.map((product) => (
             <li key={product.slug}>
               <ProductCard product={product} />
             </li>
-          ))}
+          )) : (
+            <li>
+              <p>No products found</p>
+            </li>
+          )}
         </ul>
       </ShopFilters>
     </div>

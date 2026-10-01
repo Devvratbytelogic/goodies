@@ -25,14 +25,14 @@ export interface HomeProduct {
     weight: number;
     thumbnail: string;
     product_type: string;
-    images?: (string)[] | null;
+    images?: (string | null)[] | null;
     colors?: (null)[] | null;
-    sizes?: (SizesEntity)[] | null;
-    variants?: (VariantsEntity)[] | null;
+    sizes?: (SizesEntity | null)[] | null;
+    variants?: (VariantsEntity | null)[] | null;
     categoryId: CategoryId;
     brandId?: null;
     deletedAt?: null;
-    createdBy?: null;
+    createdBy?: string | null;
     description: string;
     short_description: string;
     url: string;
@@ -50,13 +50,13 @@ export interface HomeProduct {
     view_count: number;
     meta_title?: string | null;
     meta_description?: string | null;
-    og_title?: null;
-    og_description?: null;
-    og_image?: null;
-    twitter_title?: null;
-    twitter_description?: null;
-    twitter_image?: null;
-    json_ld?: null;
+    og_title?: string | null;
+    og_description?: string | null;
+    og_image?: string | null;
+    twitter_title?: string | null;
+    twitter_description?: string | null;
+    twitter_image?: string | null;
+    json_ld?: string | null;
     createdAt: string;
     updatedAt: string;
     __v: number;
@@ -150,4 +150,5 @@ export interface HomeCategory {
     __v: number;
     id?: number | null;
     sub_categories?: (null)[] | null;
+    count?: number | null;
 }

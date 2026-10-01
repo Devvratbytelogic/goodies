@@ -2,12 +2,14 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { LuSlidersHorizontal, LuX } from "react-icons/lu";
+import { Link } from "@/i18n/navigation";
 import ShopPriceFilter from "@/components/product/ShopPriceFilter";
+import { getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
 
 type ShopFilterCategory = {
   id: string;
   label: string;
-  count: number;
+  count?: number;
 };
 
 type ShopFiltersProps = {
@@ -39,17 +41,31 @@ function FilterList({
 
   return (
     <ul className="space-y-1">
-      <li className={filterRowClassName(allSelected)}>
-        <span>{allLabel}</span>
-        <span className={allSelected ? "text-primary/70" : "text-muted"}>{total}</span>
+      <li>
+        <Link
+          href={getShopRoutePath()}
+          aria-current={allSelected ? "page" : undefined}
+          className={filterRowClassName(allSelected)}
+        >
+          <span>{allLabel}</span>
+          <span className={allSelected ? "text-primary/70" : "text-muted"}>{total}</span>
+        </Link>
       </li>
       {categories.map((category) => {
         const selected = category.id === activeCategoryId;
 
         return (
-          <li key={category.id} className={filterRowClassName(selected)}>
-            <span>{category.label}</span>
-            <span className={selected ? "text-primary/70" : "text-muted"}>{category.count}</span>
+          <li key={category.id}>
+            <Link
+              href={getProductCategoryRoutePath(category.id)}
+              aria-current={selected ? "page" : undefined}
+              className={filterRowClassName(selected)}
+            >
+              <span>{category.label}</span>
+              {category.count != null ? (
+                <span className={selected ? "text-primary/70" : "text-muted"}>{category.count}</span>
+              ) : null}
+            </Link>
           </li>
         );
       })}
@@ -58,9 +74,10 @@ function FilterList({
 }
 
 function filterRowClassName(selected: boolean) {
-  return selected
-    ? "flex items-center justify-between gap-3 rounded-md bg-primary-soft px-3 py-2 text-sm font-semibold text-primary"
-    : "flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-heading";
+  const row =
+    "flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+  return selected ? `${row} bg-primary-soft font-semibold text-primary` : `${row} text-heading hover:bg-surface`;
 }
 
 function FilterBody({
@@ -151,7 +168,7 @@ export default function ShopFilters({
       {open ? (
         <div className="fixed inset-0 z-80 lg:hidden">
           <button type="button" aria-label={closeFiltersLabel} className="absolute inset-0 bg-heading/40" onClick={() => setOpen(false)} />
-          <div role="dialog" aria-modal="true" aria-label={filtersLabel} className="absolute inset-y-0 start-0 flex w-[min(100%,20rem)] flex-col bg-background shadow-xl">
+          <div role="dialog" aria-modal="true" aria-label={filtersLabel} className="absolute inset-y-0 inset-s-0 flex w-[min(100%,20rem)] flex-col bg-background shadow-xl">
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
               <h2 className="text-base font-bold text-heading">{filtersLabel}</h2>
               <button

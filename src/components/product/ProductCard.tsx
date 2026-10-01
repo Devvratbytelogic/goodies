@@ -12,6 +12,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
   const t = useTranslations("ProductCard");
   const name = product?.title ?? "";
   const isVariant = product?.is_variant;
+  // console.log('product', product);
   const isNew = product?.new_product;
   const variant = product?.variant;
   const variants = product?.variants ?? [];
@@ -55,7 +56,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
           </h3>
           <ProductPrice
             variant={variant}
-            variants={variants}
+            variants={variants.filter((item) => item != null)}
             isVariant={isVariant}
             currencySymbol={product.pricing_context?.currency_symbol}
           />

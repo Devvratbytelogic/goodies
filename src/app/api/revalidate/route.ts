@@ -31,6 +31,10 @@ function targetFor(page: RequestPage) {
     return { tag: "products", paths: [] };
   }
 
+  if (name === "categories") {
+    return { tag: "categories", paths: [] };
+  }
+
   if (name === "product" && slug && !slug.includes("/") && !slug.includes("..")) {
     return {
       tag: `product:${slug}`,

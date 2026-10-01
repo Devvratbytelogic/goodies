@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { api } from "./api";
-import { HomePageData } from "./types/Home";
+import { HomeCategory, HomePageData } from "./types/Home";
 import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
@@ -23,15 +23,21 @@ async function getData<T>(path: string) {
 
 
 export const getProducts = unstable_cache(
-  () => getData<ProductListItem[]>("/user/products"),
+  () => getData<ProductListItem[]>("/user/products"), //only for get all products list in the product with title and slug for isr
   ["products"],
   { tags: ["products"], revalidate: 600 },
 );
 
 export const getAllProducts = unstable_cache(
-  () => getData<AllProductsData>("/user/all-product"),
+  () => getData<AllProductsData>("/user/all-product"), // used for shop and category page
   ["all-product"],
   { tags: ["all-product"], revalidate: 600 },
+);
+
+export const getCategories = unstable_cache(
+  () => getData<HomeCategory[]>("/user/categories"),
+  ["categories"],
+  { tags: ["categories"], revalidate: 600 },
 );
 
 export const getHomePage = unstable_cache(
