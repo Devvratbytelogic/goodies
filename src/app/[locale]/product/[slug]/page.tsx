@@ -12,8 +12,13 @@ type ProductPageProps = {
 };
 
 export async function generateStaticParams() {
-  const products = (await getProducts()) ?? [];
-  return products.filter((item) => item.slug).map((item) => ({ slug: item.slug }));
+  try {
+    const products = (await getProducts()) ?? [];
+    return products.filter((item) => item.slug).map((item) => ({ slug: item.slug }));
+  } catch (error) {
+    console.error("generateStaticParams: product list unavailable", error);
+    return [];
+  }
 }
 
 function metaText(value?: string | null) {
