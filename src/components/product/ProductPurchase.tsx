@@ -4,10 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import AddToCartButton from "@/components/product/AddToCartButton";
-import BuyNowButton from "@/components/product/BuyNowButton";
 import WishlistButton from "@/components/wishlist/WishlistButton";
-import { useRouter } from "@/i18n/navigation";
-import { getCheckoutClassicRoutePath } from "@/utils/routes";
 import { SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 import { formatAmount } from "@/utils/price";
 
@@ -21,11 +18,11 @@ type ProductPurchaseProps = {
   sizes: SizesEntity[];
   sizeName: string | null;
   onSizeChange: (sizeName: string | null) => void;
+  productId: string;
 };
 
-export default function ProductPurchase({ slug, name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange }: ProductPurchaseProps) {
+export default function ProductPurchase({ slug, name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
-  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -47,23 +44,12 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
     return t("priceLabel", { amount: formatAmount(price, currencySymbol) });
   }
 
-  function addToCart() {
-    if (needsSize) {
-      return;
-    }
+  const payload = {
+    product_id: productId,
+    quantity: quantity,
+    variant_sku: selectedVariant?.sku ?? "",
+  };
 
-    console.log("Add to cart", { slug, name, sizeName, quantity, currency: currencySymbol });
-    setAdded(true);
-  }
-
-  function buyNow() {
-    if (needsSize) {
-      return;
-    }
-
-    console.log("Buy now", { slug, name, sizeName, quantity, currency: currencySymbol });
-    router.push(getCheckoutClassicRoutePath());
-  }
 
   return (
     <div className="mt-3">
@@ -182,17 +168,17 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
           </div>
           <div className="grid w-full grid-cols-2 gap-2.5 @min-[30rem]:flex @min-[30rem]:w-auto @min-[30rem]:gap-3">
             <AddToCartButton
-              slug={slug}
-              name={name}
               variant="product"
               disabled={needsSize}
               describedBy={needsSize ? "choose-size" : undefined}
-              onAdd={addToCart}
+              payload={payload}
             />
-            <BuyNowButton
+            <AddToCartButton
+              variant="product"
+              action="buy"
               disabled={needsSize}
               describedBy={needsSize ? "choose-size" : undefined}
-              onBuy={buyNow}
+              payload={payload}
             />
           </div>
         </div>

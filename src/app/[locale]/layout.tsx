@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ModalProvider } from "@/components/layout/common/ModalProvider";
+import { StoreProvider } from "@/store/StoreProvider";
 import { Header } from "@/components/layout/header/Header";
 import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
@@ -122,18 +123,20 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <NextIntlClientProvider>
-          <AuthProvider>
-            <ModalProvider>
-              {/* <InstallPrompt /> */}
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <BottomNav />
-              <WhatsAppFloatingButton />
-            </ModalProvider>
-          </AuthProvider>
+          <StoreProvider>
+            <AuthProvider>
+              <ModalProvider>
+                {/* <InstallPrompt /> */}
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+                <BottomNav />
+                <WhatsAppFloatingButton />
+              </ModalProvider>
+            </AuthProvider>
+          </StoreProvider>
         </NextIntlClientProvider>
       </body>
     </html>

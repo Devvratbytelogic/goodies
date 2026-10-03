@@ -7,6 +7,7 @@ import { SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProdu
 
 type ProductSelectionProps = {
   children: ReactNode;
+  productId: string;
   name: string;
   slug: string;
   isVariant: boolean;
@@ -19,6 +20,7 @@ type ProductSelectionProps = {
 
 export default function ProductSelection({
   children,
+  productId,
   name,
   slug,
   isVariant,
@@ -51,6 +53,7 @@ export default function ProductSelection({
             currencySymbol={currencySymbol}
             sizeName={sizeName}
             onSizeChange={setSizeName}
+            productId={productId}
           />
         </div>
       </div>

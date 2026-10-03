@@ -88,6 +88,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         sizes={sizes}
         currencySymbol={product.pricing_context?.currency_symbol ?? ""}
         weight={product.weight}
+        productId={product._id}
       >
         <ProductGallery images={[product.thumbnail ?? "", ...(product.images ?? [])]} alt={name} />
       </ProductSelection>

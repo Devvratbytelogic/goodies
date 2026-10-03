@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   experimental: {
-    optimizePackageImports: ["react-icons", "swiper"],
+    optimizePackageImports: ["react-icons", "swiper", "@reduxjs/toolkit"],
   },
   async headers() {
     return [

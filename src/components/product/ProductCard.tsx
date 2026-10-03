@@ -11,7 +11,7 @@ import { HomeProduct } from "@/server/types/Home";
 export default function ProductCard({ product }: { product: HomeProduct }) {
   const t = useTranslations("ProductCard");
   const name = product?.title ?? "";
-  const isVariant = product?.is_variant;
+  const isVariant = product?.is_variant || product?.product_type === "bundle";
   // console.log('product', product);
   const isNew = product?.new_product;
   const variant = product?.variant;
