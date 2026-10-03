@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getAccountRoutePath, getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
+import CurrencySelect from "@/components/product/CurrencySelect";
 import { DesktopNav } from "./DesktopNav";
 import { LocaleToggle } from "./LocaleToggle";
 import MobileMenu from "./MobileMenu";
@@ -207,6 +208,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
               <span aria-hidden className="mx-2 h-6 w-px bg-border/70" />
 
               <LocaleToggle />
+              <CurrencySelect />
             </div>
           </div>
 

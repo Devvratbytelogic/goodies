@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import AddToCartButton from "@/components/product/AddToCartButton";
-import CurrencySelect from "@/components/product/CurrencySelect";
 import BuyNowButton from "@/components/product/BuyNowButton";
 import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useRouter } from "@/i18n/navigation";
@@ -87,8 +86,6 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
           )}
         </span>
       </p>
-
-      <CurrencySelect />
 
       {sizes.length > 0 ? (
         <div className="mt-5">

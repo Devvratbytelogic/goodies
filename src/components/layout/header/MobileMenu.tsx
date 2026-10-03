@@ -15,6 +15,7 @@ import {
   getShopRoutePath,
   getWishlistRoutePath,
 } from "@/utils/routes";
+import CurrencySelect from "@/components/product/CurrencySelect";
 import { LocaleToggle } from "./LocaleToggle";
 import { isActivePath, navItems } from "./navigation";
 
@@ -415,7 +416,8 @@ export default function MobileMenu({
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="flex gap-2 justify-between shrink-0 space-y-2 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <CurrencySelect openUp className="w-full" />
             <LocaleToggle className="w-full justify-center" />
           </div>
         </div>

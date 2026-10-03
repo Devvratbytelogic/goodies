@@ -149,7 +149,8 @@
     "shopAll": "تسوّق كل الحلويات",
     "toggleCategories": "عرض تصنيفات {section}",
     "tagline": "حلويات صغيرة، ابتسامات كبيرة",
-    "switchLanguage": "تغيير اللغة إلى {language}"
+    "switchLanguage": "تغيير اللغة إلى {language}",
+    "currency": "العملة"
   },
   "ShopMenu": {
     "freezeDriedCandy": "حلوى مجففة بالتجميد",
@@ -422,7 +423,6 @@
     "close": "إغلاق",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to}",
     "priceLabel": "السعر: {amount}",
-    "currency": "العملة",
     "size": "الحجم",
     "small": "صغير",
     "medium": "وسط",

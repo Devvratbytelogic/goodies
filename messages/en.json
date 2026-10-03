@@ -149,7 +149,8 @@
     "shopAll": "Shop all treats",
     "toggleCategories": "Show {section} categories",
     "tagline": "Little treats, big smiles",
-    "switchLanguage": "Switch language to {language}"
+    "switchLanguage": "Switch language to {language}",
+    "currency": "Currency"
   },
   "ShopMenu": {
     "freezeDriedCandy": "Freeze dried candy",
@@ -422,7 +423,6 @@
     "close": "Close",
     "priceRangeLabel": "Price range: {from} through {to}",
     "priceLabel": "Price: {amount}",
-    "currency": "Currency",
     "size": "Size",
     "small": "Small",
     "medium": "Medium",

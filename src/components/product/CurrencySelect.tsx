@@ -95,8 +95,8 @@ function CurrencyFlag({ code }: { code: CurrencyCode }) {
   }
 }
 
-export default function CurrencySelect() {
-  const t = useTranslations("ProductPage");
+export default function CurrencySelect({ className = "", openUp = false }: { className?: string; openUp?: boolean }) {
+  const t = useTranslations("Header");
   const listId = useId();
   const currencyRef = useRef<HTMLDivElement>(null);
   const [currencyCode, setCurrencyCode] = useState<CurrencyCode>("AED");
@@ -128,7 +128,7 @@ export default function CurrencySelect() {
   }, [currencyOpen]);
 
   return (
-    <div ref={currencyRef} className="relative mt-3 w-fit">
+    <div ref={currencyRef} className={`relative ${className || "w-fit"}`}>
       <button
         type="button"
         aria-label={t("currency")}
@@ -136,7 +136,7 @@ export default function CurrencySelect() {
         aria-expanded={currencyOpen}
         aria-controls={listId}
         onClick={() => setCurrencyOpen((open) => !open)}
-        className={`inline-flex h-9 items-center gap-2 rounded-lg border bg-background px-2.5 text-sm font-semibold text-heading transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${currencyOpen ? "border-primary" : "border-border hover:border-primary/40"
+        className={`inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border bg-background px-3.5 text-sm font-medium text-muted-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${currencyOpen ? "border-primary text-primary" : "border-border/70 hover:border-primary/40 hover:bg-primary-soft hover:text-primary"
           }`}
       >
         <CurrencyFlag code={currencyCode} />
@@ -151,7 +151,7 @@ export default function CurrencySelect() {
           id={listId}
           role="listbox"
           aria-label={t("currency")}
-          className="absolute z-20 mt-1.5 max-h-60 min-w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-background py-1 shadow-md"
+          className={`absolute inset-e-0 z-30 max-h-60 min-w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-background py-1 shadow-md ${openUp ? "bottom-full mb-1.5" : "mt-1.5"}`}
         >
           {currencies.map((code) => {
             const selected = code === currencyCode;
