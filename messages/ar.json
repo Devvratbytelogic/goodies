@@ -461,7 +461,8 @@
   },
   "ProductCategoryPage": {
     "title": "تصنيف المنتج",
-    "description": "تسوّق {category} من Goodies."
+    "description": "تسوّق {category} من Goodies.",
+    "faqs": "الأسئلة الشائعة"
   },
   "CheckoutClassicPage": {
     "title": "إتمام الشراء",

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
 import Pagination from "@/components/product/Pagination";
 import ShopCatalog from "@/components/product/ShopCatalog";
-import { getAllProducts, getCategories } from "@/server";
+import FaqList from "@/components/layout/common/FaqList";
+import { getAllProducts, getCategory } from "@/server";
+import { markdownToHtml } from "@/utils/markdown";
 import { getHomeRoutePath, getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
 
 function priceParam(value?: string) {
@@ -39,11 +40,6 @@ function pageHref(slug: string, number: number, minPrice?: number, maxPrice?: nu
   return query ? `${path}?${query}` : path;
 }
 
-async function categoryBySlug(slug: string) {
-  const categories = (await getCategories()) ?? [];
-  return categories.find((category) => category.slug === slug);
-}
-
 type ProductCategoryPageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string; min_price?: string; max_price?: string; sort?: string }>;
@@ -56,7 +52,8 @@ function metaText(value?: string | null) {
 
 export async function generateMetadata({ params }: ProductCategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await categoryBySlug(readSlug(slug));
+  const data = await getCategory(readSlug(slug));
+  const category = data?.category;
   if (!category) return {};
 
   const title = metaText(category.meta_title) ?? category.name;
@@ -84,11 +81,12 @@ export async function generateMetadata({ params }: ProductCategoryPageProps): Pr
 export default async function ProductCategoryPage({ params, searchParams }: ProductCategoryPageProps) {
   const { slug: rawSlug } = await params;
   const slug = readSlug(rawSlug);
-  const category = await categoryBySlug(slug);
-  if (!category) notFound();
+  const data = await getCategory(readSlug(slug));
+  const category = data?.category;
 
   const shop = await getTranslations("ShopPage");
   const nav = await getTranslations("Nav");
+  const categoryCopy = await getTranslations("ProductCategoryPage");
   const { page: pageParam, min_price: minParam, max_price: maxParam, sort: sortQuery } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
   const selectedMin = priceParam(minParam);
@@ -100,7 +98,6 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;
   const totalPages = Math.max(1, Math.ceil(total / limit));
-
   return (
     <>
       {category.json_ld ? (
@@ -133,6 +130,15 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
         nextLabel={shop("next")}
         href={(number) => pageHref(category.slug, number, price?.min, price?.max, sort)}
       />
+      {category.description?.trim() ? (
+        <section className="container mb-10">
+          <div
+            className="category-description"
+            dangerouslySetInnerHTML={{ __html: markdownToHtml(category.description) }}
+          />
+        </section>
+      ) : null}
+      <FaqList title={categoryCopy("faqs")} items={category.faqs} />
     </>
   );
 }

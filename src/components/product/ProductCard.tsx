@@ -18,6 +18,11 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
   const variants = product?.variants ?? [];
 
 
+  const payload = {
+    product_id: product._id,
+    quantity: 1,
+    variant_sku: "",
+  };
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
       <WishlistButton
@@ -71,7 +76,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
             {t("selectOption")}
           </Link>
         ) : (
-          <AddToCartButton slug={product.slug} name={name} />
+          <AddToCartButton variant="product" payload={payload} />
         )}
       </div>
     </article>

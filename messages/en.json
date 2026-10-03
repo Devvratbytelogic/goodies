@@ -461,7 +461,8 @@
   },
   "ProductCategoryPage": {
     "title": "Product category",
-    "description": "Shop {category} from Goodies."
+    "description": "Shop {category} from Goodies.",
+    "faqs": "Frequently asked questions"
   },
   "CheckoutClassicPage": {
     "title": "Checkout",

@@ -35,6 +35,17 @@ function targetFor(page: RequestPage) {
     return { tag: "categories", paths: [] };
   }
 
+  if (name === "category") {
+    if (slug && !slug.includes("/") && !slug.includes("..")) {
+      return {
+        tag: `category:${slug}`,
+        paths: [`/product-category/${slug}`, `/ar/product-category/${slug}`],
+      };
+    }
+
+    return { tag: "category", paths: [] };
+  }
+
   if (name === "product" && slug && !slug.includes("/") && !slug.includes("..")) {
     return {
       tag: `product:${slug}`,

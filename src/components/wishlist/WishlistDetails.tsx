@@ -102,7 +102,7 @@ export default function WishlistDetails({ items }: { items: WishlistItem[] }) {
                     </div>
                   </Link>
                   <div className="px-3 pt-3 pb-3 sm:px-4 sm:pb-4">
-                    <AddToCartButton slug={item.slug} name={item.name} />
+                    {/* <AddToCartButton slug={item.slug} name={item.name} /> */}
                   </div>
                 </article>
               </li>

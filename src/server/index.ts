@@ -5,6 +5,7 @@ import { HomeCategory, HomePageData } from "./types/Home";
 import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
+import { SingleCategoryApiResponseData } from "./types/singleCategory";
 
 
 function productSlug(slug: string) {
@@ -41,6 +42,17 @@ export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number, s
     () => getData<AllProductsData>(`/user/all-product?${query}`),
     ["all-product", query.toString()],
     { tags: ["all-product"], revalidate: 600 },
+  )();
+}
+
+export function getCategory(slug: string, page = 1) {
+  const decoded = productSlug(slug);
+  const query = new URLSearchParams({ page: String(page), limit: "5" });
+
+  return unstable_cache(
+    () => getData<SingleCategoryApiResponseData>(`/user/category/${encodeURIComponent(decoded)}?${query}`),
+    ["category", decoded, query.toString()],
+    { tags: ["category", `category:${decoded}`], revalidate: 600 },
   )();
 }
 
