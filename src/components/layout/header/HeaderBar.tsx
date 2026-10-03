@@ -14,6 +14,7 @@ import { DesktopNav } from "./DesktopNav";
 import { LocaleToggle } from "./LocaleToggle";
 import MobileMenu from "./MobileMenu";
 import { SearchField } from "./SearchField";
+import type { ShopCategory } from "./navigation";
 
 const actionClass =
   "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -21,6 +22,7 @@ const actionClass =
 type HeaderBarProps = {
   cartCount: number;
   wishlistCount: number;
+  shopCategories: ShopCategory[];
 };
 
 function CountBadge({ count, showZero = false }: { count: number; showZero?: boolean }) {
@@ -84,7 +86,7 @@ function BrandLogo() {
   );
 }
 
-export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
+export function HeaderBar({ cartCount, wishlistCount, shopCategories }: HeaderBarProps) {
   const t = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
@@ -164,7 +166,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
               <BrandLogo />
             </div>
 
-            <DesktopNav />
+            <DesktopNav shopCategories={shopCategories} />
 
             <div className="flex items-center gap-1 justify-self-end">
               <button
@@ -244,6 +246,7 @@ export function HeaderBar({ cartCount, wishlistCount }: HeaderBarProps) {
         onClose={() => setMenuOpen(false)}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
+        shopCategories={shopCategories}
       />
     </>
   );

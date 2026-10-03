@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "@/store/api";
+import "@/store/endpoints/cartApi";
+import "@/store/endpoints/wishlistApi";
 
 export function makeStore() {
   return configureStore({

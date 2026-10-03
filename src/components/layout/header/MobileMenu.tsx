@@ -17,13 +17,14 @@ import {
 } from "@/utils/routes";
 import CurrencySelect from "@/components/product/CurrencySelect";
 import { LocaleToggle } from "./LocaleToggle";
-import { isActivePath, navItems } from "./navigation";
+import { isActivePath, navItems, type ShopCategory } from "./navigation";
 
 type MobileMenuProps = {
   open: boolean;
   onClose: () => void;
   cartCount?: number;
   wishlistCount?: number;
+  shopCategories: ShopCategory[];
 };
 
 const accountLinks: {
@@ -143,9 +144,9 @@ export default function MobileMenu({
   onClose,
   cartCount = 0,
   wishlistCount = 0,
+  shopCategories,
 }: MobileMenuProps) {
   const t = useTranslations("Nav");
-  const tShop = useTranslations("ShopMenu");
   const tHeader = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
@@ -261,8 +262,9 @@ export default function MobileMenu({
                 const active = isActivePath(pathname, item.href);
                 const isExpanded = expandedKey === item.key;
                 const highlighted = active || isExpanded;
+                const categories = item.key === "shop" ? shopCategories : item.categories;
 
-                if (!item.categories) {
+                if (!categories?.length) {
                   return (
                     <li key={item.key}>
                       <MenuItemLink
@@ -319,14 +321,14 @@ export default function MobileMenu({
                       <div className="min-h-0 overflow-hidden">
                         <div className="ms-4 me-2 border-s-2 border-primary/20 bg-surface/60 py-1">
                           <ul className="divide-y divide-border/35">
-                            {item.categories.map((category) => {
+                            {categories.map((category) => {
                               const categoryActive = isActivePath(
                                 pathname,
                                 category.href,
                               );
 
                               return (
-                                <li key={category.key}>
+                                <li key={category.href}>
                                   <Link
                                     href={category.href}
                                     aria-current={
@@ -339,19 +341,7 @@ export default function MobileMenu({
                                         : "text-muted-foreground hover:bg-background hover:text-primary"
                                     }`}
                                   >
-                                    <span
-                                      className={`flex size-7 shrink-0 items-center justify-center rounded-md transition-colors ${
-                                        categoryActive
-                                          ? "bg-background text-primary"
-                                          : "bg-surface-soft text-accent-deep"
-                                      }`}
-                                    >
-                                      <category.icon
-                                        aria-hidden
-                                        className="size-3.5"
-                                      />
-                                    </span>
-                                    {tShop(category.key)}
+                                    {category.label}
                                   </Link>
                                 </li>
                               );

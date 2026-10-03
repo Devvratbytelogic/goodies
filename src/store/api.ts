@@ -27,7 +27,7 @@ const baseQuery = async (args: any, api: any, extraOptions: any) => {
   const result = await rawBaseQuery(args, api, extraOptions);
   const method = typeof args === "string" ? "GET" : args.method || "GET";
 
-  if (method !== "POST") return result;
+  if (method !== "POST" && method !== "DELETE") return result;
 
   const body = (result.error?.data ?? result.data) as ApiBody | undefined;
   const message = body?.message || (result.error ? "Request failed" : "Done");

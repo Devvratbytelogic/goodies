@@ -4,14 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuArrowRight, LuChevronDown } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
-import { isActivePath, navItems } from "./navigation";
+import { isActivePath, navItems, type ShopCategory } from "./navigation";
 
 const itemClass =
   "relative inline-flex items-center gap-1.5 px-3.5 py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-export function DesktopNav() {
+export function DesktopNav({ shopCategories }: { shopCategories: ShopCategory[] }) {
   const t = useTranslations("Nav");
-  const tShop = useTranslations("ShopMenu");
   const tHeader = useTranslations("Header");
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
@@ -53,6 +52,7 @@ export function DesktopNav() {
         {navItems.map((item) => {
           const active = isActivePath(pathname, item.href);
           const isOpen = openKey === item.key;
+          const categories = item.key === "shop" ? shopCategories : item.categories;
 
           const indicator = (
             <span
@@ -63,7 +63,7 @@ export function DesktopNav() {
             />
           );
 
-          if (!item.categories) {
+          if (!categories?.length) {
             return (
               <li key={item.key}>
                 <Link
@@ -122,16 +122,13 @@ export function DesktopNav() {
               >
                 <div className="w-72 rounded-2xl border border-border/70 bg-background p-2 shadow-[0_24px_60px_-28px_rgb(0_0_0/0.45)]">
                   <ul>
-                    {item.categories.map((category) => (
-                      <li key={category.key}>
+                    {categories.map((category) => (
+                      <li key={category.href}>
                         <Link
                           href={category.href}
-                          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary-soft hover:text-primary"
+                          className="block rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-primary-soft hover:text-primary"
                         >
-                          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-soft text-accent-deep">
-                            <category.icon aria-hidden className="size-4.5" />
-                          </span>
-                          {tShop(category.key)}
+                          {category.label}
                         </Link>
                       </li>
                     ))}
