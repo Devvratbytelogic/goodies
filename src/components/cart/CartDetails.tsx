@@ -9,7 +9,12 @@ import ImageComponent from "@/components/layout/common/ImageComponent";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link } from "@/i18n/navigation";
 import { getProductRoutePath, getShopRoutePath } from "@/utils/routes";
-import { useGetCartQuery, useRemoveCouponMutation, useUpdateCartItemQuantityMutation } from "@/store/endpoints/cartApi";
+import {
+  useApplyCouponMutation,
+  useGetCartQuery,
+  useRemoveCouponMutation,
+  useUpdateCartItemQuantityMutation,
+} from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
 
 const minQuantity = 1;
@@ -25,6 +30,7 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
   const t = useTranslations("CartPage");
   const { data: cart, isLoading: isLoadingCart } = useGetCartQuery();
   const [updateQuantity, { isLoading: isUpdatingQuantity }] = useUpdateCartItemQuantityMutation();
+  const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
   const [removeCoupon, { isLoading: isRemovingCoupon }] = useRemoveCouponMutation();
   const cartItems = cart?.items ?? [];
   const cartSummary = cart?.summary ?? null;
@@ -45,6 +51,14 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
       await updateQuantity({ itemId, quantity }).unwrap();
     } catch (error) {
       console.error('Error updating quantity', error);
+    }
+  };
+
+  const applyCartCoupon = async (couponCode: string) => {
+    try {
+      await applyCoupon(couponCode).unwrap();
+    } catch (error) {
+      console.error('Error applying coupon', error);
     }
   };
 
@@ -153,13 +167,16 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
       )}
 
       <aside className="overflow-hidden rounded-2xl border border-border bg-background lg:sticky lg:top-24">
-        {cartItems?.length > 0 ? <CartCoupons appliedCode={null} onApply={() => { }} /> : null}
+        {cartItems?.length > 0 ? <CartCoupons appliedCode={couponCode} applying={isApplyingCoupon} onApply={applyCartCoupon} /> : null}
 
         <div className="p-5">
           <h2 className="text-lg font-bold tracking-tight">{t("summary")}</h2>
           <dl className="mt-4 space-y-3.5 text-sm">
             <div className="flex items-center justify-between gap-3">
-              <dt className="text-muted">{t("subtotal")}</dt>
+              <dt className="text-muted">
+                {t("subtotal")}
+                {itemCount > 0 ? <span className="ms-1 text-xs">({t("itemCount", { count: itemCount })})</span> : null}
+              </dt>
               <dd className="font-semibold tabular-nums text-heading">{formatAmount(subtotal, currencySymbol)}</dd>
             </div>
             {couponCode ? (
@@ -189,6 +206,12 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
               </dt>
               <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
             </div>
+            {taxAmount > 0 ? (
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted">{t("tax")}</dt>
+                <dd className="font-semibold tabular-nums text-heading">{formatAmount(taxAmount, currencySymbol)}</dd>
+              </div>
+            ) : null}
             <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
               <dt className="text-sm font-semibold text-heading">{t("total")}</dt>
               <dd className="text-base font-bold tabular-nums text-price">{formatAmount(totalAmount, currencySymbol)}</dd>
