@@ -69,6 +69,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const variants = product?.variants ?? [];
   const sizes = product?.sizes ?? [];
   const related = product.related_products ?? [];
+  const isBundle = product?.product_type === "bundle";
+  const bundleItems = product?.bundle_items ?? [];
 
   return (
     <div className="container section_y_space">
@@ -94,6 +96,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         currencySymbol={product.pricing_context?.currency_symbol ?? ""}
         weight={product.weight}
         productId={product._id}
+
+        isBundle={isBundle}
+        bundleItems={bundleItems}
+        maxSelection={product.max_selection}
       >
         <ProductGallery images={[product.thumbnail ?? "", ...(product.images ?? [])]} alt={name} />
       </ProductSelection>

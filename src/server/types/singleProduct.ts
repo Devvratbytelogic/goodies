@@ -31,8 +31,8 @@ export interface SingleProductData {
   description: string;
   short_description: string;
   url: string;
-  bundle_items?: (null)[] | null;
-  max_selection?: null;
+  bundle_items?: (BundleItemsEntity)[] | null;
+  max_selection: number;
   average_rating: number;
   total_reviews: number;
   total_sales: number;
@@ -75,6 +75,30 @@ export interface CategoryId {
   name: string;
   slug: string;
 }
+export interface BundleItemsEntity {
+  variant_sku?: string | null;
+  variant_key?: string | null;
+  product_id: ProductId;
+}
+export interface ProductId {
+  _id: string;
+  id: number;
+  title: string;
+  slug: string;
+  sku: string;
+  product_type: string;
+  thumbnail: string;
+  images?: (string | null)[] | null;
+  status: boolean;
+  weight: number;
+  stock: number;
+  description: string;
+  short_description: string;
+  colors?: (null)[] | null;
+  sizes?: (SizesEntity | null)[] | null;
+  variant: VariantsEntity;
+  variants?: (VariantsEntity | null)[] | null;
+}
 export interface PricingContext {
   country: string;
   currency: string;
@@ -89,6 +113,7 @@ export interface PricingContext {
 export interface SizesEntity {
   name: string;
 }
+
 export interface VariantsEntity {
   is_default: boolean;
   sku: string;

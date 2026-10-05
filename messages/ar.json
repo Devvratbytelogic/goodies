@@ -430,6 +430,7 @@
     "title": "المنتج",
     "metaDescription": "اشترِ {name} من Goodies. {category}، صُنع بحب في الإمارات.",
     "viewGallery": "عرض معرض الصور بملء الشاشة",
+    "noBundleItems": "لا توجد منتجات متاحة في هذه المجموعة.",
     "close": "إغلاق",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to}",
     "priceLabel": "السعر: {amount}",

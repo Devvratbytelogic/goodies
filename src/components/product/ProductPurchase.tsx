@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import WishlistButton from "@/components/wishlist/WishlistButton";
-import { SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
+import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 import { formatAmount } from "@/utils/price";
+import BundleProductCard from "./BundleProductCard";
 
 type ProductPurchaseProps = {
   slug: string;
@@ -19,9 +20,12 @@ type ProductPurchaseProps = {
   sizeName: string | null;
   onSizeChange: (sizeName: string | null) => void;
   productId: string;
+  isBundle: boolean;
+  bundleItems: BundleItemsEntity[];
+  maxSelection: number;
 };
 
-export default function ProductPurchase({ slug, name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId }: ProductPurchaseProps) {
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -78,6 +82,19 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
         </span>
       </p>
 
+      {isBundle ? (
+        <div className="mt-5">
+          <div className="grid grid-cols-2 gap-2">
+            {bundleItems.length > 0 ? bundleItems.map((item) => (
+              <BundleProductCard key={item.product_id._id} bundleItem={item} />
+            )) :
+              <p className="text-sm font-semibold text-foreground col-span-2">
+                {t("noBundleItems")}
+              </p>
+            }
+          </div>
+        </div>
+      ) : null}
       {sizes.length > 0 ? (
         <div className="mt-5">
           <p className="text-sm font-semibold text-foreground">

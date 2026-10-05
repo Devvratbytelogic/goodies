@@ -430,6 +430,7 @@
     "title": "Product",
     "metaDescription": "Buy {name} from Goodies. {category}, made with love in the UAE.",
     "viewGallery": "View full-screen image gallery",
+    "noBundleItems": "No items available in this bundle.",
     "close": "Close",
     "priceRangeLabel": "Price range: {from} through {to}",
     "priceLabel": "Price: {amount}",
