@@ -23,11 +23,16 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
     quantity: 1,
     variant_sku: "",
   };
+
+  const wishlistPayload = {
+    product_id: product._id,
+    variant_sku: "",
+  };
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
       <WishlistButton
-        slug={product.slug}
         name={name}
+        payload={wishlistPayload}
         className="absolute inset-e-2.5 top-2.5 z-10 sm:inset-e-3 sm:top-3"
       />
       <Link
@@ -71,7 +76,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
         {isVariant ? (
           <Link
             href={getProductRoutePath(product.slug)}
-            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4 sm:text-sm"
+            className="inline-flex h-11 w-full min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             {t("selectOption")}
           </Link>

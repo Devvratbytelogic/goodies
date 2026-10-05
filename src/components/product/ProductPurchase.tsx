@@ -51,6 +51,11 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
   };
 
 
+  const wishlistPayload = {
+    product_id: productId,
+    variant_sku: selectedVariant?.sku ?? "",
+  };
+
   return (
     <div className="mt-3">
       <p className="text-[22px] font-bold leading-9" aria-live="polite">
@@ -210,7 +215,7 @@ export default function ProductPurchase({ slug, name, isVariant, variant, varian
         </div>
       </div>
 
-      <WishlistButton slug={slug} name={name} variant="text" className="mt-4" />
+      <WishlistButton name={name} payload={wishlistPayload} variant="text" className="mt-4" />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { unstable_cache } from "next/cache";
-import { cache } from "react";
 import { api } from "./api";
 import { HomeCategory, HomePageData } from "./types/Home";
 import { AllProductsData } from "./types/allProducts";
