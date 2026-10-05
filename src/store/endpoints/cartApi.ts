@@ -1,21 +1,11 @@
+import { CartApiResponse, CartApiResponseData } from "@/server/types/cart";
 import { api } from "../api";
-
-type ApiEnvelope<T> = {
-  success: boolean;
-  message?: string;
-  data: T;
-};
-
-type Cart = {
-  items: unknown[];
-  // match the real response
-};
 
 export const cartApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getCart: build.query<Cart, void>({
+    getCart: build.query<CartApiResponseData, void>({
       query: () => "/user/cart",
-      transformResponse: (res: ApiEnvelope<Cart>) => res.data,
+      transformResponse: (res: CartApiResponse) => res.data,
       providesTags: ["Cart"],
     }),
     addToCart: build.mutation({
@@ -24,10 +14,41 @@ export const cartApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      transformResponse: (res: ApiEnvelope<Cart>) => res.data,
+      transformResponse: (res: CartApiResponse) => res.data,
+      invalidatesTags: ["Cart"],
+    }),
+    removeFromCart: build.mutation({
+      query: (itemId: string) => ({
+        url: `/user/cart/${itemId}`,
+        method: "DELETE",
+      }),
+      transformResponse: (res: CartApiResponse) => res.data,
+      invalidatesTags: ["Cart"],
+    }),
+    updateCartItemQuantity: build.mutation({
+      query: ({ itemId, quantity }) => ({
+        url: `/user/cart/${itemId}`,
+        method: "PUT",
+        body: { quantity },
+      }),
+      transformResponse: (res: CartApiResponse) => res.data,
+      invalidatesTags: ["Cart"],
+    }),
+    removeCoupon: build.mutation({
+      query: () => ({
+        url: "/user/coupon-remove",
+        method: "DELETE",
+      }),
+      transformResponse: (res: CartApiResponse) => res.data,
       invalidatesTags: ["Cart"],
     }),
   }),
 });
 
-export const { useGetCartQuery, useAddToCartMutation } = cartApi;
+export const {
+  useGetCartQuery,
+  useAddToCartMutation,
+  useRemoveFromCartMutation,
+  useUpdateCartItemQuantityMutation,
+  useRemoveCouponMutation,
+} = cartApi;
