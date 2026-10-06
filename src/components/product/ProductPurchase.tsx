@@ -23,12 +23,18 @@ type ProductPurchaseProps = {
   isBundle: boolean;
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
+  minSelection: number;
 };
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection }: ProductPurchaseProps) {
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, minSelection }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [picked, setPicked] = useState<Record<string, number>>({});
+
+  const totalPicked = Object.values(picked).reduce((sum, qty) => sum + qty, 0);
+  const canAddMore = totalPicked < maxSelection;
+  const boxReady = totalPicked >= minSelection;
 
   const selectedVariant = variants.find((item) => item?.size === sizeName);
   const price = selectedVariant?.price ?? variant?.price ?? 0;
@@ -48,11 +54,18 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
     return t("priceLabel", { amount: formatAmount(price, currencySymbol) });
   }
 
-  const payload = {
-    product_id: productId,
-    quantity: quantity,
-    variant_sku: selectedVariant?.sku ?? "",
-  };
+  const bundleSelections = bundleItems
+    .filter((item) => picked[item.product_id._id] > 0)
+    .map((item) => ({
+      product_id: item.product_id._id,
+      variant_sku: item.variant_sku ?? undefined,
+      quantity: picked[item.product_id._id],
+    }));
+
+  const payload = isBundle
+    ? { product_id: productId, quantity, bundle_selections: bundleSelections }
+    : { product_id: productId, quantity, variant_sku: selectedVariant?.sku ?? "" };
+  const addDisabled = needsSize || (isBundle && !boxReady);
 
 
   const wishlistPayload = {
@@ -84,9 +97,40 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
 
       {isBundle ? (
         <div className="mt-5">
+          <div className="sticky top-22 z-10 bg-background pt-2 pb-3 lg:top-24">
+            <div className="rounded-xl border border-border bg-surface p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-heading">
+                  {minSelection === maxSelection
+                    ? t("bundleChoose", { count: maxSelection })
+                    : t("bundleChooseRange", { min: minSelection, max: maxSelection })}
+                </p>
+                <span
+                  aria-live="polite"
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${boxReady ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary"}`}
+                >
+                  {t("bundleSelected", { selected: totalPicked, max: maxSelection })}
+                </span>
+              </div>
+              <p className="mt-1.5 text-xs text-muted">
+                {!boxReady
+                  ? t("bundleRemaining", { count: minSelection - totalPicked })
+                  : canAddMore
+                    ? t("bundleCanAddMore", { count: maxSelection - totalPicked })
+                    : t("bundleFull")}
+              </p>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-2">
-            {bundleItems.length > 0 ? bundleItems.map((item) => (
-              <BundleProductCard key={item.product_id._id} bundleItem={item} />
+            {bundleItems.length > 0 ? bundleItems.map((item, index) => (
+              <BundleProductCard
+                key={index}
+                bundleItem={item}
+                quantity={picked[item.product_id._id] ?? 0}
+                canAddMore={canAddMore}
+                currencySymbol={currencySymbol}
+                onChange={(qty) => setPicked({ ...picked, [item.product_id._id]: qty })}
+              />
             )) :
               <p className="text-sm font-semibold text-foreground col-span-2">
                 {t("noBundleItems")}
@@ -191,14 +235,14 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           <div className="grid w-full grid-cols-2 gap-2.5 @min-[30rem]:flex @min-[30rem]:w-auto @min-[30rem]:gap-3">
             <AddToCartButton
               variant="product"
-              disabled={needsSize}
+              disabled={addDisabled}
               describedBy={needsSize ? "choose-size" : undefined}
               payload={payload}
             />
             <AddToCartButton
               variant="product"
               action="buy"
-              disabled={needsSize}
+              disabled={addDisabled}
               describedBy={needsSize ? "choose-size" : undefined}
               payload={payload}
             />

@@ -15,7 +15,8 @@ type AddToCartButtonProps = {
   payload?: {
     product_id: string;
     quantity: number;
-    variant_sku: string;
+    variant_sku?: string;
+    bundle_selections?: { product_id: string; variant_sku?: string; quantity: number }[];
   };
 };
 

@@ -33,6 +33,7 @@ export interface SingleProductData {
   url: string;
   bundle_items?: (BundleItemsEntity)[] | null;
   max_selection: number;
+  min_selection: number;
   average_rating: number;
   total_reviews: number;
   total_sales: number;
