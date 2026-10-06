@@ -1,3 +1,5 @@
+import { ProductId as SingleProductProductId } from "./singleProduct";
+
 export interface CartApiResponse {
     http_status_code: number;
     http_status_msg: string;
@@ -18,7 +20,7 @@ export interface CartItem {
     user_id: string;
     product_id: ProductId;
     product_type: string;
-    bundle_selections?: (null)[] | null;
+    bundle_selections?: (BundleSelectionsEntity | null)[] | null;
     variant_sku?: string | null;
     variant_key?: string | null;
     selected_size?: string | null;
@@ -36,6 +38,13 @@ export interface CartItem {
     id: number;
     __v: number;
     selected_variant: SelectedVariant;
+}
+export interface BundleSelectionsEntity {
+    product_id: SingleProductProductId;
+    variant_sku?: string | null;
+    variant_key?: string | null;
+    quantity: number;
+    _id: string;
 }
 export interface ProductId {
     _id: string;

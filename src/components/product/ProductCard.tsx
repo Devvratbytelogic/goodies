@@ -17,6 +17,14 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
   const variant = product?.variant;
   const variants = product?.variants ?? [];
 
+  // bundle: bundle stock, variable: every size sold out, simple: variant stock
+  const outOfStock =
+    product?.product_type === "bundle"
+      ? (product?.stock ?? 0) <= 0
+      : product?.is_variant
+        ? variants.length > 0 && variants.every((item) => (item?.stock ?? 0) <= 0)
+        : (variant?.stock ?? 0) <= 0;
+
 
   const payload = {
     product_id: product._id,
@@ -55,6 +63,12 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
               {t("new")}
             </span>
           ) : null}
+
+          {outOfStock ? (
+            <span className="absolute inset-x-0 bottom-0 bg-primary py-1.5 text-center text-xs font-semibold text-white">
+              {t("outOfStock")}
+            </span>
+          ) : null}
         </div>
 
         <div className="flex flex-1 flex-col px-3 pt-2.5 sm:px-4 sm:pt-3">
@@ -73,7 +87,11 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
         </div>
       </Link>
       <div className="px-3 pt-3 pb-3 sm:px-4 sm:pb-4">
-        {isVariant ? (
+        {outOfStock ? (
+          <p aria-hidden className="inline-flex h-11 w-full items-center justify-center rounded-full border border-primary bg-surface px-3 text-sm font-medium text-primary">
+            {t("outOfStock")}
+          </p>
+        ) : isVariant ? (
           <Link
             href={getProductRoutePath(product.slug)}
             className="inline-flex h-11 w-full min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

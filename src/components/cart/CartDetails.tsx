@@ -100,6 +100,11 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
         <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
           {cartItems?.map((item, index) => {
             const quantity = item?.quantity;
+            const isBundle = item?.product_type === "bundle";
+            const bundleSelections = isBundle ? (item?.bundle_selections ?? []) : [];
+            // bundle: bundle stock, others: selected variant stock
+            const stock = isBundle ? item?.product_id?.stock : item?.selected_variant?.stock;
+            const itemMaxQuantity = Math.min(maxQuantity, stock ?? maxQuantity);
 
             return (
               <li key={index} className="flex gap-4 p-4 sm:gap-5 sm:p-5">
@@ -120,6 +125,24 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
                         {item?.product_id?.title}
                       </Link>
                       <p className="mt-1 text-sm text-muted">{formatAmount(item?.selected_variant?.price, item?.product_id?.pricing_context?.currency_symbol ?? "")}</p>
+                      {bundleSelections.length > 0 ? (
+                        <div className="mt-2">
+                          <p className="text-xs font-semibold text-heading">{t("bundleContains")}</p>
+                          <ul className="mt-1 space-y-0.5 text-xs text-muted">
+                            {bundleSelections.map((selection, selectionIndex) => (
+                              <li key={selection?._id ?? selectionIndex}>
+                                <span className="font-semibold text-heading">{selection?.quantity} ×</span>{" "}
+                                <Link
+                                  href={getProductRoutePath(selection?.product_id?.slug ?? "")}
+                                  className="underline-offset-2 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                >
+                                  {selection?.product_id?.title}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
                     </div>
                     <button
                       type="button"
@@ -150,14 +173,14 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
                       <button
                         type="button"
                         aria-label={t("increase", { name: item?.product_id?.title })}
-                        disabled={isUpdatingQuantity || quantity >= maxQuantity}
+                        disabled={isUpdatingQuantity || quantity >= itemMaxQuantity}
                         onClick={() => updateCartItemQuantity(item?._id, quantity + 1)}
                         className="inline-flex size-9 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
                       >
                         <LuPlus aria-hidden className="size-3.5" />
                       </button>
                     </div>
-                    <p className="shrink-0 text-sm font-semibold text-price sm:text-base">{formatAmount(item?.selected_variant?.price, currencySymbol)}</p>
+                    <p className="shrink-0 text-sm font-semibold text-price sm:text-base">{formatAmount(item?.selected_variant?.price * quantity, currencySymbol)}</p>
                   </div>
                 </div>
               </li>
