@@ -323,6 +323,8 @@
     "itemCount": "{count, plural, one {منتج واحد} two {منتجان} few {# منتجات} other {# منتج}}",
     "tax": "الضريبة",
     "bundleContains": "محتويات الصندوق:",
+    "yourOrder": "طلبك",
+    "itemQty": "الكمية {count}",
     "shipping": "الشحن",
     "shippingNote": "سعر ثابت",
     "total": "الإجمالي",

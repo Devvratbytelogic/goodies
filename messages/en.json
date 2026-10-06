@@ -323,6 +323,8 @@
     "itemCount": "{count, plural, one {# item} other {# items}}",
     "tax": "Tax",
     "bundleContains": "In this box:",
+    "yourOrder": "Your order",
+    "itemQty": "Qty {count}",
     "shipping": "Shipping",
     "shippingNote": "Flat rate",
     "total": "Total",
