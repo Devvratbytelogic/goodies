@@ -441,6 +441,8 @@
     "bundleIncrease": "Add one {name}",
     "bundleDecrease": "Remove one {name}",
     "outOfStock": "Out of stock",
+    "outOfStockSize": "This size is sold out. Please choose another size.",
+    "outOfStockProduct": "This product is sold out right now. Add it to your wishlist to find it later.",
     "close": "Close",
     "priceRangeLabel": "Price range: {from} through {to}",
     "priceLabel": "Price: {amount}",

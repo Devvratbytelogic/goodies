@@ -48,7 +48,7 @@ export const cartApi = api.injectEndpoints({
       transformResponse: (res: CartApiResponse) => res.data,
       invalidatesTags: ["Cart"],
     }),
-    removeCoupon: build.mutation({
+    removeCoupon: build.mutation<CartApiResponseData, void>({
       query: () => ({
         url: "/user/coupon-remove",
         method: "DELETE",

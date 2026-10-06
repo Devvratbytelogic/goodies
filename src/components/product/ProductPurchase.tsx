@@ -24,9 +24,10 @@ type ProductPurchaseProps = {
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
   minSelection: number;
+  bundleStock: number;
 };
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, minSelection }: ProductPurchaseProps) {
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, minSelection, bundleStock }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -37,6 +38,16 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
   const boxReady = totalPicked >= minSelection;
 
   const selectedVariant = variants.find((item) => item?.size === sizeName);
+  const allSizesSoldOut = isVariant && variants.length > 0 && variants.every((item) => item?.stock === 0);
+
+  // bundle: bundle stock, variable: selected size stock, simple: variant stock
+  const maxQuantity = isBundle
+    ? bundleStock
+    : isVariant
+      ? (selectedVariant?.stock ?? (allSizesSoldOut ? 0 : Infinity))
+      : (variant?.stock ?? 0);
+  const outOfStock = maxQuantity <= 0;
+  const stockReached = quantity >= maxQuantity;
   const price = selectedVariant?.price ?? variant?.price ?? 0;
   const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
   const needsSize = sizes.length > 0 && !sizeName;
@@ -65,7 +76,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
   const payload = isBundle
     ? { product_id: productId, quantity, bundle_selections: bundleSelections }
     : { product_id: productId, quantity, variant_sku: selectedVariant?.sku ?? "" };
-  const addDisabled = needsSize || (isBundle && !boxReady);
+  const addDisabled = needsSize || outOfStock || (isBundle && !boxReady);
 
 
   const wishlistPayload = {
@@ -148,6 +159,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           <div role="radiogroup" aria-label={t("size")} className="mt-2 flex flex-wrap items-center gap-2">
             {sizes.map((size) => {
               const selected = size.name === sizeName;
+              const soldOut = variants.find((item) => item?.size === size.name)?.stock === 0;
               return (
                 <button
                   key={size.name}
@@ -156,14 +168,16 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
                   aria-checked={selected}
                   onClick={() => {
                     onSizeChange(size.name);
+                    setQuantity(1);
                     setAdded(false);
                   }}
                   className={`min-h-10 min-w-16 rounded-md border px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected
                     ? "border-primary bg-primary-soft text-primary"
                     : "border-border bg-background text-heading hover:border-primary/40"
-                    }`}
+                    } ${soldOut ? "border-dashed line-through" : ""}`}
                 >
                   {size.name}
+                  {soldOut ? <span className="sr-only">, {t("outOfStock")}</span> : null}
                 </button>
               );
             })}
@@ -189,6 +203,16 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
             {t("chooseSize")}
           </p>
         ) : null}
+        {outOfStock ? (
+          <div role="status" className="rounded-xl border border-border bg-surface p-4">
+            <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
+              {t("outOfStock")}
+            </span>
+            <p className="mt-2 text-sm text-foreground">
+              {isVariant && !allSizesSoldOut ? t("outOfStockSize") : t("outOfStockProduct")}
+            </p>
+          </div>
+        ) : (
         <div className="flex flex-col gap-2.5 @min-[30rem]:flex-row @min-[30rem]:items-center @min-[30rem]:gap-3">
           <div className="inline-flex h-11 w-fit shrink-0 items-center rounded-full border border-border bg-background">
             <button
@@ -215,7 +239,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
               value={quantity}
               onChange={(event) => {
                 const next = Number.parseInt(event.target.value, 10);
-                setQuantity(Number.isFinite(next) && next > 0 ? next : 1);
+                setQuantity(Number.isFinite(next) && next > 0 ? Math.min(next, maxQuantity) : 1);
                 setAdded(false);
               }}
               className="h-11 w-10 border-0 bg-transparent text-center text-sm font-semibold text-heading outline-none [appearance:textfield] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
@@ -223,11 +247,12 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
             <button
               type="button"
               aria-label={t("increaseQuantity")}
+              disabled={quantity >= maxQuantity}
               onClick={() => {
                 setQuantity((current) => current + 1);
                 setAdded(false);
               }}
-              className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
             >
               <LuPlus aria-hidden className="size-4" />
             </button>
@@ -248,6 +273,12 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
             />
           </div>
         </div>
+        )}
+        {!outOfStock && stockReached ? (
+          <p aria-live="polite" className="mt-3 text-sm font-medium text-primary">
+            {t("bundleStockLimit", { count: maxQuantity })}
+          </p>
+        ) : null}
         {added ? (
           <p className="mt-3 text-sm font-medium text-accent" role="status">
             {t("added")}

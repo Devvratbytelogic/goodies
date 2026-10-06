@@ -441,6 +441,8 @@
     "bundleIncrease": "أضف واحدًا من {name}",
     "bundleDecrease": "أزل واحدًا من {name}",
     "outOfStock": "نفد المخزون",
+    "outOfStockSize": "هذا الحجم نفد. يرجى اختيار حجم آخر.",
+    "outOfStockProduct": "هذا المنتج غير متوفر حاليًا. أضفه إلى قائمة الأمنيات للعودة إليه لاحقًا.",
     "close": "إغلاق",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to}",
     "priceLabel": "السعر: {amount}",
