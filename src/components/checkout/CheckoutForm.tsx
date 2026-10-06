@@ -5,13 +5,17 @@ import Country from "country-state-city/lib/country";
 import State from "country-state-city/lib/state";
 import { useFormik } from "formik";
 import { useLocale, useTranslations } from "next-intl";
+import { LuPencil, LuPlus, LuTrash2 } from "react-icons/lu";
 import Select, { type StylesConfig } from "react-select";
 import type { InferType } from "yup";
+import PhoneField from "@/components/auth/PhoneField";
+import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
 import { RequiredMark } from "@/components/form/RequiredMark";
-import { sampleAddresses } from "@/data/sampleAddresses";
+import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link } from "@/i18n/navigation";
+import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
+import { AddressEntity } from "@/server/types/address";
 import { checkoutValidationSchema } from "@/validations";
-
 type SelectOption = { value: string; label: string };
 
 function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
@@ -91,9 +95,6 @@ function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
 
 type CheckoutFormValues = InferType<ReturnType<typeof checkoutValidationSchema>>;
 type ValidationMessageKey = "required" | "emailInvalid" | "phoneInvalid" | "invalidText" | "tooLong";
-type SavedAddress = CheckoutFormValues & { id: string };
-type AddressEditor = { mode: "add" } | { mode: "edit"; id: string };
-
 const sampleOrderNumber = "GD-1042";
 
 const initialValues: CheckoutFormValues = {
@@ -108,59 +109,100 @@ const initialValues: CheckoutFormValues = {
 };
 
 const fieldClassName =
-  "mt-1.5 h-11 w-full rounded-md border border-border bg-background px-3.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-primary";
+  "mt-1.5 h-11 w-full rounded-md border border-border font-normal bg-background px-3.5 text-sm text-foreground outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-invalid:border-primary";
 
 const labelClassName = "block text-sm font-bold text-heading";
 
-function addressLocation(address: SavedAddress) {
-  const countryName = Country.getCountryByCode(address.country)?.name;
-  const stateName = State.getStatesOfCountry(address.country).find((state) => state.isoCode === address.state)?.name;
-  return [address.city, stateName, countryName].filter(Boolean).join(", ");
+const addLinkClassName =
+  "inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+function toAddressPayload(values: CheckoutFormValues, phoneCountryCode: string, isDefault: boolean, postalCode: string) {
+  const country = Country.getCountryByCode(values.country);
+  const state = State.getStatesOfCountry(values.country).find((item) => item.isoCode === values.state);
+
+  return {
+    first_name: values.firstName,
+    last_name: values.lastName,
+    email: values.email.trim(),
+    phone_number: values.phone.trim(),
+    phone_country_code: phoneCountryCode,
+    street_address: values.address,
+    city: values.city,
+    state: state?.name ?? "",
+    state_code: values.state ?? "",
+    country: country?.name ?? "",
+    country_code: values.country,
+    postal_code: postalCode.trim(),
+    is_default: isDefault,
+  };
 }
 
-function toFormValues(address: SavedAddress): CheckoutFormValues {
-  return {
-    firstName: address.firstName,
-    lastName: address.lastName,
-    country: address.country,
-    state: address.state ?? "",
-    city: address.city,
-    address: address.address,
-    phone: address.phone,
-    email: address.email,
-  };
+function AddressLines({ address, defaultLabel }: { address: AddressEntity; defaultLabel: string }) {
+  return (
+    <span className="min-w-0">
+      <span className="flex flex-wrap items-center gap-2 text-sm font-bold text-heading">
+        {address.first_name} {address.last_name}
+        {address.is_default ? (
+          <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">{defaultLabel}</span>
+        ) : null}
+      </span>
+      <span className="mt-1 block text-sm text-muted">{address.street_address}</span>
+      <span className="mt-0.5 block text-sm text-muted">{[address.city, address.state, address.country].filter(Boolean).join(", ")}</span>
+      <span className="mt-1 block text-sm text-muted">{address.phone_number}</span>
+      {address.email ? <span className="block text-sm text-muted">{address.email}</span> : null}
+    </span>
+  );
 }
 
 export default function CheckoutForm({ shopHref }: { shopHref: string }) {
   const t = useTranslations("CheckoutClassicPage");
   const locale = useLocale();
   const [placed, setPlaced] = useState(false);
-  const [addresses, setAddresses] = useState<SavedAddress[]>(() => sampleAddresses.map((address) => ({ ...address })));
-  const [selectedId, setSelectedId] = useState<string>(sampleAddresses[0].id);
-  const [editor, setEditor] = useState<AddressEditor | null>(null);
+  const { data: addresses = [], isLoading: isLoadingAddresses } = useGetAddressesQuery();
+  const [pickedId, setPickedId] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<AddressEntity | null>(null);
+  const [addAddress] = useAddAddressMutation();
+  const [updateAddress] = useUpdateAddressMutation();
+  const { openModal } = useModal();
+  // until the user picks one (or the picked one is deleted), use the default address (or the first one)
+  const pickedAddressId = addresses.find((address) => address._id === pickedId)?._id;
+  const selectedId = pickedAddressId ?? addresses.find((address) => address.is_default)?._id ?? addresses[0]?._id ?? null;
+  const [shipToDifferent, setShipToDifferent] = useState(false);
+  const [shippingPickedId, setShippingPickedId] = useState<string | null>(null);
+  const [addingFor, setAddingFor] = useState<"billing" | "shipping">("billing");
+  // shipping is the billing address unless the user ticks "Ship to a different address?" and picks another one
+  const shippingId = shipToDifferent
+    ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId)
+    : selectedId;
+  const [phoneCountryCode, setPhoneCountryCode] = useState("971");
+  const [isDefault, setIsDefault] = useState(false);
+  const [postalCode, setPostalCode] = useState("");
 
   const validationSchema = useMemo(() => checkoutValidationSchema((countryCode) => State.getStatesOfCountry(countryCode)), []);
 
   const formik = useFormik<CheckoutFormValues>({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
-      if (!editor) {
-        return;
+    onSubmit: async (values) => {
+      try {
+        if (editingAddress) {
+          const payload = toAddressPayload(values, phoneCountryCode, isDefault, postalCode);
+          await updateAddress({ addressId: editingAddress._id, ...payload }).unwrap();
+          setPickedId(editingAddress._id);
+        } else {
+          const newAddress = await addAddress(toAddressPayload(values, phoneCountryCode, isDefault, postalCode)).unwrap();
+          // select the new address in the list it was added from (only if the API returns its _id)
+          if (addingFor === "shipping") {
+            setShippingPickedId(newAddress?._id ?? null);
+          } else {
+            setPickedId(newAddress?._id ?? null);
+          }
+        }
+        setFormOpen(false);
+      } catch (error) {
+        console.error("Error saving address", error);
       }
-
-      const next = { ...values, state: values.state ?? "" };
-
-      if (editor.mode === "add") {
-        const id = crypto.randomUUID();
-        setAddresses((current) => [...current, { id, ...next }]);
-        setSelectedId(id);
-      } else {
-        setAddresses((current) => current.map((item) => (item.id === editor.id ? { ...item, ...next } : item)));
-        setSelectedId(editor.id);
-      }
-
-      setEditor(null);
     },
   });
 
@@ -190,15 +232,42 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
     void formik.setFieldTouched("state", false, false);
   }
 
-  function openAdd() {
+  function openAdd(target: "billing" | "shipping") {
+    setAddingFor(target);
     formik.resetForm({ values: initialValues });
-    setEditor({ mode: "add" });
+    setPhoneCountryCode("971");
+    setIsDefault(addresses.length === 0);
+    setPostalCode("");
+    setEditingAddress(null);
+    setFormOpen(true);
   }
 
-  function openEdit(address: SavedAddress) {
-    formik.resetForm({ values: toFormValues(address) });
-    setSelectedId(address.id);
-    setEditor({ mode: "edit", id: address.id });
+  function openEdit(address: AddressEntity) {
+    formik.resetForm({
+      values: {
+        firstName: address.first_name,
+        lastName: address.last_name,
+        country: address.country_code,
+        state: State.getStatesOfCountry(address.country_code).find((item) => item.name === address.state)?.isoCode ?? "",
+        city: address.city,
+        address: address.street_address,
+        phone: address.phone_number,
+        email: address.email ?? "",
+      },
+    });
+    setIsDefault(address.is_default);
+    setPostalCode(address.postal_code ?? "");
+    setEditingAddress(address);
+    setFormOpen(true);
+  }
+
+  function openDelete(address: AddressEntity) {
+    const name = `${address.first_name} ${address.last_name}`.trim();
+    openModal({
+      title: t("deleteTitle"),
+      size: "sm",
+      content: <DeleteAddressConfirm addressId={address._id} name={name} />,
+    });
   }
 
   if (placed) {
@@ -220,60 +289,110 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
     );
   }
 
-  if (!editor) {
+  if (!formOpen) {
     return (
       <section className="rounded-2xl border border-border bg-background px-5 py-5 sm:px-6 sm:py-6">
-        <h2 className="text-base font-bold">{t("savedAddresses")}</h2>
-        {addresses.length === 0 ? <p className="mt-4 text-sm text-muted">{t("emptyAddresses")}</p> : null}
-        <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("savedAddresses")}>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-base font-bold">{t("billingAddress")}</h2>
+          <button type="button" onClick={() => openAdd("billing")} className={addLinkClassName}>
+            <LuPlus aria-hidden className="size-4" />
+            {t("addNew")}
+          </button>
+        </div>
+        {isLoadingAddresses ? <p className="mt-4 text-sm text-muted">{t("loadingAddresses")}</p> : null}
+        {!isLoadingAddresses && addresses.length === 0 ? <p className="mt-4 text-sm text-muted">{t("emptyAddresses")}</p> : null}
+        <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("billingAddress")}>
           {addresses.map((address) => {
-            const selected = address.id === selectedId;
+            const selected = address._id === selectedId;
 
             return (
-              <div key={address.id} className={`rounded-xl border p-4 ${selected ? "border-primary bg-primary-soft" : "border-border"}`}>
-                <div className="flex items-start gap-3">
-                  <label className="flex min-w-0 flex-1 cursor-pointer gap-3">
-                    <input
-                      type="radio"
-                      name="saved-address"
-                      value={address.id}
-                      checked={selected}
-                      onChange={() => setSelectedId(address.id)}
-                      className="mt-1 size-4 accent-primary"
-                    />
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold text-heading">
-                        {address.firstName} {address.lastName}
-                      </span>
-                      <span className="mt-1 block text-sm text-muted">{address.address}</span>
-                      <span className="mt-0.5 block text-sm text-muted">{addressLocation(address)}</span>
-                      <span className="mt-1 block text-sm text-muted">{address.phone}</span>
-                      <span className="block text-sm text-muted">{address.email}</span>
-                    </span>
-                  </label>
+              <div
+                key={address._id}
+                className={`flex items-start gap-3 rounded-xl border p-4 ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
+              >
+                <label className="flex min-w-0 flex-1 cursor-pointer gap-3">
+                  <input
+                    type="radio"
+                    name="saved-address"
+                    value={address._id}
+                    checked={selected}
+                    onChange={() => setPickedId(address._id)}
+                    className="mt-1 size-4 accent-primary"
+                  />
+                  <AddressLines address={address} defaultLabel={t("defaultAddress")} />
+                </label>
+                <div className="-me-1 -mt-1 flex shrink-0 items-center gap-1">
                   <button
                     type="button"
+                    aria-label={t("editLabel", { name: `${address.first_name} ${address.last_name}` })}
                     onClick={() => openEdit(address)}
-                    className="shrink-0 text-sm font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-background hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    {t("edit")}
+                    <LuPencil aria-hidden className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={t("deleteLabel", { name: `${address.first_name} ${address.last_name}` })}
+                    onClick={() => openDelete(address)}
+                    className="inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-background hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <LuTrash2 aria-hidden className="size-4" />
                   </button>
                 </div>
               </div>
             );
           })}
         </div>
-        <button
-          type="button"
-          onClick={openAdd}
-          className="mt-4 inline-flex h-11 items-center justify-center rounded-full border border-border px-5 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          {t("addNew")}
-        </button>
+        {addresses.length > 0 ? (
+          <label className="mt-6 flex cursor-pointer items-center gap-2.5 border-t border-border pt-5 text-sm font-bold text-heading">
+            <input
+              type="checkbox"
+              checked={shipToDifferent}
+              onChange={(event) => setShipToDifferent(event.target.checked)}
+              className="size-4 accent-primary"
+            />
+            {t("shipToDifferent")}
+          </label>
+        ) : null}
+
+        {shipToDifferent && addresses.length > 0 ? (
+          <div className="mt-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-base font-bold">{t("shippingAddress")}</h2>
+              <button type="button" onClick={() => openAdd("shipping")} className={addLinkClassName}>
+                <LuPlus aria-hidden className="size-4" />
+                {t("addNew")}
+              </button>
+            </div>
+            <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("shippingAddress")}>
+              {addresses.map((address) => {
+                const selected = address._id === shippingId;
+
+                return (
+                  <label
+                    key={address._id}
+                    className={`flex cursor-pointer gap-3 rounded-xl border p-4 ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
+                  >
+                    <input
+                      type="radio"
+                      name="shipping-address"
+                      value={address._id}
+                      checked={selected}
+                      onChange={() => setShippingPickedId(address._id)}
+                      className="mt-1 size-4 accent-primary"
+                    />
+                    <AddressLines address={address} defaultLabel={t("defaultAddress")} />
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
         <button
           type="button"
           onClick={() => setPlaced(true)}
-          disabled={!selectedId}
+          disabled={!selectedId || !shippingId}
           className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
         >
           {t("placeOrder")}
@@ -284,7 +403,7 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
 
   return (
     <form noValidate onSubmit={formik.handleSubmit} className="rounded-2xl border border-border bg-background px-5 py-5 sm:px-6 sm:py-6">
-      <h2 className="text-base font-bold">{editor.mode === "edit" ? t("editAddress") : t("addNew")}</h2>
+      <h2 className="text-base font-bold">{editingAddress ? t("editAddress") : t("addNew")}</h2>
       <div className="mt-5 grid gap-5 sm:grid-cols-2">
         <label className={labelClassName}>
           {t("firstName")}
@@ -380,7 +499,7 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
             </p>
           ) : null}
         </div>
-        <label className={`${labelClassName} sm:col-span-2`}>
+        <label className={labelClassName}>
           {t("city")}
           <RequiredMark />
           <input
@@ -399,6 +518,18 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
               {fieldError("city")}
             </p>
           ) : null}
+        </label>
+        <label className={labelClassName}>
+          {t("postalCode")}
+          <input
+            name="postalCode"
+            type="text"
+            autoComplete="postal-code"
+            maxLength={10}
+            value={postalCode}
+            onChange={(event) => setPostalCode(event.target.value)}
+            className={fieldClassName}
+          />
         </label>
         <label className={`${labelClassName} sm:col-span-2`}>
           {t("address")}
@@ -423,16 +554,18 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
         <label className={`${labelClassName} sm:col-span-2`}>
           {t("phone")}
           <RequiredMark />
-          <input
-            name="phone"
-            type="tel"
-            autoComplete="tel"
+          <PhoneField
             value={formik.values.phone}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            aria-invalid={Boolean(fieldError("phone"))}
-            aria-describedby={fieldError("phone") ? "checkout-phone-error" : undefined}
-            className={fieldClassName}
+            invalid={Boolean(fieldError("phone"))}
+            describedBy={fieldError("phone") ? "checkout-phone-error" : undefined}
+            searchPlaceholder={t("searchCountry")}
+            onChange={(value, dialCode) => {
+              void formik.setFieldValue("phone", value);
+              setPhoneCountryCode(dialCode);
+            }}
+            onBlur={() => {
+              void formik.setFieldTouched("phone", true);
+            }}
           />
           {fieldError("phone") ? (
             <p id="checkout-phone-error" className="mt-1.5 text-xs font-medium text-primary">
@@ -462,6 +595,16 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
         </label>
       </div>
 
+      <label className="mt-5 flex cursor-pointer items-center gap-2.5 text-sm font-semibold text-heading">
+        <input
+          type="checkbox"
+          checked={isDefault}
+          onChange={(event) => setIsDefault(event.target.checked)}
+          className="size-4 accent-primary"
+        />
+        {t("setDefault")}
+      </label>
+
       <button
         type="submit"
         disabled={formik.isSubmitting}
@@ -471,7 +614,7 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
       </button>
       <button
         type="button"
-        onClick={() => setEditor(null)}
+        onClick={() => setFormOpen(false)}
         className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-border text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         {t("cancel")}
