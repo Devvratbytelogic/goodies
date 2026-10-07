@@ -9,12 +9,15 @@ import { LuPencil, LuPlus, LuTrash2 } from "react-icons/lu";
 import Select, { type StylesConfig } from "react-select";
 import type { InferType } from "yup";
 import PhoneField from "@/components/auth/PhoneField";
+import CodCheckout from "@/components/checkout/CodCheckout";
 import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
+import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import TabbyCheckout from "@/components/checkout/TabbyCheckout";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
-import { Link } from "@/i18n/navigation";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
 import { AddressEntity } from "@/server/types/address";
+import { PlacedOrder } from "@/server/types/order";
 import { checkoutValidationSchema } from "@/validations";
 type SelectOption = { value: string; label: string };
 
@@ -95,8 +98,6 @@ function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
 
 type CheckoutFormValues = InferType<ReturnType<typeof checkoutValidationSchema>>;
 type ValidationMessageKey = "required" | "emailInvalid" | "phoneInvalid" | "invalidText" | "tooLong";
-const sampleOrderNumber = "GD-1042";
-
 const initialValues: CheckoutFormValues = {
   firstName: "",
   lastName: "",
@@ -154,10 +155,10 @@ function AddressLines({ address, defaultLabel }: { address: AddressEntity; defau
   );
 }
 
-export default function CheckoutForm({ shopHref }: { shopHref: string }) {
+export default function CheckoutForm({ onPlaced }: { onPlaced: (order: PlacedOrder) => void }) {
   const t = useTranslations("CheckoutClassicPage");
   const locale = useLocale();
-  const [placed, setPlaced] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const { data: addresses = [], isLoading: isLoadingAddresses } = useGetAddressesQuery();
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -175,6 +176,7 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
   const shippingId = shipToDifferent
     ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId)
     : selectedId;
+  const shippingCountry = addresses.find((address) => address._id === shippingId)?.country_code ?? "AE";
   const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const [isDefault, setIsDefault] = useState(false);
   const [postalCode, setPostalCode] = useState("");
@@ -268,25 +270,6 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
       size: "sm",
       content: <DeleteAddressConfirm addressId={address._id} name={name} />,
     });
-  }
-
-  if (placed) {
-    return (
-      <section className="rounded-2xl border border-border bg-background px-5 py-8 sm:px-8">
-        <h2 className="text-2xl font-bold">{t("received")}</h2>
-        <p className="mt-2 max-w-md text-sm text-muted">{t("receivedNote")}</p>
-        <p className="mt-5 text-sm">
-          <span className="text-muted">{t("orderNumber")}</span>{" "}
-          <span className="font-bold text-primary">{sampleOrderNumber}</span>
-        </p>
-        <Link
-          href={shopHref}
-          className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          {t("shop")}
-        </Link>
-      </section>
-    );
   }
 
   if (!formOpen) {
@@ -389,14 +372,13 @@ export default function CheckoutForm({ shopHref }: { shopHref: string }) {
           </div>
         ) : null}
 
-        <button
-          type="button"
-          onClick={() => setPlaced(true)}
-          disabled={!selectedId || !shippingId}
-          className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
-        >
-          {t("placeOrder")}
-        </button>
+        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} onChange={setPaymentMethod} /> : null}
+
+        {paymentMethod === "tabby" ? (
+          <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} />
+        ) : (
+          <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} onPlaced={onPlaced} />
+        )}
       </section>
     );
   }

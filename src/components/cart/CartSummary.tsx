@@ -52,7 +52,6 @@ export default function CartSummary({ checkoutHref, showItems = false }: CartSum
   const taxAmount = cartSummary?.tax_amount ?? 0;
   const totalAmount = cartSummary?.total_amount ?? 0;
   const currencySymbol = cartSummary?.currency_symbol ?? "";
-
   return (
     <aside className="overflow-hidden rounded-2xl border border-border bg-background lg:sticky lg:top-24">
       {showItems && cartItems.length > 0 ? (
