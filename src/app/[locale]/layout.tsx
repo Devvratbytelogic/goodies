@@ -6,13 +6,8 @@ import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ModalProvider } from "@/components/layout/common/ModalProvider";
 import { StoreProvider } from "@/store/StoreProvider";
-import { Header } from "@/components/layout/header/Header";
-import { InstallPrompt } from "@/components/install-prompt";
 import { routing } from "@/i18n/routing";
 import "../../styles/globals.css";
-import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
-import { BottomNav } from "@/components/layout/footer/BottomNav";
-import Footer from "@/components/layout/footer/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -126,14 +121,7 @@ export default async function LocaleLayout({
           <StoreProvider>
             <AuthProvider>
               <ModalProvider>
-                {/* <InstallPrompt /> */}
-                <Header />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-                <BottomNav />
-                <WhatsAppFloatingButton />
+                {children}
               </ModalProvider>
             </AuthProvider>
           </StoreProvider>

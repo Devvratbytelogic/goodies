@@ -1,4 +1,5 @@
 import { getHomePage } from "@/server";
+import { toCurrency } from "@/utils/currency";
 import BestSellerSection from "@/components/page-components/home/BestSellerSection";
 import CategorySection from "@/components/page-components/home/CategorySection";
 import InstallAppBanner from "@/components/page-components/home/InstallAppBanner";
@@ -8,8 +9,9 @@ import NewArrivalsSection from "@/components/page-components/home/NewArrivalsSec
 import TastyChoicesSection from "@/components/page-components/home/TastyChoicesSection";
 import WhyChooseSection from "@/components/page-components/home/WhyChooseSection";
 
-export default async function Home() {
-  const homePage = await getHomePage();
+export default async function Home({ params }: { params: Promise<{ currency: string }> }) {
+  const { currency } = await params;
+  const homePage = await getHomePage(toCurrency(currency));
 
   return (
     <>

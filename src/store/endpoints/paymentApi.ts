@@ -8,7 +8,6 @@ export const paymentApi = api.injectEndpoints({
       query: (body) => ({
         url: "/user/tabby/checkout",
         method: "POST",
-        headers: { country: body.country },
         body,
       }),
       transformResponse: (res: TabbySessionResponse) => res.data,

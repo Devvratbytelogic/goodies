@@ -10,6 +10,7 @@ import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getAccountRoutePath, getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
 import CurrencySelect from "@/components/product/CurrencySelect";
+import type { CurrencyCode } from "@/utils/currency";
 import { DesktopNav } from "./DesktopNav";
 import { LocaleToggle } from "./LocaleToggle";
 import MobileMenu from "./MobileMenu";
@@ -23,6 +24,7 @@ type HeaderBarProps = {
   cartCount: number;
   wishlistCount: number;
   shopCategories: ShopCategory[];
+  currency: CurrencyCode;
 };
 
 function CountBadge({ count, showZero = false }: { count: number; showZero?: boolean }) {
@@ -86,7 +88,7 @@ function BrandLogo() {
   );
 }
 
-export function HeaderBar({ cartCount, wishlistCount, shopCategories }: HeaderBarProps) {
+export function HeaderBar({ cartCount, wishlistCount, shopCategories, currency }: HeaderBarProps) {
   const t = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
@@ -210,7 +212,7 @@ export function HeaderBar({ cartCount, wishlistCount, shopCategories }: HeaderBa
               <span aria-hidden className="mx-2 h-6 w-px bg-border/70" />
 
               <LocaleToggle />
-              <CurrencySelect />
+              <CurrencySelect key={currency} value={currency} />
             </div>
           </div>
 
@@ -247,6 +249,7 @@ export function HeaderBar({ cartCount, wishlistCount, shopCategories }: HeaderBa
         cartCount={cartCount}
         wishlistCount={wishlistCount}
         shopCategories={shopCategories}
+        currency={currency}
       />
     </>
   );

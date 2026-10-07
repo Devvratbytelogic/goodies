@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LuCheck, LuChevronDown } from "react-icons/lu";
-
-const currencies = ["AED", "USD", "EUR", "SAR", "QAR", "KWD", "OMR", "BHD"] as const;
-
-type CurrencyCode = (typeof currencies)[number];
+import { api } from "@/store/api";
+import { useAppDispatch } from "@/store/hooks";
+import { currencies, type CurrencyCode } from "@/utils/currency";
+import { writeCurrencyCookie } from "@/utils/currencyCookie";
 
 const flagClass = "h-3.5 w-5 shrink-0 overflow-hidden rounded-[2px] ring-1 ring-black/10";
 
@@ -95,12 +96,31 @@ function CurrencyFlag({ code }: { code: CurrencyCode }) {
   }
 }
 
-export default function CurrencySelect({ className = "", openUp = false }: { className?: string; openUp?: boolean }) {
+export default function CurrencySelect({
+  className = "",
+  openUp = false,
+  value,
+}: {
+  className?: string;
+  openUp?: boolean;
+  value: CurrencyCode;
+}) {
   const t = useTranslations("Header");
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const listId = useId();
   const currencyRef = useRef<HTMLDivElement>(null);
-  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>("AED");
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(value);
   const [currencyOpen, setCurrencyOpen] = useState(false);
+
+  function selectCurrency(code: CurrencyCode) {
+    setCurrencyOpen(false);
+    if (code === currencyCode) return;
+    setCurrencyCode(code);
+    writeCurrencyCookie(code);
+    dispatch(api.util.resetApiState());
+    router.refresh();
+  }
 
   useEffect(() => {
     if (!currencyOpen) {
@@ -161,10 +181,7 @@ export default function CurrencySelect({ className = "", openUp = false }: { cla
                   type="button"
                   role="option"
                   aria-selected={selected}
-                  onClick={() => {
-                    setCurrencyCode(code);
-                    setCurrencyOpen(false);
-                  }}
+                  onClick={() => selectCurrency(code)}
                   className={`flex w-full items-center gap-2 px-2.5 py-2 text-start text-sm focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${selected ? "bg-primary-soft font-semibold text-primary" : "text-heading hover:bg-surface"
                     }`}
                 >

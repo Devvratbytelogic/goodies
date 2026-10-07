@@ -5,6 +5,7 @@ import ShopFilters from "@/components/product/ShopFilters";
 import ShopSortSelect from "@/components/product/ShopSortSelect";
 import { getCategories } from "@/server";
 import { HomeProduct } from "@/server/types/Home";
+import { defaultCurrency, type CurrencyCode } from "@/utils/currency";
 
 type ShopCatalogProps = {
   title: string;
@@ -20,6 +21,7 @@ type ShopCatalogProps = {
   priceTo?: number;
   currencySymbol?: string;
   sort?: string;
+  currency?: CurrencyCode;
 };
 
 export default async function ShopCatalog({
@@ -36,9 +38,10 @@ export default async function ShopCatalog({
   priceTo,
   currencySymbol,
   sort,
+  currency = defaultCurrency,
 }: ShopCatalogProps) {
   const t = await getTranslations("ShopPage");
-  const categoryList = (await getCategories()) ?? [];
+  const categoryList = (await getCategories(currency)) ?? [];
   const count = products.length;
   const total = totalCount ?? count;
   const size = pageSize ?? count;

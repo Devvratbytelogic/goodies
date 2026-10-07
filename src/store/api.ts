@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import Cookies from "js-cookie";
 import { getDeviceId } from "@/utils/deviceId";
+import { readCurrencyCookie } from "@/utils/currencyCookie";
 import { showToast } from "@/utils/toast";
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders(headers) {
     headers.set("Accept", "application/json");
+    headers.set("country", readCurrencyCookie());
 
     const token = Cookies.get("token");
     if (token) headers.set("Authorization", `Bearer ${token}`);

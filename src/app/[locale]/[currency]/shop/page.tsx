@@ -4,6 +4,7 @@ import Pagination from "@/components/product/Pagination";
 import ShopCatalog from "@/components/product/ShopCatalog";
 import { getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
 import { getAllProducts } from "@/server";
+import { toCurrency } from "@/utils/currency";
 
 function priceParam(value?: string) {
   if (!value) return undefined;
@@ -38,10 +39,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ShopPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ currency: string }>;
   searchParams: Promise<{ page?: string; min_price?: string; max_price?: string; sort?: string }>;
 }) {
+  const { currency } = await params;
+  const country = toCurrency(currency);
   const t = await getTranslations("ShopPage");
   const nav = await getTranslations("Nav");
   const { page: pageParam, min_price: minParam, max_price: maxParam, sort: sortQuery } = await searchParams;
@@ -50,7 +55,7 @@ export default async function ShopPage({
   const selectedMax = priceParam(maxParam);
   const price = selectedMin != null && selectedMax != null ? { min: selectedMin, max: selectedMax } : undefined;
   const sort = sortParam(sortQuery);
-  const allProductsData = await getAllProducts(page, price?.min, price?.max, sort);
+  const allProductsData = await getAllProducts(page, price?.min, price?.max, sort, undefined, country);
   const products = allProductsData.data ?? [];
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;
@@ -76,6 +81,7 @@ export default async function ShopPage({
         priceFrom={price?.min}
         priceTo={price?.max}
         currencySymbol={currencySymbol}
+        currency={country}
         sort={sort ?? ""}
       />
       <Pagination

@@ -16,6 +16,7 @@ import {
   getWishlistRoutePath,
 } from "@/utils/routes";
 import CurrencySelect from "@/components/product/CurrencySelect";
+import type { CurrencyCode } from "@/utils/currency";
 import { LocaleToggle } from "./LocaleToggle";
 import { isActivePath, navItems, type ShopCategory } from "./navigation";
 
@@ -25,6 +26,7 @@ type MobileMenuProps = {
   cartCount?: number;
   wishlistCount?: number;
   shopCategories: ShopCategory[];
+  currency: CurrencyCode;
 };
 
 const accountLinks: {
@@ -145,6 +147,7 @@ export default function MobileMenu({
   cartCount = 0,
   wishlistCount = 0,
   shopCategories,
+  currency,
 }: MobileMenuProps) {
   const t = useTranslations("Nav");
   const tHeader = useTranslations("Header");
@@ -407,7 +410,7 @@ export default function MobileMenu({
           </div>
 
           <div className="flex gap-2 justify-between shrink-0 space-y-2 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-            <CurrencySelect openUp className="w-full" />
+            <CurrencySelect key={currency} value={currency} openUp className="w-full" />
             <LocaleToggle className="w-full justify-center" />
           </div>
         </div>

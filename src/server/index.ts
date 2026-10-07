@@ -1,11 +1,11 @@
 import { unstable_cache } from "next/cache";
+import { defaultCurrency } from "@/utils/currency";
 import { api } from "./api";
 import { HomeCategory, HomePageData } from "./types/Home";
 import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
 import { SingleCategoryApiResponseData } from "./types/singleCategory";
-
 
 function productSlug(slug: string) {
   try {
@@ -15,20 +15,30 @@ function productSlug(slug: string) {
   }
 }
 
-async function getData<T>(path: string) {
-  const { data } = await api.get(path);
+async function getData<T>(path: string, country: string) {
+  const { data } = await api.get(path, { headers: { country } });
   return data.data as T;
 }
 
+function cached<T>(country: string, key: string[], tags: string[], revalidate: number, load: () => Promise<T>) {
+  return unstable_cache(load, [...key, country], { tags, revalidate })();
+}
 
-
+// Slug list for build-time params. Slugs do not change with currency.
 export const getProducts = unstable_cache(
-  () => getData<ProductListItem[]>("/user/products"), //only for get all products list in the product with title and slug for isr
-  ["products"],
+  () => getData<ProductListItem[]>("/user/products", defaultCurrency),
+  ["products", defaultCurrency],
   { tags: ["products"], revalidate: 600 },
 );
 
-export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number, sort?: string, category?: string) {
+export function getAllProducts(
+  page = 1,
+  minPrice?: number,
+  maxPrice?: number,
+  sort?: string,
+  category?: string,
+  country = defaultCurrency,
+) {
   const query = new URLSearchParams({ page: String(page), limit: "20" });
   if (minPrice != null && maxPrice != null) {
     query.set("min_price", String(minPrice));
@@ -37,42 +47,44 @@ export function getAllProducts(page = 1, minPrice?: number, maxPrice?: number, s
   if (sort) query.set("sort", sort);
   if (category) query.set("category", category);
 
-  return unstable_cache(
-    () => getData<AllProductsData>(`/user/all-product?${query}`),
+  return cached(
+    country,
     ["all-product", query.toString()],
-    { tags: ["all-product"], revalidate: 600 },
-  )();
+    ["all-product"],
+    600,
+    () => getData<AllProductsData>(`/user/all-product?${query}`, country),
+  );
 }
 
-export function getCategory(slug: string, page = 1) {
+export function getCategory(slug: string, page = 1, country = defaultCurrency) {
   const decoded = productSlug(slug);
   const query = new URLSearchParams({ page: String(page), limit: "5" });
 
-  return unstable_cache(
-    () => getData<SingleCategoryApiResponseData>(`/user/category/${encodeURIComponent(decoded)}?${query}`),
+  return cached(
+    country,
     ["category", decoded, query.toString()],
-    { tags: ["category", `category:${decoded}`], revalidate: 600 },
-  )();
+    ["category", `category:${decoded}`],
+    600,
+    () => getData<SingleCategoryApiResponseData>(`/user/category/${encodeURIComponent(decoded)}?${query}`, country),
+  );
 }
 
-export const getCategories = unstable_cache(
-  () => getData<HomeCategory[]>("/user/categories"),
-  ["categories"],
-  { tags: ["categories"], revalidate: 600 },
-);
+export function getCategories(country = defaultCurrency) {
+  return cached(country, ["categories"], ["categories"], 600, () => getData<HomeCategory[]>("/user/categories", country));
+}
 
-export const getHomePage = unstable_cache(
-  () => getData<HomePageData>("/user/home-page"),
-  ["home-page"],
-  { tags: ["home-page"], revalidate: 600 }, // 10 minutes
-);
+export function getHomePage(country = defaultCurrency) {
+  return cached(country, ["home-page"], ["home-page"], 600, () => getData<HomePageData>("/user/home-page", country));
+}
 
-export function getProduct(slug: string) {
+export function getProduct(slug: string, country = defaultCurrency) {
   const decoded = productSlug(slug);
 
-  return unstable_cache(
-    () => getData<SingleProductData>(`/user/product/${encodeURIComponent(decoded)}`),
+  return cached(
+    country,
     ["product", decoded],
-    { tags: [`product:${decoded}`], revalidate: 120 },
-  )();
+    [`product:${decoded}`],
+    120,
+    () => getData<SingleProductData>(`/user/product/${encodeURIComponent(decoded)}`, country),
+  );
 }

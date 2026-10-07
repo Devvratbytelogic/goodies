@@ -6,9 +6,10 @@ import ProductGallery from "@/components/product/ProductGallery";
 import ProductSelection from "@/components/product/ProductSelection";
 import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
 import { getProduct, getProducts } from "@/server";
+import { toCurrency } from "@/utils/currency";
 
 type ProductPageProps = {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: string; currency: string; slug: string }>;
 };
 
 export async function generateStaticParams() {
@@ -27,9 +28,9 @@ function metaText(value?: string | null) {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { currency, slug } = await params;
 
-  const product = await getProduct(slug);
+  const product = await getProduct(slug, toCurrency(currency));
   const title = metaText(product.meta_title) ?? product.title;
   const description =
     metaText(product.meta_description) ??
@@ -56,8 +57,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
+  const { currency, slug } = await params;
+  const product = await getProduct(slug, toCurrency(currency));
 
   const t = await getTranslations("ProductPage");
   const nav = await getTranslations("Nav");

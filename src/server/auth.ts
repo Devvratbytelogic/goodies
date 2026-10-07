@@ -1,6 +1,7 @@
 "use server";
 
 import { ApiError, api } from "@/server/api";
+import { getRequestCurrency } from "@/server/currency";
 
 export type VerifyType = "account" | "login" | "forgot";
 
@@ -9,7 +10,8 @@ type AuthFailure = { ok: false; message: string };
 
 async function post<T>(path: string, body: unknown, headers?: Record<string, string>): Promise<AuthSuccess<T> | AuthFailure> {
   try {
-    const { data } = await api.post(path, body, headers ? { headers } : undefined);
+    const country = await getRequestCurrency();
+    const { data } = await api.post(path, body, { headers: { country, ...headers } });
     return { ok: true, data: data?.data as T, message: data?.message };
   } catch (error) {
     if (error instanceof ApiError) return { ok: false, message: error.message };
