@@ -8,6 +8,7 @@ import WishlistButton from "@/components/wishlist/WishlistButton";
 import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 import { formatAmount } from "@/utils/price";
 import BundleProductCard from "./BundleProductCard";
+import TabbyPromo from "./TabbyPromo";
 
 type ProductPurchaseProps = {
   slug: string;
@@ -287,15 +288,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
       </div>
 
       <div className="mt-4 space-y-3">
-        <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-3 text-sm sm:px-4">
-          <p className="text-foreground">
-            {t("tabbyBefore")} <strong>{formatAmount(price / 4, currencySymbol)}/{t("month")}</strong>{" "}
-            {t("tabbyAfter")} <span className="font-semibold text-[#2563eb]">{t("learnMore")}</span>
-          </p>
-          <span className="shrink-0 rounded-md bg-[#3cff7e] px-2 py-1 text-sm font-black tracking-tight text-black lowercase">
-            tabby
-          </span>
-        </div>
+        <TabbyPromo price={price} currencySymbol={currencySymbol} />
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-3 text-sm sm:px-4">
           <p className="text-foreground">
             <strong>{formatAmount(price / 4, currencySymbol)}</strong>
