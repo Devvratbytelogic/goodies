@@ -16,14 +16,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
   const isNew = product?.new_product;
   const variant = product?.variant;
   const variants = product?.variants ?? [];
-
-  // bundle: bundle stock, variable: every size sold out, simple: variant stock
-  const outOfStock =
-    product?.product_type === "bundle"
-      ? (product?.stock ?? 0) <= 0
-      : product?.is_variant
-        ? variants.length > 0 && variants.every((item) => (item?.stock ?? 0) <= 0)
-        : (variant?.stock ?? 0) <= 0;
+  const outOfStock = product.stock_manage && product.stock_status === "out_of_stock"; // when stock_manage is false, the product is always in stock
 
 
   const payload = {

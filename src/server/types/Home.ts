@@ -14,6 +14,8 @@ export interface HomePageData {
 }
 export interface HomeProduct {
     variant: HomeProductVariant;
+    stock_manage: boolean;
+    stock_status: 'in_stock' | 'out_of_stock';
     is_best_seller: boolean;
     _id: string;
     id: number;
