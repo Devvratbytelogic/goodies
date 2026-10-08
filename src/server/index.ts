@@ -20,25 +20,29 @@ async function getData<T>(path: string, country: string) {
   return data.data as T;
 }
 
-function cached<T>(country: string, key: string[], tags: string[], revalidate: number, load: () => Promise<T>) {
-  return unstable_cache(load, [...key, country], { tags, revalidate })();
+export function getCategories(country: string) {
+  return unstable_cache(
+    () => getData<HomeCategory[]>("/user/categories", country),
+    ["categories", country],
+    { tags: ["categories"], revalidate: 600 },
+  )();
 }
 
-// Slug list for build-time params. Slugs do not change with currency.
 export const getProducts = unstable_cache(
   () => getData<ProductListItem[]>("/user/products", defaultCurrency),
-  ["products", defaultCurrency],
+  ["products"],
   { tags: ["products"], revalidate: 600 },
 );
 
-export function getAllProducts(
-  page = 1,
-  minPrice?: number,
-  maxPrice?: number,
-  sort?: string,
-  category?: string,
-  country = defaultCurrency,
-) {
+export function getHomePage(country: string) {
+  return unstable_cache(
+    () => getData<HomePageData>("/user/home-page", country),
+    ["home-page", country],
+    { tags: ["home-page"], revalidate: 600 },
+  )();
+}
+
+export function getAllProducts(country: string, page = 1, minPrice?: number, maxPrice?: number, sort?: string, category?: string) {
   const query = new URLSearchParams({ page: String(page), limit: "20" });
   if (minPrice != null && maxPrice != null) {
     query.set("min_price", String(minPrice));
@@ -47,44 +51,30 @@ export function getAllProducts(
   if (sort) query.set("sort", sort);
   if (category) query.set("category", category);
 
-  return cached(
-    country,
-    ["all-product", query.toString()],
-    ["all-product"],
-    600,
+  return unstable_cache(
     () => getData<AllProductsData>(`/user/all-product?${query}`, country),
-  );
+    ["all-product", query.toString(), country],
+    { tags: ["all-product"], revalidate: 600 },
+  )();
 }
 
-export function getCategory(slug: string, page = 1, country = defaultCurrency) {
+export function getCategory(country: string, slug: string, page = 1) {
   const decoded = productSlug(slug);
   const query = new URLSearchParams({ page: String(page), limit: "5" });
 
-  return cached(
-    country,
-    ["category", decoded, query.toString()],
-    ["category", `category:${decoded}`],
-    600,
+  return unstable_cache(
     () => getData<SingleCategoryApiResponseData>(`/user/category/${encodeURIComponent(decoded)}?${query}`, country),
-  );
+    ["category", decoded, query.toString(), country],
+    { tags: ["category", `category:${decoded}`], revalidate: 600 },
+  )();
 }
 
-export function getCategories(country = defaultCurrency) {
-  return cached(country, ["categories"], ["categories"], 600, () => getData<HomeCategory[]>("/user/categories", country));
-}
-
-export function getHomePage(country = defaultCurrency) {
-  return cached(country, ["home-page"], ["home-page"], 600, () => getData<HomePageData>("/user/home-page", country));
-}
-
-export function getProduct(slug: string, country = defaultCurrency) {
+export function getProduct(country: string, slug: string) {
   const decoded = productSlug(slug);
 
-  return cached(
-    country,
-    ["product", decoded],
-    [`product:${decoded}`],
-    120,
+  return unstable_cache(
     () => getData<SingleProductData>(`/user/product/${encodeURIComponent(decoded)}`, country),
-  );
+    ["product", decoded, country],
+    { tags: [`product:${decoded}`], revalidate: 120 },
+  )();
 }

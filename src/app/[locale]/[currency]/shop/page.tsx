@@ -55,7 +55,7 @@ export default async function ShopPage({
   const selectedMax = priceParam(maxParam);
   const price = selectedMin != null && selectedMax != null ? { min: selectedMin, max: selectedMax } : undefined;
   const sort = sortParam(sortQuery);
-  const allProductsData = await getAllProducts(page, price?.min, price?.max, sort, undefined, country);
+  const allProductsData = await getAllProducts(country, page, price?.min, price?.max, sort);
   const products = allProductsData.data ?? [];
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;

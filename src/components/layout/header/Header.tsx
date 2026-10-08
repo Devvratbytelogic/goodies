@@ -20,7 +20,7 @@ export async function Header({ currency, cartCount = 0, wishlistCount = 0 }: Hea
   return (
     <>
       <AnnouncementBar />
-      <HeaderBar cartCount={cartCount} wishlistCount={wishlistCount} shopCategories={shopCategories} currency={currency} />
+      <HeaderBar currency={currency} cartCount={cartCount} wishlistCount={wishlistCount} shopCategories={shopCategories} />
     </>
   );
 }

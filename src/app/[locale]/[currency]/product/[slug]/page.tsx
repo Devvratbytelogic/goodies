@@ -30,7 +30,7 @@ function metaText(value?: string | null) {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { currency, slug } = await params;
 
-  const product = await getProduct(slug, toCurrency(currency));
+  const product = await getProduct(toCurrency(currency), slug);
   const title = metaText(product.meta_title) ?? product.title;
   const description =
     metaText(product.meta_description) ??
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { currency, slug } = await params;
-  const product = await getProduct(slug, toCurrency(currency));
+  const product = await getProduct(toCurrency(currency), slug);
 
   const t = await getTranslations("ProductPage");
   const nav = await getTranslations("Nav");

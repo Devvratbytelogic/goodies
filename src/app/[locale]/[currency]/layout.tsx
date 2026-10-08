@@ -1,7 +1,7 @@
 import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
-import { Header } from "@/components/layout/header/Header";
 import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
+import { Header } from "@/components/layout/header/Header";
 import { currencies, toCurrency } from "@/utils/currency";
 
 export function generateStaticParams() {

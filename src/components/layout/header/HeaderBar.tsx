@@ -21,10 +21,10 @@ const actionClass =
   "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 type HeaderBarProps = {
+  currency: CurrencyCode;
   cartCount: number;
   wishlistCount: number;
   shopCategories: ShopCategory[];
-  currency: CurrencyCode;
 };
 
 function CountBadge({ count, showZero = false }: { count: number; showZero?: boolean }) {
@@ -88,7 +88,7 @@ function BrandLogo() {
   );
 }
 
-export function HeaderBar({ cartCount, wishlistCount, shopCategories, currency }: HeaderBarProps) {
+export function HeaderBar({ currency, cartCount, wishlistCount, shopCategories }: HeaderBarProps) {
   const t = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
@@ -212,7 +212,7 @@ export function HeaderBar({ cartCount, wishlistCount, shopCategories, currency }
               <span aria-hidden className="mx-2 h-6 w-px bg-border/70" />
 
               <LocaleToggle />
-              <CurrencySelect key={currency} value={currency} />
+              <CurrencySelect value={currency} />
             </div>
           </div>
 

@@ -113,6 +113,10 @@ export default function CurrencySelect({
   const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(value);
   const [currencyOpen, setCurrencyOpen] = useState(false);
 
+  useEffect(() => {
+    setCurrencyCode(value);
+  }, [value]);
+
   function selectCurrency(code: CurrencyCode) {
     setCurrencyOpen(false);
     if (code === currencyCode) return;

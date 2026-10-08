@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
-import { countryCookie, toCurrency, type CurrencyCode } from "@/utils/currency";
+import { countryCookie, toCurrency, type CurrencyCode } from "./currency";
 
 export function readCurrencyCookie(): CurrencyCode {
-  if (typeof document === "undefined") return toCurrency(null);
+  if (typeof document === "undefined") return toCurrency(undefined);
   return toCurrency(Cookies.get(countryCookie));
 }
 

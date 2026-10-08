@@ -410,7 +410,7 @@ export default function MobileMenu({
           </div>
 
           <div className="flex gap-2 justify-between shrink-0 space-y-2 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-            <CurrencySelect key={currency} value={currency} openUp className="w-full" />
+            <CurrencySelect value={currency} openUp className="w-full" />
             <LocaleToggle className="w-full justify-center" />
           </div>
         </div>

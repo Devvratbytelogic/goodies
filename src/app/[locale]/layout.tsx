@@ -120,9 +120,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <StoreProvider>
             <AuthProvider>
-              <ModalProvider>
-                {children}
-              </ModalProvider>
+              <ModalProvider>{children}</ModalProvider>
             </AuthProvider>
           </StoreProvider>
         </NextIntlClientProvider>

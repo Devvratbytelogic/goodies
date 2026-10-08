@@ -53,7 +53,7 @@ function metaText(value?: string | null) {
 
 export async function generateMetadata({ params }: ProductCategoryPageProps): Promise<Metadata> {
   const { currency, slug } = await params;
-  const data = await getCategory(readSlug(slug), 1, toCurrency(currency));
+  const data = await getCategory(toCurrency(currency), readSlug(slug));
   const category = data?.category;
   if (!category) return {};
 
@@ -83,7 +83,7 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
   const { currency, slug: rawSlug } = await params;
   const country = toCurrency(currency);
   const slug = readSlug(rawSlug);
-  const data = await getCategory(slug, 1, country);
+  const data = await getCategory(country, slug);
   const category = data?.category;
 
   const shop = await getTranslations("ShopPage");
@@ -95,7 +95,7 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
   const selectedMax = priceParam(maxParam);
   const price = selectedMin != null && selectedMax != null ? { min: selectedMin, max: selectedMax } : undefined;
   const sort = sortParam(sortQuery);
-  const allProductsData = await getAllProducts(page, price?.min, price?.max, sort, category.slug, country);
+  const allProductsData = await getAllProducts(country, page, price?.min, price?.max, sort, category.slug);
   const products = allProductsData.data ?? [];
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;

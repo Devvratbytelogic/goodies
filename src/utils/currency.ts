@@ -6,10 +6,6 @@ export const defaultCurrency: CurrencyCode = "AED";
 
 export const countryCookie = "country";
 
-export function isCurrencyCode(value: string | undefined | null): value is CurrencyCode {
-  return !!value && (currencies as readonly string[]).includes(value);
-}
-
 export function toCurrency(value: string | undefined | null): CurrencyCode {
-  return isCurrencyCode(value) ? value : defaultCurrency;
+  return value && (currencies as readonly string[]).includes(value) ? (value as CurrencyCode) : defaultCurrency;
 }
