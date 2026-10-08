@@ -16,6 +16,8 @@ export interface SingleProductData {
   slug: string;
   sku: string;
   status: boolean;
+  stock_manage: boolean;
+  stock_status: "out_of_stock" | "in_stock";
   stock: number;
   weight: number;
   thumbnail: string;
@@ -33,6 +35,7 @@ export interface SingleProductData {
   url: string;
   bundle_items?: (BundleItemsEntity)[] | null;
   max_selection: number;
+  max_product_quantity: number;
   average_rating: number;
   total_reviews: number;
   total_sales: number;
@@ -126,6 +129,8 @@ export interface VariantsEntity {
   weight: number;
   status: boolean;
   images?: (string)[] | null;
+  stock_manage: boolean;
+  stock_status: "out_of_stock" | "in_stock";
 }
 export interface AttributesOrBreakdown {
 }

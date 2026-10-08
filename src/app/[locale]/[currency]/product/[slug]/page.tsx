@@ -102,6 +102,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         bundleItems={bundleItems}
         maxSelection={product.max_selection}
         bundleStock={product.stock}
+        stockManage={product.stock_manage}
+        stockStatus={product.stock_status}
       >
         <ProductGallery images={[product.thumbnail ?? "", ...(product.images ?? [])]} alt={name} />
       </ProductSelection>

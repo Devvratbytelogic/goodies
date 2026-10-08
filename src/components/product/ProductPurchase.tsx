@@ -25,9 +25,19 @@ type ProductPurchaseProps = {
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
   bundleStock: number;
+  stockManage: boolean;
+  stockStatus: "out_of_stock" | "in_stock";
 };
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, bundleStock }: ProductPurchaseProps) {
+function managedOutOfStock(stockManage?: boolean, stockStatus?: string) {
+  return Boolean(stockManage && stockStatus === "out_of_stock");
+}
+
+function availableQuantity(stockManage: boolean, stock: number) {
+  return stockManage ? stock : Infinity;
+}
+
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, bundleStock, stockManage, stockStatus }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -38,15 +48,22 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
   const boxReady = totalPicked > 0;
 
   const selectedVariant = variants.find((item) => item?.size === sizeName);
-  const allSizesSoldOut = isVariant && variants.length > 0 && variants.every((item) => item?.stock === 0);
-
-  // bundle: bundle stock, variable: selected size stock, simple: variant stock
+  const allSizesSoldOut =
+    isVariant && variants.length > 0 && variants.every((item) => managedOutOfStock(item?.stock_manage, item?.stock_status));
+  const outOfStock = isVariant
+    ? selectedVariant
+      ? managedOutOfStock(selectedVariant.stock_manage, selectedVariant.stock_status)
+      : allSizesSoldOut
+    : managedOutOfStock(stockManage, stockStatus);
   const maxQuantity = isBundle
-    ? bundleStock
+    ? availableQuantity(stockManage, bundleStock)
     : isVariant
-      ? (selectedVariant?.stock ?? (allSizesSoldOut ? 0 : Infinity))
-      : (variant?.stock ?? 0);
-  const outOfStock = maxQuantity <= 0;
+      ? selectedVariant
+        ? availableQuantity(selectedVariant.stock_manage, selectedVariant.stock ?? 0)
+        : allSizesSoldOut
+          ? 0
+          : Infinity
+      : availableQuantity(stockManage, variant?.stock ?? 0);
   const stockReached = quantity >= maxQuantity;
   const price = selectedVariant?.price ?? variant?.price ?? 0;
   const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
@@ -157,7 +174,8 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           <div role="radiogroup" aria-label={t("size")} className="mt-2 flex flex-wrap items-center gap-2">
             {sizes.map((size) => {
               const selected = size.name === sizeName;
-              const soldOut = variants.find((item) => item?.size === size.name)?.stock === 0;
+              const sizeVariant = variants.find((item) => item?.size === size.name);
+              const soldOut = managedOutOfStock(sizeVariant?.stock_manage, sizeVariant?.stock_status);
               return (
                 <button
                   key={size.name}
