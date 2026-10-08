@@ -19,6 +19,7 @@ type ProductSelectionProps = {
   isBundle: boolean;
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
+  maxProductQuantity: number;
   bundleStock: number;
   stockManage: boolean;
   stockStatus: "out_of_stock" | "in_stock";
@@ -38,6 +39,7 @@ export default function ProductSelection({
   isBundle,
   bundleItems,
   maxSelection,
+  maxProductQuantity,
   bundleStock,
   stockManage,
   stockStatus,
@@ -59,6 +61,7 @@ export default function ProductSelection({
             isBundle={isBundle}
             bundleItems={bundleItems}
             maxSelection={maxSelection}
+            maxProductQuantity={maxProductQuantity}
             bundleStock={bundleStock}
             stockManage={stockManage}
             stockStatus={stockStatus}

@@ -101,6 +101,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         isBundle={isBundle}
         bundleItems={bundleItems}
         maxSelection={product.max_selection}
+        maxProductQuantity={product.max_product_quantity}
         bundleStock={product.stock}
         stockManage={product.stock_manage}
         stockStatus={product.stock_status}

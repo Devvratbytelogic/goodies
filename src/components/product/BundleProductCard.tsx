@@ -11,16 +11,20 @@ interface BundleProductCardProps {
   bundleItem: BundleItemsEntity;
   quantity: number;
   canAddMore: boolean;
+  maxProductQuantity: number;
   currencySymbol: string;
   onChange: (quantity: number) => void;
 }
 
-export default function BundleProductCard({ bundleItem, quantity, canAddMore, currencySymbol, onChange }: BundleProductCardProps) {
+export default function BundleProductCard({ bundleItem, quantity, canAddMore, maxProductQuantity, currencySymbol, onChange }: BundleProductCardProps) {
   const t = useTranslations("ProductPage");
 
   const product = bundleItem.product_id;
   const inStock = product.stock > 0;
+  // One item cannot pass its own stock, or the bundle's max for a single product.
   const stockReached = quantity >= product.stock;
+  const productMaxReached = quantity >= maxProductQuantity;
+  const canIncrease = canAddMore && !stockReached && !productMaxReached;
 
   return (
     <div className={`flex flex-col overflow-hidden rounded-xl border bg-background ${quantity > 0 ? "border-primary" : "border-border"}`}>
@@ -55,7 +59,7 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, cu
               <button
                 type="button"
                 aria-label={t("bundleIncrease", { name: product.title })}
-                disabled={!canAddMore || stockReached}
+                disabled={!canIncrease}
                 onClick={() => onChange(quantity + 1)}
                 className="inline-flex size-9 items-center justify-center rounded-full text-heading hover:text-primary disabled:text-border"
               >
@@ -68,6 +72,11 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, cu
           {inStock && stockReached ? (
             <p aria-live="polite" className="mt-1.5 text-center text-xs font-medium text-primary">
               {t("bundleStockLimit", { count: product.stock })}
+            </p>
+          ) : null}
+          {inStock && !stockReached && productMaxReached ? (
+            <p aria-live="polite" className="mt-1.5 text-center text-xs font-medium text-primary">
+              {t("bundleProductLimit", { count: maxProductQuantity })}
             </p>
           ) : null}
         </div>

@@ -24,6 +24,7 @@ type ProductPurchaseProps = {
   isBundle: boolean;
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
+  maxProductQuantity: number;
   bundleStock: number;
   stockManage: boolean;
   stockStatus: "out_of_stock" | "in_stock";
@@ -37,7 +38,7 @@ function availableQuantity(stockManage: boolean, stock: number) {
   return stockManage ? stock : Infinity;
 }
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, bundleStock, stockManage, stockStatus }: ProductPurchaseProps) {
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, maxProductQuantity, bundleStock, stockManage, stockStatus }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -64,6 +65,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           ? 0
           : Infinity
       : availableQuantity(stockManage, variant?.stock ?? 0);
+      
   const stockReached = quantity >= maxQuantity;
   const price = selectedVariant?.price ?? variant?.price ?? 0;
   const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
@@ -154,6 +156,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
                 bundleItem={item}
                 quantity={picked[item.product_id._id] ?? 0}
                 canAddMore={canAddMore}
+                maxProductQuantity={maxProductQuantity}
                 currencySymbol={currencySymbol}
                 onChange={(qty) => setPicked({ ...picked, [item.product_id._id]: qty })}
               />

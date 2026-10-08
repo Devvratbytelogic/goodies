@@ -439,6 +439,7 @@
     "bundleSelected": "{selected}/{max} selected",
     "bundleCanAddMore": "{count, plural, one {Ready to add. You can pick # more item.} other {Ready to add. You can pick # more items.}}",
     "bundleStockLimit": "Only {count} in stock",
+    "bundleProductLimit": "You can add up to {count} of this item",
     "bundleFull": "Your box is full. Remove an item to pick something else.",
     "bundleRemaining": "Pick items to add this box.",
     "bundleIncrease": "Add one {name}",

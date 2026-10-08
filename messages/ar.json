@@ -439,6 +439,7 @@
     "bundleSelected": "تم اختيار {selected}/{max}",
     "bundleCanAddMore": "{count, plural, one {جاهز للإضافة. يمكنك اختيار منتج واحد إضافي.} two {جاهز للإضافة. يمكنك اختيار منتجين إضافيين.} other {جاهز للإضافة. يمكنك اختيار # منتجات إضافية.}}",
     "bundleStockLimit": "متوفر {count} فقط",
+    "bundleProductLimit": "يمكنك إضافة {count} كحد أقصى من هذا المنتج",
     "bundleFull": "صندوقك ممتلئ. أزل منتجًا لاختيار شيء آخر.",
     "bundleRemaining": "اختر منتجات لإضافة هذا الصندوق.",
     "bundleIncrease": "أضف واحدًا من {name}",
