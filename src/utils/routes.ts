@@ -52,11 +52,11 @@ export function getAccountCouponsRoutePath(): string {
 }
 
 export function getCheckoutClassicRoutePath(): string {
-  return "/checkout-classic";
+  return "/cart/checkout";
 }
 
 export function getTabbyResultRoutePath(): string {
-  return "/checkout-classic/tabby";
+  return "/cart/checkout/tabby";
 }
 
 // ─── Dynamic Routes ─────────────────────────────────────────────────────────

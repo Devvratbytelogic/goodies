@@ -1,4 +1,5 @@
 import { TabbyPayment, TabbyPaymentResponse, TabbySession, TabbySessionPayload, TabbySessionResponse } from "@/server/types/tabby";
+import { ZiinaCheckout, ZiinaCheckoutPayload, ZiinaCheckoutResponse } from "@/server/types/ziina";
 import { api } from "../api";
 
 export const paymentApi = api.injectEndpoints({
@@ -11,6 +12,15 @@ export const paymentApi = api.injectEndpoints({
         body,
       }),
       transformResponse: (res: TabbySessionResponse) => res.data,
+    }),
+    // backend creates the Ziina payment and returns the hosted checkout URL
+    createZiinaCheckout: build.mutation<ZiinaCheckout, ZiinaCheckoutPayload>({
+      query: (body) => ({
+        url: "/user/ziina/checkout",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: ZiinaCheckoutResponse) => res.data,
     }),
     // dummy endpoint: backend checks the payment with Tabby, captures it when AUTHORIZED and creates the order
     verifyTabbyPayment: build.query<TabbyPayment, string>({
@@ -28,4 +38,4 @@ export const paymentApi = api.injectEndpoints({
   }),
 });
 
-export const { useCreateTabbySessionMutation, useVerifyTabbyPaymentQuery } = paymentApi;
+export const { useCreateTabbySessionMutation, useCreateZiinaCheckoutMutation, useVerifyTabbyPaymentQuery } = paymentApi;
