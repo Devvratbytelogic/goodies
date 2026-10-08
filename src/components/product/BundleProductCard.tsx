@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { BundleItemsEntity } from "@/server/types/singleProduct";
-import ProductPrice from "@/components/product/ProductPrice";
 import { formatAmount } from "@/utils/price";
 
 interface BundleProductCardProps {
