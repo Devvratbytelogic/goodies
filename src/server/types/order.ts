@@ -92,3 +92,67 @@ export interface OrderDeliveryAddress {
     country_code: string;
     email?: string | null;
 }
+
+export interface OrderDetailsResponse {
+    http_status_code: number;
+    http_status_msg: string;
+    success: boolean;
+    data: OrderDetails;
+    message: string;
+    timestamp: string;
+}
+
+export interface OrderDetailsItem {
+    item_id: string;
+    product_id?: string;
+    title: string;
+    slug?: string | null;
+    image?: string | null;
+    size?: string | null;
+    quantity: number;
+    unit_price: number;
+    line_total: number;
+    currency?: string;
+}
+
+export interface OrderDetailsSummary {
+    order_total: number;
+    discount_amount: number;
+    coupon_code?: string | null;
+    coupon_discount?: number | null;
+    shipping_amount: number;
+    fee_amount: number;
+    grand_total: number;
+    tax_amount: number;
+    currency: string;
+}
+
+export interface OrderDetailsAddress {
+    first_name?: string | null;
+    last_name?: string | null;
+    full_name?: string | null;
+    street_address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    state_code?: string | null;
+    country?: string | null;
+    postal_code?: string | null;
+    phone_number?: string | null;
+    phone_country_code?: string | null;
+    country_code?: string | null;
+    email?: string | null;
+}
+
+export interface OrderDetails {
+    order_id: string;
+    order_number: number | string;
+    order_code?: string;
+    status?: string;
+    order_date?: string;
+    payment_method?: string;
+    payment_method_title?: string;
+    payment_status?: string;
+    summary?: OrderDetailsSummary | null;
+    shipping_address?: OrderDetailsAddress | null;
+    items?: OrderDetailsItem[] | null;
+}
