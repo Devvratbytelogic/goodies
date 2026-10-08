@@ -20,9 +20,13 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, ma
   const t = useTranslations("ProductPage");
 
   const product = bundleItem.product_id;
-  const inStock = product.stock > 0;
-  // One item cannot pass its own stock, or the bundle's max for a single product.
-  const stockReached = quantity >= product.stock;
+  const stockManage = product.variant?.stock_manage;
+  const stockStatus = product.variant?.stock_status;
+  // stock_manage false means the item stays available, same as the product card.
+  const inStock = !(stockManage && stockStatus === "out_of_stock");
+  // Only a managed item is limited by its stock count.
+  const stock = product.variant?.stock ?? product.stock;
+  const stockReached = Boolean(stockManage) && quantity >= stock;
   const productMaxReached = quantity >= maxProductQuantity;
   const canIncrease = canAddMore && !stockReached && !productMaxReached;
 
@@ -71,7 +75,7 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, ma
           )}
           {inStock && stockReached ? (
             <p aria-live="polite" className="mt-1.5 text-center text-xs font-medium text-primary">
-              {t("bundleStockLimit", { count: product.stock })}
+              {t("bundleStockLimit", { count: stock })}
             </p>
           ) : null}
           {inStock && !stockReached && productMaxReached ? (
