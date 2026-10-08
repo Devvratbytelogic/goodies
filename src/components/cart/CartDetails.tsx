@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { LuMinus, LuPlus, LuTrash2 } from "react-icons/lu";
+import { LuGift, LuMinus, LuPlus, LuShoppingBag, LuSparkles, LuTrash2, LuTruck } from "react-icons/lu";
 import CartSummary from "@/components/cart/CartSummary";
 import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
 import CartItemsSkeleton from "@/components/skeletons/CartItemsSkeleton";
@@ -15,6 +15,48 @@ import { formatAmount } from "@/utils/price";
 
 const minQuantity = 1;
 const maxQuantity = 99;
+
+const emptyNotes = [
+  { icon: LuTruck, title: "deliveryTitle", description: "deliveryDescription" },
+  { icon: LuSparkles, title: "qualityTitle", description: "qualityDescription" },
+  { icon: LuGift, title: "giftingTitle", description: "giftingDescription" },
+] as const;
+
+function EmptyCart() {
+  const t = useTranslations("CartPage");
+  const notes = useTranslations("WhyChooseSection");
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-background">
+      <div className="px-6 py-14 text-center sm:px-10 sm:py-16">
+        <span className="mx-auto inline-flex size-16 items-center justify-center rounded-full bg-primary-soft text-primary">
+          <LuShoppingBag aria-hidden className="size-7" />
+        </span>
+        <h2 className="mt-5 text-2xl font-bold tracking-tight text-heading">{t("empty")}</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted sm:text-base">{t("emptyNote")}</p>
+        <Link
+          href={getShopRoutePath()}
+          className="mt-7 inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {t("shop")}
+        </Link>
+      </div>
+      <ul className="grid border-t border-border sm:grid-cols-3">
+        {emptyNotes.map(({ icon: Icon, title, description }) => (
+          <li key={title} className="flex items-start gap-3 border-t border-border px-5 py-4 text-start first:border-t-0 sm:border-t-0 sm:border-s sm:first:border-s-0">
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+              <Icon aria-hidden className="size-4" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-heading">{notes(title)}</span>
+              <span className="mt-0.5 block text-xs leading-5 text-muted">{notes(description)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 type CartDetailsProps = {
   checkoutHref: string;
@@ -47,20 +89,14 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
 
   const currencySymbol = cartSummary?.currency_symbol ?? "";
 
+  if (!isLoadingCart && cartItems.length === 0) {
+    return <EmptyCart />;
+  }
+
   return (
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
       {isLoadingCart ? (
         <CartItemsSkeleton label={t("loading")} />
-      ) : cartItems?.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-background px-6 py-12 text-center">
-          <p className="text-muted">{t("empty")}</p>
-          <Link
-            href={getShopRoutePath()}
-            className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            {t("shop")}
-          </Link>
-        </div>
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
           {cartItems?.map((item, index) => {
