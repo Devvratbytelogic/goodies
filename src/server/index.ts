@@ -75,6 +75,6 @@ export function getProduct(country: string, slug: string) {
   return unstable_cache(
     () => getData<SingleProductData>(`/user/product/${encodeURIComponent(decoded)}`, country),
     ["product", decoded, country],
-    { tags: [`product:${decoded}`], revalidate: 120 },
+    { tags: [`product:${decoded}`], revalidate: 600 },
   )();
 }
