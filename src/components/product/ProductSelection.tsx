@@ -19,7 +19,6 @@ type ProductSelectionProps = {
   isBundle: boolean;
   bundleItems: BundleItemsEntity[];
   maxSelection: number;
-  minSelection: number;
   bundleStock: number;
 };
 
@@ -37,7 +36,6 @@ export default function ProductSelection({
   isBundle,
   bundleItems,
   maxSelection,
-  minSelection,
   bundleStock,
 }: ProductSelectionProps) {
   const [sizeName, setSizeName] = useState<string | null>(
@@ -57,7 +55,6 @@ export default function ProductSelection({
             isBundle={isBundle}
             bundleItems={bundleItems}
             maxSelection={maxSelection}
-            minSelection={minSelection}
             bundleStock={bundleStock}
             slug={slug}
             name={name}
