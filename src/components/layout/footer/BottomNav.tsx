@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuHeart, LuHouse, LuShoppingCart, LuStore, LuUser } from "react-icons/lu";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCartCount } from "@/store/endpoints/cartApi";
 import { useOpenLogin } from "@/components/auth/Login";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath } from "@/components/layout/header/navigation";
@@ -27,10 +28,6 @@ const items: {
   { href: getAccountRoutePath(), key: "account", icon: LuUser },
 ];
 
-type BottomNavProps = {
-  cartCount?: number;
-};
-
 function CountBadge({ count }: { count: number }) {
   return (
     <span
@@ -42,8 +39,9 @@ function CountBadge({ count }: { count: number }) {
   );
 }
 
-export function BottomNav({ cartCount = 0 }: BottomNavProps) {
+export function BottomNav() {
   const t = useTranslations("BottomNav");
+  const cartCount = useCartCount();
   const tHeader = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();

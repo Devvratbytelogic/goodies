@@ -13,6 +13,7 @@ import CodCheckout from "@/components/checkout/CodCheckout";
 import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
 import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import TabbyCheckout from "@/components/checkout/TabbyCheckout";
+import CheckoutFormSkeleton from "@/components/skeletons/CheckoutFormSkeleton";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
@@ -272,6 +273,10 @@ export default function CheckoutForm({ onPlaced }: { onPlaced: (order: PlacedOrd
     });
   }
 
+  if (!formOpen && isLoadingAddresses) {
+    return <CheckoutFormSkeleton label={t("loadingAddresses")} />;
+  }
+
   if (!formOpen) {
     return (
       <section className="rounded-2xl border border-border bg-background px-5 py-5 sm:px-6 sm:py-6">
@@ -282,8 +287,7 @@ export default function CheckoutForm({ onPlaced }: { onPlaced: (order: PlacedOrd
             {t("addNew")}
           </button>
         </div>
-        {isLoadingAddresses ? <p className="mt-4 text-sm text-muted">{t("loadingAddresses")}</p> : null}
-        {!isLoadingAddresses && addresses.length === 0 ? <p className="mt-4 text-sm text-muted">{t("emptyAddresses")}</p> : null}
+        {addresses.length === 0 ? <p className="mt-4 text-sm text-muted">{t("emptyAddresses")}</p> : null}
         <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("billingAddress")}>
           {addresses.map((address) => {
             const selected = address._id === selectedId;

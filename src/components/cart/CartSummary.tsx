@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { LuX } from "react-icons/lu";
 import CartCoupons from "@/components/cart/CartCoupons";
+import CartSummarySkeleton from "@/components/skeletons/CartSummarySkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { Link } from "@/i18n/navigation";
 import { useApplyCouponMutation, useGetCartQuery, useRemoveCouponMutation } from "@/store/endpoints/cartApi";
@@ -18,7 +19,7 @@ type CartSummaryProps = {
 
 export default function CartSummary({ checkoutHref, showItems = false }: CartSummaryProps) {
   const t = useTranslations("CartPage");
-  const { data: cart } = useGetCartQuery();
+  const { data: cart, isLoading } = useGetCartQuery();
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
   const [removeCoupon, { isLoading: isRemovingCoupon }] = useRemoveCouponMutation();
   const cartItems = cart?.items ?? [];
@@ -52,6 +53,11 @@ export default function CartSummary({ checkoutHref, showItems = false }: CartSum
   const taxAmount = cartSummary?.tax_amount ?? 0;
   const totalAmount = cartSummary?.total_amount ?? 0;
   const currencySymbol = cartSummary?.currency_symbol ?? "";
+
+  if (isLoading) {
+    return <CartSummarySkeleton label={t("loading")} checkoutHref={checkoutHref} showItems={showItems} />;
+  }
+
   return (
     <aside className="overflow-hidden rounded-2xl border border-border bg-background lg:sticky lg:top-24">
       {showItems && cartItems.length > 0 ? (

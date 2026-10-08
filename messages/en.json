@@ -302,6 +302,7 @@
     "confirmRemove": "Remove",
     "removing": "Removing...",
     "cancel": "Cancel",
+    "loading": "Loading cart…",
     "empty": "Your cart is empty.",
     "shop": "Continue shopping",
     "summary": "Cart totals",

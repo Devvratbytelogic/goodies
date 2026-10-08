@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus, LuTrash2 } from "react-icons/lu";
 import CartSummary from "@/components/cart/CartSummary";
 import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
+import CartItemsSkeleton from "@/components/skeletons/CartItemsSkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link } from "@/i18n/navigation";
@@ -14,8 +15,6 @@ import { formatAmount } from "@/utils/price";
 
 const minQuantity = 1;
 const maxQuantity = 99;
-
-
 
 type CartDetailsProps = {
   checkoutHref: string;
@@ -50,7 +49,9 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
 
   return (
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
-      {cartItems?.length === 0 ? (
+      {isLoadingCart ? (
+        <CartItemsSkeleton label={t("loading")} />
+      ) : cartItems?.length === 0 ? (
         <div className="rounded-2xl border border-border bg-background px-6 py-12 text-center">
           <p className="text-muted">{t("empty")}</p>
           <Link

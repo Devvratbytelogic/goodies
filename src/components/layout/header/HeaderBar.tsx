@@ -6,6 +6,7 @@ import type { IconType } from "react-icons";
 import { LuHeart, LuMenu, LuSearch, LuShoppingCart, LuUser, LuX } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCartCount } from "@/store/endpoints/cartApi";
 import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getAccountRoutePath, getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
@@ -22,7 +23,6 @@ const actionClass =
 
 type HeaderBarProps = {
   currency: CurrencyCode;
-  cartCount: number;
   wishlistCount: number;
   shopCategories: ShopCategory[];
 };
@@ -88,8 +88,9 @@ function BrandLogo() {
   );
 }
 
-export function HeaderBar({ currency, cartCount, wishlistCount, shopCategories }: HeaderBarProps) {
+export function HeaderBar({ currency, wishlistCount, shopCategories }: HeaderBarProps) {
   const t = useTranslations("Header");
+  const cartCount = useCartCount();
   const { token } = useAuth();
   const openLogin = useOpenLogin();
   const pathname = usePathname();

@@ -68,3 +68,15 @@ export const {
   useApplyCouponMutation,
   useRemoveCouponMutation,
 } = cartApi;
+
+// One cart request, shared by the header and the bottom nav.
+// The badge is the total pieces, so changing a quantity updates it too.
+export function useCartCount() {
+  const { count } = useGetCartQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      count: (data?.items ?? []).reduce((total, item) => total + (item?.quantity ?? 0), 0),
+    }),
+  });
+
+  return count;
+}
