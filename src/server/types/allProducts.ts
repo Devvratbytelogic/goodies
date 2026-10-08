@@ -16,6 +16,8 @@ export interface AllProductsData {
 }
 export interface AllProductsProduct {
     variant: Variant;
+    stock_manage: boolean;
+    stock_status: "in_stock" | "out_of_stock";
     _id: string;
     id: number;
     title: string;
