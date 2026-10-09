@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { LuCircleCheck, LuCircleX, LuClock } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import OrderAddresses from "@/components/checkout/OrderAddresses";
 import { Link } from "@/i18n/navigation";
-import { OrderDetailsAddress } from "@/server/types/order";
 import { api } from "@/store/api";
 import { useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
 import { useAppDispatch } from "@/store/hooks";
@@ -23,12 +23,6 @@ type ZiinaReturnProps = {
   shopHref: string;
   checkoutHref: string;
 };
-
-function phoneLabel(address: OrderDetailsAddress) {
-  const number = address.phone_number?.trim();
-  if (!number) return "";
-  return number.startsWith("+") ? number : `+${number}`;
-}
 
 function OrderDetailsSkeleton() {
   return (
@@ -139,15 +133,13 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
 
   const summary = order?.summary;
   const items = order?.items ?? [];
-  const address = order?.shipping_address;
+  const shippingAddress = order?.shipping_address;
+  const billingAddress = order?.billing_address;
   const currency = summary?.currency || items[0]?.currency || "";
   const paid = order?.payment_status?.toLowerCase() === "paid";
   const shownOrderNumber = order?.order_number ?? orderNumber;
   const discount = (summary?.discount_amount ?? 0) > 0 ? summary?.discount_amount ?? 0 : summary?.coupon_discount ?? 0;
   const itemCount = items.reduce((sum, item) => sum + (item.quantity ?? 0), 0);
-  const addressName = address?.full_name || [address?.first_name, address?.last_name].filter(Boolean).join(" ");
-  const addressLine = [address?.city, address?.state, address?.postal_code, address?.country].filter(Boolean).join(", ");
-  const phone = address ? phoneLabel(address) : "";
 
   return (
     <section
@@ -294,22 +286,12 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
             </dl>
           ) : null}
 
-          {address ? (
-            <div className="mt-6">
-              <h2 className="text-base font-bold">{t("deliveryAddress")}</h2>
-              <address className="mt-2 text-sm leading-6 text-muted not-italic">
-                {addressName ? <span className="block font-semibold text-heading">{addressName}</span> : null}
-                {address.street_address ? <span className="block">{address.street_address}</span> : null}
-                {addressLine ? <span className="block">{addressLine}</span> : null}
-                {phone ? (
-                  <span className="block">
-                    <bdi>{phone}</bdi>
-                  </span>
-                ) : null}
-                {address.email ? <span className="block">{address.email}</span> : null}
-              </address>
-            </div>
-          ) : null}
+          <OrderAddresses
+            shipping={shippingAddress}
+            billing={billingAddress}
+            shippingLabel={t("shippingAddress")}
+            billingLabel={t("billingAddress")}
+          />
         </>
       ) : null}
 

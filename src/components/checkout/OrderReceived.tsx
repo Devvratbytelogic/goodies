@@ -3,8 +3,10 @@
 import { useTranslations } from "next-intl";
 import { LuCircleCheck } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import OrderAddresses from "@/components/checkout/OrderAddresses";
 import { Link } from "@/i18n/navigation";
 import { PlacedOrder } from "@/server/types/order";
+import { useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
 import { getProductRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
 
@@ -12,8 +14,13 @@ export default function OrderReceived({ order, shopHref }: { order: PlacedOrder;
   const t = useTranslations("CheckoutClassicPage");
   const cart = useTranslations("CartPage");
   const items = order.order_items ?? [];
-  const address = order.delivery_address;
   const currency = order.currency;
+  const hasBothAddresses = Boolean(order.shipping_address && order.billing_address);
+  const { data: details } = useGetOrderDetailsQuery(order.order_id, {
+    skip: !order.order_id || hasBothAddresses,
+  });
+  const shippingAddress = order.shipping_address ?? details?.shipping_address ?? order.delivery_address;
+  const billingAddress = order.billing_address ?? details?.billing_address;
 
   return (
     <section className="rounded-2xl border border-border bg-background px-5 py-6 sm:px-8 sm:py-8">
@@ -106,22 +113,13 @@ export default function OrderReceived({ order, shopHref }: { order: PlacedOrder;
         </div>
       </dl>
 
-      {address ? (
-        <div className="mt-6">
-          <h3 className="text-base font-bold">{t("deliveryAddress")}</h3>
-          <address className="mt-2 text-sm leading-6 text-muted not-italic">
-            <span className="block font-semibold text-heading">{address.full_name}</span>
-            <span className="block">{address.street_address}</span>
-            <span className="block">
-              {[address.city, address.state, address.postal_code, address.country].filter(Boolean).join(", ")}
-            </span>
-            <span className="block">
-              <bdi>+{address.phone_number}</bdi>
-            </span>
-            {address.email ? <span className="block">{address.email}</span> : null}
-          </address>
-        </div>
-      ) : null}
+      <OrderAddresses
+        shipping={shippingAddress}
+        billing={billingAddress}
+        shippingLabel={t("shippingAddress")}
+        billingLabel={t("billingAddress")}
+        heading="h3"
+      />
 
       <Link
         href={shopHref}

@@ -37,6 +37,8 @@ export interface PlacedOrder {
     payment_method_title: string;
     currency: string;
     delivery_address?: OrderDeliveryAddress | null;
+    shipping_address?: OrderDetailsAddress | null;
+    billing_address?: OrderDetailsAddress | null;
 }
 export interface OrderItem {
     _id: string;
@@ -154,5 +156,6 @@ export interface OrderDetails {
     payment_status?: string;
     summary?: OrderDetailsSummary | null;
     shipping_address?: OrderDetailsAddress | null;
+    billing_address?: OrderDetailsAddress | null;
     items?: OrderDetailsItem[] | null;
 }
