@@ -12,6 +12,7 @@ import { useOpenLogin } from "@/components/auth/Login";
 import { useOpenRegister } from "@/components/auth/Register";
 import { useOpenResetPassword } from "@/components/auth/ResetPassword";
 import { useModal } from "@/components/layout/common/ModalProvider";
+import { getDeviceId } from "@/utils/deviceId";
 import { otpValidationSchema } from "@/validations";
 
 type OtpValues = InferType<typeof otpValidationSchema>;
@@ -51,7 +52,7 @@ export default function OTPScreen() {
       setNotice("");
 
       try {
-        const result = await verifyCode(email, values.code, type);
+        const result = await verifyCode(email, values.code, type, getDeviceId());
         if (!result.ok) {
           setErrorMessage(result.message || t("failed"));
           return;
@@ -117,7 +118,7 @@ export default function OTPScreen() {
     setResending(true);
 
     try {
-      const result = await resendCode(email);
+      const result = await resendCode(email, getDeviceId());
       if (!result.ok) {
         setErrorMessage(result.message || t("failed"));
         return;

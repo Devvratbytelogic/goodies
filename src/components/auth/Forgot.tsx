@@ -9,6 +9,7 @@ import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { forgotPassword } from "@/server/auth";
+import { getDeviceId } from "@/utils/deviceId";
 import { forgotValidationSchema } from "@/validations";
 
 type ForgotValues = InferType<typeof forgotValidationSchema>;
@@ -32,7 +33,7 @@ export default function Forgot() {
       setError("");
 
       try {
-        const result = await forgotPassword(values.email.trim());
+        const result = await forgotPassword(values.email.trim(), getDeviceId());
         if (!result.ok) {
           setError(result.message || t("failed"));
           return;

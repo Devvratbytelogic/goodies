@@ -14,6 +14,7 @@ import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { registerAccount } from "@/server/auth";
+import { getDeviceId } from "@/utils/deviceId";
 import { registerValidationSchema } from "@/validations";
 
 type RegisterValues = InferType<typeof registerValidationSchema>;
@@ -74,7 +75,7 @@ export default function Register() {
           countryCode,
           state: State.getStatesOfCountry(countryCode).find((item) => item.isoCode === stateCode)?.name ?? "",
           stateCode,
-        });
+        }, getDeviceId());
         if (!result.ok) {
           setError(result.message || t("failed"));
           return;

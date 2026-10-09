@@ -2,9 +2,11 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import Cookies from "js-cookie";
+import { api } from "@/store/api";
+import { useAppDispatch } from "@/store/hooks";
+import { getDeviceId } from "@/utils/deviceId";
 
 const cookieName = "token";
-const userKey = "goodies-auth";
 
 type AuthContextValue = {
   token: string | null;
@@ -24,25 +26,34 @@ const cookieOptions = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const dispatch = useAppDispatch();
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    localStorage.removeItem(userKey);
     setToken(Cookies.get(cookieName) ?? null);
     setReady(true);
   }, []);
 
+  function refreshAccount() {
+    dispatch(api.util.resetApiState());
+  }
+
   function startSession(nextToken: string) {
-    localStorage.removeItem(userKey);
     Cookies.set(cookieName, nextToken, cookieOptions);
     setToken(nextToken);
+    refreshAccount();
   }
 
   async function login(email: string, password: string) {
+    const deviceId = getDeviceId();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
       method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...(deviceId ? { "device-id": deviceId } : {}),
+      },
       body: JSON.stringify({ email, password }),
     });
     const body = await response.json().catch(() => null);
@@ -56,8 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function logout() {
     Cookies.remove(cookieName, { path: "/" });
-    localStorage.removeItem(userKey);
     setToken(null);
+    refreshAccount();
   }
 
   return <AuthContext.Provider value={{ token, ready, login, startSession, logout }}>{children}</AuthContext.Provider>;

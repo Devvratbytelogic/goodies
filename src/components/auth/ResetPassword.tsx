@@ -9,6 +9,7 @@ import { useOpenLogin } from "@/components/auth/Login";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { setNewPassword } from "@/server/auth";
+import { getDeviceId } from "@/utils/deviceId";
 import { resetPasswordValidationSchema } from "@/validations";
 
 type ResetValues = InferType<typeof resetPasswordValidationSchema>;
@@ -42,7 +43,7 @@ export default function ResetPassword() {
       setError("");
 
       try {
-        const result = await setNewPassword(token, values.password, values.confirmPassword);
+        const result = await setNewPassword(token, values.password, values.confirmPassword, getDeviceId());
         if (!result.ok) {
           setError(result.message || t("failed"));
           return;
