@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
-import { LuHeart, LuMenu, LuSearch, LuShoppingCart, LuUser, LuX } from "react-icons/lu";
+import { LuHeart, LuMenu, LuSearch, LuUser, LuX } from "react-icons/lu";
+import MiniCart from "@/components/cart/MiniCart";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCartCount } from "@/store/endpoints/cartApi";
 import { useWishlistCount } from "@/store/endpoints/wishlistApi";
 import { useOpenLogin } from "@/components/auth/Login";
 import ImageComponent from "@/components/layout/common/ImageComponent";
-import { getAccountRoutePath, getCartRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
+import { getAccountRoutePath, getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
 import CurrencySelect from "@/components/product/CurrencySelect";
 import type { CurrencyCode } from "@/utils/currency";
 import { DesktopNav } from "./DesktopNav";
@@ -153,14 +154,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
                 icon={LuHeart}
                 count={wishlistCount}
               />
-              <ActionLink
-                href={getCartRoutePath()}
-                label={t("cartLabel", { count: cartCount })}
-                icon={LuShoppingCart}
-                count={cartCount}
-                showZero
-                className="-me-2"
-              />
+              <MiniCart className="-me-2" />
             </div>
           </div>
 
@@ -203,13 +197,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
                 icon={LuHeart}
                 count={wishlistCount}
               />
-              <ActionLink
-                href={getCartRoutePath()}
-                label={t("cartLabel", { count: cartCount })}
-                icon={LuShoppingCart}
-                count={cartCount}
-                showZero
-              />
+              <MiniCart />
 
               <span aria-hidden className="mx-2 h-6 w-px bg-border/70" />
 

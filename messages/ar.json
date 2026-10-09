@@ -210,6 +210,7 @@
     "priceRange": "{from} – {to} د.إ",
     "priceRangeLabel": "نطاق السعر: من {from} إلى {to} د.إ",
     "addToCart": "أضف إلى السلة",
+    "inCart": "{count} في السلة",
     "selectOption": "اختر الخيار",
     "outOfStock": "نفد المخزون",
     "fruits": "فواكه",
@@ -331,6 +332,10 @@
     "shippingNote": "سعر ثابت",
     "total": "الإجمالي",
     "checkout": "متابعة الدفع"
+  },
+  "MiniCart": {
+    "title": "سلتك",
+    "viewCart": "عرض السلة"
   },
   "Wishlist": {
     "add": "أضف {name} إلى المفضلة",
@@ -466,6 +471,7 @@
     "decreaseQuantity": "تقليل الكمية",
     "increaseQuantity": "زيادة الكمية",
     "addToCart": "أضف إلى السلة",
+    "inCart": "{count} في السلة",
     "buyNow": "اشتر الآن",
     "added": "تمت الإضافة إلى السلة",
     "chooseSize": "يرجى اختيار الحجم",

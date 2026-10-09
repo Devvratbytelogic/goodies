@@ -210,6 +210,7 @@
     "priceRange": "AED {from} – {to}",
     "priceRangeLabel": "Price range: AED {from} through {to}",
     "addToCart": "Add to cart",
+    "inCart": "{count} in cart",
     "selectOption": "Select option",
     "outOfStock": "Out of stock",
     "fruits": "Fruits",
@@ -331,6 +332,10 @@
     "shippingNote": "Flat rate",
     "total": "Total",
     "checkout": "Proceed to checkout"
+  },
+  "MiniCart": {
+    "title": "Your cart",
+    "viewCart": "View cart"
   },
   "Wishlist": {
     "add": "Add {name} to wishlist",
@@ -466,6 +471,7 @@
     "decreaseQuantity": "Decrease quantity",
     "increaseQuantity": "Increase quantity",
     "addToCart": "Add to cart",
+    "inCart": "{count} in cart",
     "buyNow": "Buy Now",
     "added": "Added to cart",
     "chooseSize": "Please choose a size",
