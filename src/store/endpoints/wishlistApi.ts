@@ -32,3 +32,13 @@ export const {
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
 } = wishlistApi;
+
+export function useWishlistCount() {
+  const { count } = useGetWishlistQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      count: data?.length ?? 0,
+    }),
+  });
+
+  return count;
+}

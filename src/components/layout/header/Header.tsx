@@ -6,10 +6,9 @@ import { HeaderBar } from "./HeaderBar";
 
 type HeaderProps = {
   currency: CurrencyCode;
-  wishlistCount?: number;
 };
 
-export async function Header({ currency, wishlistCount = 0 }: HeaderProps) {
+export async function Header({ currency }: HeaderProps) {
   const categoryList = (await getCategories(currency)) ?? [];
   const shopCategories = categoryList.map((category) => ({
     href: getProductCategoryRoutePath(category.slug),
@@ -19,7 +18,7 @@ export async function Header({ currency, wishlistCount = 0 }: HeaderProps) {
   return (
     <>
       <AnnouncementBar />
-      <HeaderBar currency={currency} wishlistCount={wishlistCount} shopCategories={shopCategories} />
+      <HeaderBar currency={currency} shopCategories={shopCategories} />
     </>
   );
 }

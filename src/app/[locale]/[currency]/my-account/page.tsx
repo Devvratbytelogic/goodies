@@ -6,7 +6,7 @@ import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { Link } from "@/i18n/navigation";
 import { sampleAddresses } from "@/data/sampleAddresses";
 import { sampleCoupons } from "@/data/sampleAccount";
-import { sampleWishlist } from "@/data/sampleWishlist";
+// import { sampleWishlist } from "@/data/sampleWishlist";
 import { getAccountOrders } from "@/components/account/orders";
 import {
   getAccountAddressRoutePath,
@@ -32,7 +32,7 @@ export default async function MyAccountPage() {
 
   const stats = [
     { href: getAccountOrdersRoutePath(), label: t("orders"), value: orders.length },
-    { href: getWishlistRoutePath(), label: t("wishlist"), value: sampleWishlist.length },
+    { href: getWishlistRoutePath(), label: t("wishlist"), value: 1 },
     { href: getAccountAddressRoutePath(), label: t("addresses"), value: sampleAddresses.length },
     { href: getAccountCouponsRoutePath(), label: t("coupons"), value: sampleCoupons.length },
   ];

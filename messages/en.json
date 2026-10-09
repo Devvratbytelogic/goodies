@@ -334,15 +334,21 @@
   },
   "Wishlist": {
     "add": "Add {name} to wishlist",
-    "label": "Add to wishlist"
+    "label": "Add to wishlist",
+    "remove": "Remove {name} from wishlist",
+    "removeLabel": "Remove from wishlist"
   },
   "WishlistPage": {
     "title": "Wishlist",
-    "description": "A sample Goodies wishlist with the same saved items for every visitor.",
+    "description": "Treats you saved to buy later.",
     "count": "{count, plural, =0 {No saved items} one {# saved item} other {# saved items}}",
     "empty": "Your wishlist is empty.",
+    "emptyNote": "Tap the heart on a treat and it will show up here.",
     "shop": "Continue shopping",
-    "remove": "Remove {name} from wishlist"
+    "remove": "Remove {name} from wishlist",
+    "error": "We couldn't load your wishlist. Please try again.",
+    "retry": "Try again",
+    "loading": "Loading wishlist…"
   },
   "AccountPage": {
     "title": "Account",

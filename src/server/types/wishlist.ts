@@ -10,11 +10,11 @@ export interface WishlistApiResponse {
 }
 export interface WishlistApiResponseData {
     _id: string;
-    guest_user?: null;
-    user_id: string;
+    guest_user?: string | null;
+    user_id?: string | null;
     product_id: HomeProduct;
     product_type: string;
-    variant_sku: string;
+    variant_sku?: string | null;
     variant_key?: null;
     deletedAt?: null;
     createdAt: string;

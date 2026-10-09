@@ -5,6 +5,7 @@ import type { IconType } from "react-icons";
 import { LuHeart, LuHouse, LuShoppingCart, LuStore, LuUser } from "react-icons/lu";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCartCount } from "@/store/endpoints/cartApi";
+import { useWishlistCount } from "@/store/endpoints/wishlistApi";
 import { useOpenLogin } from "@/components/auth/Login";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath } from "@/components/layout/header/navigation";
@@ -42,6 +43,7 @@ function CountBadge({ count }: { count: number }) {
 export function BottomNav() {
   const t = useTranslations("BottomNav");
   const cartCount = useCartCount();
+  const wishlistCount = useWishlistCount();
   const tHeader = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
@@ -59,7 +61,9 @@ export function BottomNav() {
             const label =
               key === "cart"
                 ? tHeader("cartLabel", { count: cartCount })
-                : t(key);
+                : key === "favorites"
+                  ? tHeader("wishlistLabel", { count: wishlistCount })
+                  : t(key);
 
             const className = `flex h-full w-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               active ? "text-primary" : "text-icon-muted hover:text-primary"
@@ -72,6 +76,7 @@ export function BottomNav() {
                     className={`size-5.5 ${active && key === "favorites" ? "fill-current" : ""}`}
                   />
                   {key === "cart" ? <CountBadge count={cartCount} /> : null}
+                  {key === "favorites" && wishlistCount > 0 ? <CountBadge count={wishlistCount} /> : null}
                 </span>
                 <span>{t(key)}</span>
               </>
