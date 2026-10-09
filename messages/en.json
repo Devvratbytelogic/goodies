@@ -150,7 +150,8 @@
     "toggleCategories": "Show {section} categories",
     "tagline": "Little treats, big smiles",
     "switchLanguage": "Switch language to {language}",
-    "currency": "Currency"
+    "currency": "Currency",
+    "updatingCurrency": "Updating currency"
   },
   "ShopMenu": {
     "freezeDriedCandy": "Freeze dried candy",

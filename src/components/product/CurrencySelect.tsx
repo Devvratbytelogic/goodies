@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LuCheck, LuChevronDown } from "react-icons/lu";
+import { LuCheck, LuChevronDown, LuLoaderCircle } from "react-icons/lu";
 import { api } from "@/store/api";
 import { useAppDispatch } from "@/store/hooks";
 import { currencies, type CurrencyCode } from "@/utils/currency";
@@ -112,17 +112,20 @@ export default function CurrencySelect({
   const currencyRef = useRef<HTMLDivElement>(null);
   const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(value);
   const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     setCurrencyCode(value);
+    setIsUpdating(false);
   }, [value]);
 
   function selectCurrency(code: CurrencyCode) {
     setCurrencyOpen(false);
-    if (code === currencyCode) return;
+    if (code === currencyCode || isUpdating) return;
     setCurrencyCode(code);
     writeCurrencyCookie(code);
     dispatch(api.util.resetApiState());
+    setIsUpdating(true);
     router.refresh();
   }
 
@@ -155,21 +158,30 @@ export default function CurrencySelect({
     <div ref={currencyRef} className={`relative ${className || "w-fit"}`}>
       <button
         type="button"
-        aria-label={t("currency")}
+        aria-label={isUpdating ? t("updatingCurrency") : t("currency")}
+        aria-busy={isUpdating}
         aria-haspopup="listbox"
         aria-expanded={currencyOpen}
         aria-controls={listId}
+        disabled={isUpdating}
         onClick={() => setCurrencyOpen((open) => !open)}
-        className={`inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border bg-background px-3.5 text-sm font-medium text-muted-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${currencyOpen ? "border-primary text-primary" : "border-border/70 hover:border-primary/40 hover:bg-primary-soft hover:text-primary"
+        className={`inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border bg-background px-3.5 text-sm font-medium text-muted-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait ${currencyOpen ? "border-primary text-primary" : "border-border/70 hover:border-primary/40 hover:bg-primary-soft hover:text-primary"
           }`}
       >
         <CurrencyFlag code={currencyCode} />
         <span>{currencyCode}</span>
-        <LuChevronDown
-          aria-hidden
-          className={`size-4 text-muted transition-transform ${currencyOpen ? "rotate-180" : ""}`}
-        />
+        {isUpdating ? (
+          <LuLoaderCircle aria-hidden className="size-4 animate-spin text-primary" />
+        ) : (
+          <LuChevronDown
+            aria-hidden
+            className={`size-4 text-muted transition-transform ${currencyOpen ? "rotate-180" : ""}`}
+          />
+        )}
       </button>
+      <span className="sr-only" role="status" aria-live="polite">
+        {isUpdating ? t("updatingCurrency") : ""}
+      </span>
       {currencyOpen ? (
         <ul
           id={listId}

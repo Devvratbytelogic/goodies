@@ -150,7 +150,8 @@
     "toggleCategories": "عرض تصنيفات {section}",
     "tagline": "حلويات صغيرة، ابتسامات كبيرة",
     "switchLanguage": "تغيير اللغة إلى {language}",
-    "currency": "العملة"
+    "currency": "العملة",
+    "updatingCurrency": "جارٍ تحديث العملة"
   },
   "ShopMenu": {
     "freezeDriedCandy": "حلوى مجففة بالتجميد",
