@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { PlacedOrder } from "@/server/types/order";
 import { usePlaceOrderMutation } from "@/store/endpoints/orderApi";
 
@@ -34,10 +35,12 @@ export default function CodCheckout({ billingAddressId, shippingAddressId, count
     }
   }
 
+  const requestPlace = usePlaceWhenSignedIn(placeCodOrder);
+
   return (
     <button
       type="button"
-      onClick={placeCodOrder}
+      onClick={requestPlace}
       disabled={!billingAddressId || !shippingAddressId || isLoading}
       className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
     >

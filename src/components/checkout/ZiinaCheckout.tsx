@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { useCreateZiinaCheckoutMutation } from "@/store/endpoints/paymentApi";
 
 type ZiinaCheckoutProps = {
@@ -37,6 +38,8 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId }: Z
     }
   }
 
+  const requestPlace = usePlaceWhenSignedIn(payWithZiina);
+
   return (
     <>
       {error ? (
@@ -47,7 +50,7 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId }: Z
 
       <button
         type="button"
-        onClick={payWithZiina}
+        onClick={requestPlace}
         disabled={!billingAddressId || !shippingAddressId || isLoading}
         className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
       >
