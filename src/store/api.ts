@@ -7,7 +7,7 @@ import { showToast } from "@/utils/toast";
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders(headers) {
-    headers.set("Accept", "application/json");
+    if (!headers.has("Accept")) headers.set("Accept", "application/json");
     headers.set("country", readCurrencyCookie());
 
     const token = Cookies.get("token");

@@ -589,6 +589,9 @@
     "paymentLabel": "Payment",
     "deliveryAddress": "Delivery address",
     "orderNumber": "Order number",
+    "downloadPdf": "Download PDF",
+    "downloadingPdf": "Preparing PDF…",
+    "downloadPdfError": "We could not create the PDF. Please try again.",
     "shop": "Continue shopping"
   },
   "NotFound": {

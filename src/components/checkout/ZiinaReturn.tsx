@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuCircleCheck, LuCircleX, LuClock } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import OrderAddresses from "@/components/checkout/OrderAddresses";
 import { Link } from "@/i18n/navigation";
 import { api } from "@/store/api";
-import { useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
+import { useDownloadOrderInvoiceMutation, useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
 import { useAppDispatch } from "@/store/hooks";
 import { formatAmount } from "@/utils/price";
 import { getProductRoutePath } from "@/utils/routes";
 
 const buttonClassName =
   "mt-6 inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+const actionClassName =
+  "inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70";
 
 type ZiinaReturnProps = {
   status: string;
@@ -66,6 +69,8 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
   const t = useTranslations("CheckoutClassicPage");
   const cart = useTranslations("CartPage");
   const dispatch = useAppDispatch();
+  const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();
+  const [pdfError, setPdfError] = useState(false);
   const isSuccess = status === "success";
   const orderKey = orderId || orderNumber;
   const { data: order, isError } = useGetOrderDetailsQuery(orderKey, {
@@ -137,9 +142,27 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
   const billingAddress = order?.billing_address;
   const currency = summary?.currency || items[0]?.currency || "";
   const paid = order?.payment_status?.toLowerCase() === "paid";
+  const isCod = order?.payment_method === "cod";
   const shownOrderNumber = order?.order_number ?? orderNumber;
   const discount = (summary?.discount_amount ?? 0) > 0 ? summary?.discount_amount ?? 0 : summary?.coupon_discount ?? 0;
   const itemCount = items.reduce((sum, item) => sum + (item.quantity ?? 0), 0);
+
+  async function onDownload() {
+    const invoiceId = order?.order_id || orderId;
+    if (!invoiceId || downloading) return;
+    setPdfError(false);
+    try {
+      const blob = await downloadInvoice(invoiceId).unwrap();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `goodies-order-${shownOrderNumber || invoiceId}.pdf`;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setPdfError(true);
+    }
+  }
 
   return (
     <section
@@ -151,7 +174,10 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
         <div>
           <h1 className="text-2xl font-bold">{t("received")}</h1>
           <p className="mt-1 max-w-md text-sm text-muted">{t("receivedNote")}</p>
-          {order && !paid ? <p className="mt-2 max-w-md text-sm text-muted">{t("ziinaPendingTitle")}</p> : null}
+          {isCod && summary ? (
+            <p className="mt-2 max-w-md text-sm text-muted">{t("codNote", { amount: formatAmount(summary.grand_total, currency) })}</p>
+          ) : null}
+          {order && !paid && !isCod ? <p className="mt-2 max-w-md text-sm text-muted">{t("ziinaPendingTitle")}</p> : null}
         </div>
       </div>
 
@@ -295,9 +321,26 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
         </>
       ) : null}
 
-      <Link href={shopHref} className={buttonClassName}>
-        {t("shop")}
-      </Link>
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        {order ? (
+          <button
+            type="button"
+            onClick={onDownload}
+            disabled={downloading}
+            className={`${actionClassName} border border-border text-heading hover:border-primary hover:text-primary`}
+          >
+            {downloading ? t("downloadingPdf") : t("downloadPdf")}
+          </button>
+        ) : null}
+        <Link href={shopHref} className={`${actionClassName} bg-primary text-white hover:bg-primary/90`}>
+          {t("shop")}
+        </Link>
+      </div>
+      {pdfError ? (
+        <p role="alert" className="mt-3 text-sm text-primary">
+          {t("downloadPdfError")}
+        </p>
+      ) : null}
     </section>
   );
 }

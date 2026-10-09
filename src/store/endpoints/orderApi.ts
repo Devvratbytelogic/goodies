@@ -16,7 +16,14 @@ export const orderApi = api.injectEndpoints({
       query: (orderId) => `/user/order-details/${encodeURIComponent(orderId)}`,
       transformResponse: (res: OrderDetailsResponse) => res.data,
     }),
+    downloadOrderInvoice: build.mutation<Blob, string>({
+      query: (orderId) => ({
+        url: `/user/order-invoice/${encodeURIComponent(orderId)}`,
+        headers: { Accept: "application/pdf" },
+        responseHandler: (response: Response) => response.blob(),
+      }),
+    }),
   }),
 });
 
-export const { useGetOrderDetailsQuery, usePlaceOrderMutation } = orderApi;
+export const { useGetOrderDetailsQuery, usePlaceOrderMutation, useDownloadOrderInvoiceMutation } = orderApi;

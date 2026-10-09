@@ -3,8 +3,9 @@
 import { useState } from "react";
 import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
-import OrderReceived from "@/components/checkout/OrderReceived";
+import ZiinaReturn from "@/components/checkout/ZiinaReturn";
 import { PlacedOrder } from "@/server/types/order";
+import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
 export default function CheckoutView({ shopHref }: { shopHref: string }) {
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
@@ -12,7 +13,14 @@ export default function CheckoutView({ shopHref }: { shopHref: string }) {
   if (placedOrder) {
     return (
       <div className="mx-auto mt-6 max-w-3xl">
-        <OrderReceived order={placedOrder} shopHref={shopHref} />
+        <ZiinaReturn
+          status="success"
+          orderId={placedOrder.order_id}
+          orderNumber={String(placedOrder.order_number)}
+          message=""
+          shopHref={shopHref}
+          checkoutHref={getCheckoutClassicRoutePath()}
+        />
       </div>
     );
   }

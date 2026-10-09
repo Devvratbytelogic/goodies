@@ -8,7 +8,13 @@ export function makeStore() {
     reducer: {
       [api.reducerPath]: api.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ["api/executeMutation/fulfilled"],
+          ignoredPaths: ["api.mutations"],
+        },
+      }).concat(api.middleware),
   });
 }
 

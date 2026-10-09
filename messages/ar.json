@@ -589,6 +589,9 @@
     "paymentLabel": "الدفع",
     "deliveryAddress": "عنوان التوصيل",
     "orderNumber": "رقم الطلب",
+    "downloadPdf": "تنزيل PDF",
+    "downloadingPdf": "جارٍ تجهيز ملف PDF…",
+    "downloadPdfError": "تعذر إنشاء ملف PDF. يرجى المحاولة مرة أخرى.",
     "shop": "متابعة التسوق"
   },
   "NotFound": {
