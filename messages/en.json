@@ -359,6 +359,7 @@
   },
   "AccountPage": {
     "title": "Account",
+    "loading": "Loading account…",
     "description": "A sample Goodies account with the same orders, addresses, and coupons for every visitor.",
     "greeting": "Hello, {name}",
     "navLabel": "Account",

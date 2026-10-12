@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { LuHouse, LuLogOut, LuMapPin, LuPackage, LuTicket, LuUser } from "react-icons/lu";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
+import { AccountNavIdentitySkeleton } from "@/components/skeletons/AccountSkeletons";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   getAccountAddressRoutePath,
@@ -30,7 +31,7 @@ function normalize(path: string) {
   return path;
 }
 
-export default function AccountNav({ name, photo, email }: { name: string; photo: string; email: string }) {
+export default function AccountNav({ name, photo, email, pending = false }: { name: string; photo: string; email: string; pending?: boolean }) {
   const t = useTranslations("AccountPage");
   const router = useRouter();
   const pathname = normalize(usePathname());
@@ -41,15 +42,19 @@ export default function AccountNav({ name, photo, email }: { name: string; photo
   return (
     <nav aria-label={t("navLabel")} className="mb-6 lg:sticky lg:top-24 lg:mb-0">
       <div className="rounded-2xl border border-border bg-background p-3">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <ProfileAvatar photo={photo} initials={initials} />
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-heading">
-              {name}
-            </p>
-            <p className="truncate text-xs text-muted">{email}</p>
+        {pending ? (
+          <AccountNavIdentitySkeleton />
+        ) : (
+          <div className="flex items-center gap-3 px-2 py-2">
+            <ProfileAvatar photo={photo} initials={initials} />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-heading">
+                {name}
+              </p>
+              <p className="truncate text-xs text-muted">{email}</p>
+            </div>
           </div>
-        </div>
+        )}
         <ul className="mt-2 grid grid-cols-2 gap-1 border-t border-border pt-2 lg:grid-cols-1">
           {items.map((item) => {
             const path = normalize(item.href);

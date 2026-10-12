@@ -10,6 +10,7 @@ import { useGetUserOrdersQuery } from "@/store/endpoints/orderApi";
 import type { UserOrder } from "@/server/types/order";
 import { getAccountOrderRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
+import { AccountRecentOrdersSkeleton, AccountStatValueSkeleton } from "@/components/skeletons/AccountSkeletons";
 
 const recentOrdersArgs = { status: "all", page: 1, limit: 2 };
 
@@ -37,7 +38,8 @@ function useRecentOrders() {
 }
 
 export function AccountOrdersCount() {
-  const { data } = useRecentOrders();
+  const { data, isLoading, isUninitialized } = useRecentOrders();
+  if (!data && (isLoading || isUninitialized)) return <AccountStatValueSkeleton />;
   return data?.pagination.totalItems ?? 0;
 }
 
@@ -48,7 +50,7 @@ export function AccountRecentOrders() {
   const { data, isLoading, isUninitialized } = useRecentOrders();
   const orders = data?.orders ?? [];
 
-  if (isLoading || isUninitialized) return null;
+  if ((isLoading || isUninitialized) && !data) return <AccountRecentOrdersSkeleton />;
 
   if (orders.length === 0) {
     return <p className="text-sm text-muted">{t("noOrders")}</p>;

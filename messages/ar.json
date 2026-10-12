@@ -359,6 +359,7 @@
   },
   "AccountPage": {
     "title": "الحساب",
+    "loading": "جارٍ تحميل الحساب…",
     "description": "حساب Goodies نموذجي بنفس الطلبات والعناوين والقسائم لكل الزوار.",
     "greeting": "مرحبًا {name}",
     "navLabel": "الحساب",

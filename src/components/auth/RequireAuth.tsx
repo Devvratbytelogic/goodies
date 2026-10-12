@@ -5,7 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getHomeRoutePath } from "@/utils/routes";
 
-export function RequireAuth({ children }: { children: ReactNode }) {
+export function RequireAuth({ children, fallback = null }: { children: ReactNode; fallback?: ReactNode }) {
   const { token, ready } = useAuth();
   const router = useRouter();
 
@@ -16,7 +16,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }, [ready, token, router]);
 
   if (!ready || !token) {
-    return null;
+    return fallback;
   }
 
   return children;

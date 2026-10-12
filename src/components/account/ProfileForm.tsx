@@ -7,6 +7,7 @@ import { LuCamera, LuEye, LuEyeOff, LuX } from "react-icons/lu";
 import type { InferType } from "yup";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { AccountProfileFormSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useRouter } from "@/i18n/navigation";
 import { useChangePasswordMutation, useDeleteUserAccountMutation, useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/store/endpoints/userApi";
@@ -29,7 +30,7 @@ export default function ProfileForm() {
   const t = useTranslations("AccountPage");
   const router = useRouter();
   const { token, logout } = useAuth();
-  const { data: profile } = useGetUserProfileQuery(undefined, { skip: !token });
+  const { data: profile, isLoading, isUninitialized } = useGetUserProfileQuery(undefined, { skip: !token });
   const [updateUserProfile, { isLoading: isSavingProfile }] = useUpdateUserProfileMutation();
   const [changePassword, { isLoading: isSavingPassword }] = useChangePasswordMutation();
   const [deleteAccount, { isLoading: isDeleting }] = useDeleteUserAccountMutation();
@@ -59,6 +60,7 @@ export default function ProfileForm() {
       body.append("name", values.firstName.trim());
       body.append("last_name", values.lastName.trim());
       if (photoFile.current) body.append("profile_pic", photoFile.current);
+      else if (!photo) body.append("profile_pic", "");
 
       try {
         await updateUserProfile(body).unwrap();
@@ -137,9 +139,11 @@ export default function ProfileForm() {
   }
 
   const initials = `${profileForm.values.firstName[0] ?? ""}${profileForm.values.lastName[0] ?? ""}`;
+  const profilePending = !profile && (isLoading || isUninitialized);
 
   return (
     <div className="grid gap-6">
+      {profilePending ? <AccountProfileFormSkeleton /> : (
       <form noValidate onSubmit={profileForm.handleSubmit} className="rounded-2xl border border-border bg-background px-5 py-5">
         <h2 className="text-lg font-bold text-heading">{t("profile")}</h2>
         <p className="mt-1 text-sm text-muted">{t("profileIntro")}</p>
@@ -260,6 +264,7 @@ export default function ProfileForm() {
           ) : null}
         </div>
       </form>
+      )}
 
       <form noValidate onSubmit={passwordForm.handleSubmit} className="rounded-2xl border border-border bg-background px-5 py-5">
         <h2 className="text-lg font-bold text-heading">{t("changePassword")}</h2>

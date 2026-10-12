@@ -14,6 +14,7 @@ import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
 import type { AddressEntity } from "@/server/types/address";
+import { AccountAddressCardsSkeleton, AccountStatValueSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { checkoutValidationSchema } from "@/validations";
 
 type SelectOption = { value: string; label: string };
@@ -104,7 +105,8 @@ function toAddressPayload(values: AddressValues, phoneCountryCode: string, isDef
 }
 
 export function AccountAddressCount() {
-  const { data } = useGetAddressesQuery();
+  const { data, isLoading, isUninitialized } = useGetAddressesQuery();
+  if (!data && (isLoading || isUninitialized)) return <AccountStatValueSkeleton />;
   return data?.length ?? 0;
 }
 
@@ -320,7 +322,9 @@ export function AccountAddresses() {
           {checkout("addNew")}
         </button>
       </div>
-      {isLoading || isUninitialized ? null : addresses.length === 0 ? (
+      {(isLoading || isUninitialized) && addresses.length === 0 ? (
+        <AccountAddressCardsSkeleton />
+      ) : addresses.length === 0 ? (
         <p className="mt-4 text-sm text-muted">{checkout("emptyAddresses")}</p>
       ) : (
         <ul className="mt-4 grid gap-4 sm:grid-cols-2">

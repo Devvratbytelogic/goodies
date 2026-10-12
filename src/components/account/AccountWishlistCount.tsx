@@ -1,7 +1,11 @@
 "use client";
 
-import { useWishlistCount } from "@/store/endpoints/wishlistApi";
+import { AccountStatValueSkeleton } from "@/components/skeletons/AccountSkeletons";
+import { useGetWishlistQuery, useWishlistCount } from "@/store/endpoints/wishlistApi";
 
 export function AccountWishlistCount() {
-  return useWishlistCount();
+  const { data, isLoading, isUninitialized } = useGetWishlistQuery();
+  const count = useWishlistCount();
+  if (!data && (isLoading || isUninitialized)) return <AccountStatValueSkeleton />;
+  return count;
 }

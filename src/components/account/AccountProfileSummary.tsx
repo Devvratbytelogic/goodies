@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import { AccountDefaultAddressSkeleton, AccountGreetingSkeleton, AccountProfileCardSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useGetUserProfileQuery } from "@/store/endpoints/userApi";
@@ -14,15 +15,19 @@ function useAccountUser() {
 
 export function AccountGreeting() {
   const t = useTranslations("AccountPage");
-  const { data: profile } = useAccountUser();
+  const { data: profile, isLoading, isUninitialized } = useAccountUser();
+
+  if (!profile && (isLoading || isUninitialized)) return <AccountGreetingSkeleton />;
 
   return <h1 className="text-2xl font-bold tracking-tight text-heading">{t("greeting", { name: profile?.name ?? "" })}</h1>;
 }
 
 export function AccountProfileSummary() {
   const t = useTranslations("AccountPage");
-  const { data: profile } = useAccountUser();
+  const { data: profile, isLoading, isUninitialized } = useAccountUser();
   const initials = `${profile?.name?.[0] ?? ""}${profile?.last_name?.[0] ?? ""}`;
+
+  if (!profile && (isLoading || isUninitialized)) return <AccountProfileCardSkeleton />;
 
   return (
     <section className="rounded-2xl border border-border bg-background px-5 py-4">
@@ -53,8 +58,10 @@ export function AccountProfileSummary() {
 
 export function AccountDefaultAddress() {
   const t = useTranslations("AccountPage");
-  const { data: profile } = useAccountUser();
+  const { data: profile, isLoading, isUninitialized } = useAccountUser();
   const address = profile?.address;
+
+  if (!profile && (isLoading || isUninitialized)) return <AccountDefaultAddressSkeleton />;
 
   return (
     <section className="rounded-2xl border border-border bg-background px-5 py-4">
@@ -92,9 +99,11 @@ export function ProfileAvatar({ photo, initials, size = "sm" }: { photo: string 
   const className = size === "lg" ? "size-24 text-2xl" : "size-11 text-sm";
 
   return (
-    <span className={`relative uppercase flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary font-semibold text-primary-foreground ${className}`}>
+    <span
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold border border-gray-200 uppercase ${className} ${photo ? "" : "bg-primary text-primary-foreground"}`}
+    >
       {photo ? (
-        <ImageComponent src={photo} alt="" width={size === "lg" ? 96 : 44} height={size === "lg" ? 96 : 44} sizes={size === "lg" ? "96px" : "44px"} unoptimized objectFit="cover" />
+        <ImageComponent src={photo} alt="" fill sizes={size === "lg" ? "96px" : "44px"} unoptimized objectFit="cover" className="object-center" />
       ) : (
         initials
       )}
