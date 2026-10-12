@@ -255,6 +255,7 @@
     "categories": "Categories",
     "allProducts": "All products",
     "showing": "Showing {from}–{to} of {total} results",
+    "loading": "Loading products",
     "sortLabel": "Sort products",
     "sortDefault": "Default sorting",
     "sortPriceAsc": "Sort by price: low to high",

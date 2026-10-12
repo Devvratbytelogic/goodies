@@ -1,11 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import Breadcrumbs, { type BreadcrumbItem } from "@/components/layout/common/Breadcrumbs";
-import ProductCard from "@/components/product/ProductCard";
+import Pagination from "@/components/product/Pagination";
+import ProductGrid from "@/components/product/ProductGrid";
 import ShopFilters from "@/components/product/ShopFilters";
-import ShopSortSelect from "@/components/product/ShopSortSelect";
 import { getCategories } from "@/server";
 import { HomeProduct } from "@/server/types/Home";
 import type { CurrencyCode } from "@/utils/currency";
+import { getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
+import { shopPageHref, shopResultWindow } from "@/utils/shopQuery";
 
 type ShopCatalogProps = {
   title: string;
@@ -17,10 +19,7 @@ type ShopCatalogProps = {
   totalCount?: number;
   minPrice?: number;
   maxPrice?: number;
-  priceFrom?: number;
-  priceTo?: number;
   currencySymbol?: string;
-  sort?: string;
   currency: CurrencyCode;
 };
 
@@ -34,10 +33,7 @@ export default async function ShopCatalog({
   totalCount,
   minPrice,
   maxPrice,
-  priceFrom,
-  priceTo,
   currencySymbol,
-  sort,
   currency,
 }: ShopCatalogProps) {
   const t = await getTranslations("ShopPage");
@@ -45,8 +41,8 @@ export default async function ShopCatalog({
   const count = products.length;
   const total = totalCount ?? count;
   const size = pageSize ?? count;
-  const from = count === 0 ? 0 : (page - 1) * size + 1;
-  const to = count === 0 ? 0 : from + count - 1;
+  const { from, to, totalPages } = shopResultWindow(page, size, count, total);
+  const path = activeCategoryId ? getProductCategoryRoutePath(activeCategoryId) : getShopRoutePath();
 
   return (
     <div className="container section_y_space">
@@ -63,46 +59,37 @@ export default async function ShopCatalog({
         maxPriceLabel={t("maxPrice")}
         minPrice={minPrice}
         maxPrice={maxPrice}
-        priceFrom={priceFrom}
-        priceTo={priceTo}
         currencySymbol={currencySymbol}
-        sortLabel={sort === "newest" ? t("sortLatest") : sort === "low_to_high" ? t("sortPriceAsc") : sort === "high_to_low" ? t("sortPriceDesc") : undefined}
         removeSortLabel={t("removeSort")}
         title={t("categories")}
         allLabel={t("allProducts")}
         total={total}
         activeCategoryId={activeCategoryId}
         showing={t("showing", { from, to, total })}
+        currency={currency}
+        sortFieldLabel={t("sortLabel")}
+        sortOptions={[
+          { value: "", label: t("sortDefault") },
+          { value: "newest", label: t("sortLatest") },
+          { value: "low_to_high", label: t("sortPriceAsc") },
+          { value: "high_to_low", label: t("sortPriceDesc") },
+        ]}
         categories={categoryList.map((category) => ({
           id: category.slug,
           label: category.name,
           count: category.count ?? 0,
         }))}
-        sort={
-          <ShopSortSelect
-            id="shop-sort"
-            label={t("sortLabel")}
-            value={sort}
-            options={[
-              { value: "", label: t("sortDefault") },
-              { value: "newest", label: t("sortLatest") },
-              { value: "low_to_high", label: t("sortPriceAsc") },
-              { value: "high_to_low", label: t("sortPriceDesc") },
-            ]}
-          />
-        }
       >
-        <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
-          {products.length > 0 ? products.map((product) => (
-            <li key={product.slug}>
-              <ProductCard product={product} />
-            </li>
-          )) : (
-            <li>
-              <p>No products found</p>
-            </li>
-          )}
-        </ul>
+        <ProductGrid products={products} />
+        <Pagination
+          className="mt-8 flex items-center justify-center gap-1.5"
+          page={page}
+          totalPages={totalPages}
+          label={t("pagination")}
+          previousLabel={t("previous")}
+          nextLabel={t("next")}
+          href={(number) => shopPageHref(path, number)}
+        />
       </ShopFilters>
     </div>
   );

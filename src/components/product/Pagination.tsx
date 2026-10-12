@@ -8,6 +8,7 @@ type PaginationProps = {
   previousLabel: string;
   nextLabel: string;
   href: (page: number) => string;
+  className?: string;
 };
 
 function pageItems(current: number, total: number) {
@@ -27,11 +28,11 @@ function pageItems(current: number, total: number) {
 const arrowClass =
   "inline-flex size-10 items-center justify-center rounded-full border border-border text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-export default function Pagination({ page, totalPages, label, previousLabel, nextLabel, href }: PaginationProps) {
+export default function Pagination({ page, totalPages, label, previousLabel, nextLabel, href, className }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="container mb-10 flex items-center justify-center gap-1.5" aria-label={label}>
+    <nav className={className ?? "container mb-10 flex items-center justify-center gap-1.5"} aria-label={label}>
       <Link
         href={href(page - 1)}
         aria-disabled={page <= 1}

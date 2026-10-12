@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { formatAmount } from "@/utils/price";
+import { priceParam } from "@/utils/shopQuery";
 import { shopSearchPath } from "@/utils/shopSearch";
 
 type ShopPriceFilterProps = {
@@ -11,8 +13,6 @@ type ShopPriceFilterProps = {
   maxLabel: string;
   min: number;
   max: number;
-  valueMin?: number;
-  valueMax?: number;
   currencySymbol?: string;
 };
 
@@ -20,7 +20,16 @@ function clamp(value: number, lower: number, upper: number) {
   return Math.min(Math.max(value, lower), upper);
 }
 
-export default function ShopPriceFilter({ title, minLabel, maxLabel, min, max, valueMin, valueMax, currencySymbol }: ShopPriceFilterProps) {
+function PriceSlider({
+  title,
+  minLabel,
+  maxLabel,
+  min,
+  max,
+  valueMin,
+  valueMax,
+  currencySymbol,
+}: ShopPriceFilterProps & { valueMin?: number; valueMax?: number }) {
   const router = useRouter();
   const pathname = usePathname();
   const trackRef = useRef<HTMLDivElement>(null);
@@ -188,6 +197,30 @@ export default function ShopPriceFilter({ title, minLabel, maxLabel, min, max, v
         />
       </div>
     </div>
+  );
+}
+
+function PriceSliderFromUrl(props: ShopPriceFilterProps) {
+  const params = useSearchParams();
+  const minPrice = priceParam(params.get("min_price"));
+  const maxPrice = priceParam(params.get("max_price"));
+  const hasPrice = minPrice != null && maxPrice != null;
+
+  return (
+    <PriceSlider
+      key={hasPrice ? `${minPrice}-${maxPrice}` : "full"}
+      {...props}
+      valueMin={hasPrice ? minPrice : undefined}
+      valueMax={hasPrice ? maxPrice : undefined}
+    />
+  );
+}
+
+export default function ShopPriceFilter(props: ShopPriceFilterProps) {
+  return (
+    <Suspense fallback={<PriceSlider {...props} />}>
+      <PriceSliderFromUrl {...props} />
+    </Suspense>
   );
 }
 

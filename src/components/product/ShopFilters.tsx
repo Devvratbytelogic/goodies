@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { LuSlidersHorizontal, LuX } from "react-icons/lu";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import ShopPriceFilter from "@/components/product/ShopPriceFilter";
+import ShopResults, { ShopResultColumn } from "@/components/product/ShopResults";
 import { getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
-import { formatAmount } from "@/utils/price";
-import { shopSearchPath } from "@/utils/shopSearch";
+import type { CurrencyCode } from "@/utils/currency";
 
 type ShopFilterCategory = {
   id: string;
@@ -24,10 +24,7 @@ type ShopFiltersProps = {
   maxPriceLabel: string;
   minPrice?: number;
   maxPrice?: number;
-  priceFrom?: number;
-  priceTo?: number;
   currencySymbol?: string;
-  sortLabel?: string;
   removeSortLabel: string;
   title: string;
   allLabel: string;
@@ -35,7 +32,9 @@ type ShopFiltersProps = {
   categories: ShopFilterCategory[];
   activeCategoryId?: string;
   showing: string;
-  sort: ReactNode;
+  sortFieldLabel: string;
+  sortOptions: { value: string; label: string }[];
+  currency: CurrencyCode;
   children: ReactNode;
 };
 
@@ -94,27 +93,22 @@ function FilterBody({
   maxPriceLabel,
   minPrice,
   maxPrice,
-  priceFrom,
-  priceTo,
   currencySymbol,
   title,
   allLabel,
   total,
   categories,
   activeCategoryId,
-}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sort" | "children" | "removePriceLabel" | "sortLabel" | "removeSortLabel">) {
+}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sortFieldLabel" | "sortOptions" | "currency" | "children" | "removePriceLabel" | "removeSortLabel">) {
   return (
     <div className="min-w-0 space-y-5 lg:space-y-8">
       {minPrice != null && maxPrice != null ? (
         <ShopPriceFilter
-          key={`${priceFrom ?? minPrice}-${priceTo ?? maxPrice}`}
           title={priceTitle}
           minLabel={minPriceLabel}
           maxLabel={maxPriceLabel}
           min={minPrice}
           max={maxPrice}
-          valueMin={priceFrom}
-          valueMax={priceTo}
           currencySymbol={currencySymbol}
         />
       ) : null}
@@ -134,23 +128,25 @@ export default function ShopFilters({
   showResultsLabel,
   removePriceLabel,
   removeSortLabel,
-  sortLabel,
   showing,
-  sort,
+  sortFieldLabel,
+  sortOptions,
+  currency,
+  activeCategoryId,
   children,
   ...filters
 }: ShopFiltersProps) {
-  const router = useRouter();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const priceApplied = filters.priceFrom != null && filters.priceTo != null;
-  const priceLabel = priceApplied
-    ? `${formatAmount(filters.priceFrom ?? 0, filters.currencySymbol)} – ${formatAmount(filters.priceTo ?? 0, filters.currencySymbol)}`
-    : "";
-
-  function updateSearch(updates: Record<string, string | null>) {
-    router.push(shopSearchPath(pathname, window.location.search, updates), { scroll: false });
-  }
+  const filtersButton = (
+    <button
+      type="button"
+      onClick={() => setOpen(true)}
+      className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+    >
+      <LuSlidersHorizontal aria-hidden className="size-4" />
+      {filtersLabel}
+    </button>
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -177,58 +173,31 @@ export default function ShopFilters({
     };
   }, [open]);
 
+  const columnProps = {
+    showing,
+    sortFieldLabel,
+    sortOptions,
+    filtersButton,
+  };
+
   return (
     <>
       <div className="mt-6 grid min-w-0 items-start gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
         <aside className="hidden min-w-0 lg:sticky lg:top-24 lg:block">
-          <FilterBody {...filters} />
+          <FilterBody {...filters} activeCategoryId={activeCategoryId} />
         </aside>
         <div className="min-w-0">
-          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="min-w-0 text-sm text-muted">{showing}</p>
-            <div className="flex min-w-0 items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setOpen(true)}
-                className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
-              >
-                <LuSlidersHorizontal aria-hidden className="size-4" />
-                {filtersLabel}
-              </button>
-              <div className="min-w-0 flex-1 sm:flex-none">{sort}</div>
-            </div>
-          </div>
-          {priceApplied || sortLabel ? (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {priceApplied ? (
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => updateSearch({ min_price: null, max_price: null })}
-                    aria-label={`${removePriceLabel}, ${priceLabel}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    <bdi>{priceLabel}</bdi>
-                    <LuX aria-hidden className="size-3.5" />
-                  </button>
-                </li>
-              ) : null}
-              {sortLabel ? (
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => updateSearch({ sort: null })}
-                    aria-label={`${removeSortLabel}, ${sortLabel}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    {sortLabel}
-                    <LuX aria-hidden className="size-3.5" />
-                  </button>
-                </li>
-              ) : null}
-            </ul>
-          ) : null}
-          {children}
+          <Suspense fallback={<ShopResultColumn {...columnProps} sort="" list={children} />}>
+            <ShopResults
+              {...columnProps}
+              currency={currency}
+              category={activeCategoryId}
+              currencySymbol={filters.currencySymbol}
+              removePriceLabel={removePriceLabel}
+              removeSortLabel={removeSortLabel}
+              fallback={children}
+            />
+          </Suspense>
         </div>
       </div>
       {open ? (
@@ -247,7 +216,7 @@ export default function ShopFilters({
               </button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-              <FilterBody {...filters} />
+              <FilterBody {...filters} activeCategoryId={activeCategoryId} />
             </div>
             <div className="border-t border-border p-4">
               <button

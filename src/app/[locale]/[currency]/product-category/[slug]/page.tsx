@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Pagination from "@/components/product/Pagination";
 import ShopCatalog from "@/components/product/ShopCatalog";
 import FaqList from "@/components/layout/common/FaqList";
-import { getAllProducts, getCategory } from "@/server";
+import { getAllProducts, getCategories, getCategory } from "@/server";
 import { markdownToHtml } from "@/utils/markdown";
-import { toCurrency } from "@/utils/currency";
-import { getHomeRoutePath, getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
+import { defaultCurrency, toCurrency } from "@/utils/currency";
+import { getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
+import { HomeProduct } from "@/server/types/Home";
 
-function priceParam(value?: string) {
-  if (!value) return undefined;
-  const amount = Number(value);
-  return Number.isFinite(amount) ? amount : undefined;
-}
+export const revalidate = 600;
 
-const sorts = ["newest", "low_to_high", "high_to_low"];
-
-function sortParam(value?: string) {
-  return sorts.includes(value ?? "") ? value : undefined;
+export async function generateStaticParams() {
+  try {
+    const categories = (await getCategories(defaultCurrency)) ?? [];
+    return categories.filter((category) => category.slug).map((category) => ({ slug: category.slug }));
+  } catch (error) {
+    console.error("generateStaticParams: category list unavailable", error);
+    return [];
+  }
 }
 
 function readSlug(slug: string) {
@@ -28,22 +28,8 @@ function readSlug(slug: string) {
   }
 }
 
-function pageHref(slug: string, number: number, minPrice?: number, maxPrice?: number, sort?: string) {
-  const params = new URLSearchParams();
-  if (number > 1) params.set("page", String(number));
-  if (minPrice != null && maxPrice != null) {
-    params.set("min_price", String(minPrice));
-    params.set("max_price", String(maxPrice));
-  }
-  if (sort) params.set("sort", sort);
-  const path = getProductCategoryRoutePath(slug);
-  const query = params.toString();
-  return query ? `${path}?${query}` : path;
-}
-
 type ProductCategoryPageProps = {
-  params: Promise<{ currency: string; slug: string }>;
-  searchParams: Promise<{ page?: string; min_price?: string; max_price?: string; sort?: string }>;
+  params: Promise<{ locale: string; currency: string; slug: string }>;
 };
 
 function metaText(value?: string | null) {
@@ -79,7 +65,7 @@ export async function generateMetadata({ params }: ProductCategoryPageProps): Pr
   };
 }
 
-export default async function ProductCategoryPage({ params, searchParams }: ProductCategoryPageProps) {
+export default async function ProductCategoryPage({ params }: ProductCategoryPageProps) {
   const { currency, slug: rawSlug } = await params;
   const country = toCurrency(currency);
   const slug = readSlug(rawSlug);
@@ -89,17 +75,11 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
   const shop = await getTranslations("ShopPage");
   const nav = await getTranslations("Nav");
   const categoryCopy = await getTranslations("ProductCategoryPage");
-  const { page: pageParam, min_price: minParam, max_price: maxParam, sort: sortQuery } = await searchParams;
-  const page = Math.max(1, Number(pageParam) || 1);
-  const selectedMin = priceParam(minParam);
-  const selectedMax = priceParam(maxParam);
-  const price = selectedMin != null && selectedMax != null ? { min: selectedMin, max: selectedMax } : undefined;
-  const sort = sortParam(sortQuery);
-  const allProductsData = await getAllProducts(country, page, price?.min, price?.max, sort, category.slug);
-  const products = allProductsData.data ?? [];
+  const allProductsData = await getAllProducts(country, 1, undefined, undefined, undefined, category.slug);
+  const products = (allProductsData.data ?? []) as HomeProduct[];
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;
-  const totalPages = Math.max(1, Math.ceil(total / limit));
+
   return (
     <>
       {category.json_ld ? (
@@ -114,24 +94,13 @@ export default async function ProductCategoryPage({ params, searchParams }: Prod
         ]}
         products={products}
         activeCategoryId={category.slug}
-        page={page}
+        page={1}
         pageSize={limit}
         totalCount={total}
         minPrice={allProductsData.lowest_price ?? 0}
         maxPrice={allProductsData.highest_price ?? 0}
-        priceFrom={price?.min}
-        priceTo={price?.max}
         currencySymbol={allProductsData.pricing_context?.currency_symbol || "د.إ"}
         currency={country}
-        sort={sort ?? ""}
-      />
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        label={shop("pagination")}
-        previousLabel={shop("previous")}
-        nextLabel={shop("next")}
-        href={(number) => pageHref(category.slug, number, price?.min, price?.max, sort)}
       />
       {category.description?.trim() ? (
         <section className="container mb-10">

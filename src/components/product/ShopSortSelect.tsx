@@ -17,7 +17,7 @@ type ShopSortSelectProps = {
 
 const className = "h-10 w-full max-w-full rounded-lg border border-border bg-background px-3 text-sm text-heading outline-none sm:w-56";
 
-export default function ShopSortSelect({ id, label, value, options }: ShopSortSelectProps) {
+export default function ShopSortSelect({ id, label, value = "", options }: ShopSortSelectProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,23 +30,13 @@ export default function ShopSortSelect({ id, label, value, options }: ShopSortSe
       <label className="sr-only" htmlFor={id}>
         {label}
       </label>
-      {value == null ? (
-        <select id={id} defaultValue="" className={className}>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <select id={id} value={value} onChange={(event) => onChange(event.target.value)} className={className}>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      )}
+      <select id={id} value={value} onChange={(event) => onChange(event.target.value)} className={className}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </>
   );
 }

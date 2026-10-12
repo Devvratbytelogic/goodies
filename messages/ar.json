@@ -255,6 +255,7 @@
     "categories": "التصنيفات",
     "allProducts": "كل المنتجات",
     "showing": "عرض {from}–{to} من {total} نتيجة",
+    "loading": "جارٍ تحميل المنتجات",
     "sortLabel": "ترتيب المنتجات",
     "sortDefault": "الترتيب الافتراضي",
     "sortPriceAsc": "الترتيب حسب السعر: من الأقل إلى الأعلى",
