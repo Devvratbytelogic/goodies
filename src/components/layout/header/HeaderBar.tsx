@@ -214,7 +214,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
               }`}
           >
             <div className="overflow-hidden">
-              <div className="pb-4">
+              <div className="pb-2 pt-1">
                 <SearchField
                   focused={searchOpen}
                   onSubmitted={() => setSearchOpen(false)}
