@@ -143,6 +143,39 @@ export interface OrderDetailsAddress {
     email?: string | null;
 }
 
+export interface UserOrdersResponse {
+    http_status_code: number;
+    http_status_msg: string;
+    success: boolean;
+    data: UserOrdersData;
+    message: string;
+    timestamp: string;
+}
+
+export interface UserOrdersData {
+    orders?: UserOrder[] | null;
+    pagination: UserOrdersPagination;
+}
+
+export interface UserOrder {
+    _id: string;
+    order_number: number;
+    order_code: string;
+    order_date: string;
+    status: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing";
+    item_count: number;
+    total_amount: number;
+    currency: string;
+    preview_images?: string[] | null;
+}
+
+export interface UserOrdersPagination {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+}
+
 export interface OrderDetails {
     order_id: string;
     order_number: number | string;

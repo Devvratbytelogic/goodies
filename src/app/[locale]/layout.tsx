@@ -24,7 +24,7 @@ const notoArabic = Noto_Sans_Arabic({
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
-export const revalidate = 120; // in seconds
+export const revalidate = 600; // in seconds
 
 export const viewport: Viewport = {
   themeColor: "#d60751",

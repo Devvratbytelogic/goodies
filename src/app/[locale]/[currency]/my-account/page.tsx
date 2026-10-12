@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { AccountOrderList } from "@/components/account/AccountOrders";
-import { AccountGreeting, AccountProfileSummary } from "@/components/account/AccountProfileSummary";
+import { AccountDefaultAddress, AccountGreeting, AccountProfileSummary } from "@/components/account/AccountProfileSummary";
+import { AccountAddressCount } from "@/components/account/AccountAddresses";
+import { AccountOrdersCount, AccountRecentOrders } from "@/components/account/AccountRecentOrders";
+import { AccountWishlistCount } from "@/components/account/AccountWishlistCount";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { Link } from "@/i18n/navigation";
-import { sampleAddresses } from "@/data/sampleAddresses";
 import { sampleCoupons } from "@/data/sampleAccount";
-// import { sampleWishlist } from "@/data/sampleWishlist";
-import { getAccountOrders } from "@/components/account/orders";
 import {
   getAccountAddressRoutePath,
   getAccountCouponsRoutePath,
@@ -27,13 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function MyAccountPage() {
   const t = await getTranslations("AccountPage");
   const nav = await getTranslations("Nav");
-  const orders = await getAccountOrders();
-  const address = sampleAddresses[0];
-
   const stats = [
-    { href: getAccountOrdersRoutePath(), label: t("orders"), value: orders.length },
-    { href: getWishlistRoutePath(), label: t("wishlist"), value: 1 },
-    { href: getAccountAddressRoutePath(), label: t("addresses"), value: sampleAddresses.length },
+    { href: getAccountOrdersRoutePath(), label: t("orders"), value: <AccountOrdersCount /> },
+    { href: getWishlistRoutePath(), label: t("wishlist"), value: <AccountWishlistCount /> },
+    { href: getAccountAddressRoutePath(), label: t("addresses"), value: <AccountAddressCount /> },
     { href: getAccountCouponsRoutePath(), label: t("coupons"), value: sampleCoupons.length },
   ];
 
@@ -74,31 +70,12 @@ export default async function MyAccountPage() {
               {t("viewAll")}
             </Link>
           </div>
-          <AccountOrderList orders={orders.slice(0, 2)} />
+          <AccountRecentOrders />
         </section>
 
         <div className="grid gap-4">
           <AccountProfileSummary />
-
-          <section className="rounded-2xl border border-border bg-background px-5 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold text-heading">{t("defaultAddress")}</h2>
-              <Link
-                href={getAccountAddressRoutePath()}
-                className="text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                {t("viewAll")}
-              </Link>
-            </div>
-            <p className="mt-3 text-sm font-medium text-heading">
-              {address.firstName} {address.lastName}
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-muted">
-              {address.address}
-              <br />
-              {address.city}
-            </p>
-          </section>
+          <AccountDefaultAddress />
         </div>
       </div>
     </>

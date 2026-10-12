@@ -9,19 +9,14 @@ import {
   getAboutUsRoutePath,
   getContactUsRoutePath,
   getHomeRoutePath,
-  getProductCategoryRoutePath,
   getShopRoutePath,
   getWishlistRoutePath,
 } from "@/utils/routes";
 
-const shopLinks = [
-  { key: "allProducts" as const, href: getShopRoutePath() },
-  { key: "fruits" as const, href: getProductCategoryRoutePath("fruits") },
-  { key: "iceCream" as const, href: getProductCategoryRoutePath("ice-cream") },
-  { key: "vegetables" as const, href: getProductCategoryRoutePath("vegetables") },
-  { key: "candy" as const, href: getProductCategoryRoutePath("candy") },
-  { key: "boxDeals" as const, href: getShopRoutePath() },
-];
+type FooterCategory = {
+  href: string;
+  label: string;
+};
 
 const quickLinks = [
   { key: "home" as const, href: getHomeRoutePath() },
@@ -247,9 +242,13 @@ function MobileFooter() {
   );
 }
 
-export default function Footer() {
+export default function Footer({ categories }: { categories: FooterCategory[] }) {
   const t = useTranslations("Footer");
   const year = new Date().getFullYear();
+  const shopLinks = [
+    { href: getShopRoutePath(), label: t("allProducts") },
+    ...categories.map((category) => ({ href: category.href, label: category.label })),
+  ];
 
   return (
     <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface">
@@ -272,10 +271,10 @@ export default function Footer() {
             {t("shop")}
           </h2>
           <ul className="mt-4 flex flex-col gap-2.5">
-            {shopLinks.map(({ key, href }) => (
-              <li key={key}>
+            {shopLinks.map(({ href, label }) => (
+              <li key={href}>
                 <Link href={href} className={footerLinkClass}>
-                  {t(key)}
+                  {label}
                 </Link>
               </li>
             ))}

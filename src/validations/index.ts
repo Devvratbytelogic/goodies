@@ -48,7 +48,7 @@ export const profileValidationSchema = Yup.object({
 
 export const changePasswordValidationSchema = Yup.object({
   currentPassword: Yup.string().required("required"),
-  password: passwordString(),
+  password: passwordString().notOneOf([Yup.ref("currentPassword")], "passwordSame"),
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
 

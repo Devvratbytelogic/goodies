@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { LuHouse, LuLogOut, LuMapPin, LuPackage, LuTicket, LuUser } from "react-icons/lu";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
-import { useAccountProfile } from "@/components/account/AccountProfileProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   getAccountAddressRoutePath,
@@ -31,24 +30,24 @@ function normalize(path: string) {
   return path;
 }
 
-export default function AccountNav() {
+export default function AccountNav({ name, photo, email }: { name: string; photo: string; email: string }) {
   const t = useTranslations("AccountPage");
   const router = useRouter();
   const pathname = normalize(usePathname());
-  const { profile } = useAccountProfile();
   const { logout } = useAuth();
-  const initials = `${profile.firstName[0] ?? ""}${profile.lastName[0] ?? ""}`;
 
+  const initials = `${name[0] ?? ""}${name[1] ?? ""}`;
+  
   return (
     <nav aria-label={t("navLabel")} className="mb-6 lg:sticky lg:top-24 lg:mb-0">
       <div className="rounded-2xl border border-border bg-background p-3">
         <div className="flex items-center gap-3 px-2 py-2">
-          <ProfileAvatar photo={profile.photo} initials={initials} />
+          <ProfileAvatar photo={photo} initials={initials} />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-heading">
-              {profile.firstName} {profile.lastName}
+              {name}
             </p>
-            <p className="truncate text-xs text-muted">{profile.email}</p>
+            <p className="truncate text-xs text-muted">{email}</p>
           </div>
         </div>
         <ul className="mt-2 grid grid-cols-2 gap-1 border-t border-border pt-2 lg:grid-cols-1">
@@ -62,14 +61,12 @@ export default function AccountNav() {
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-11 items-center gap-3 rounded-xl px-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                    active ? "bg-primary-soft text-primary" : "text-heading hover:bg-surface"
-                  }`}
+                  className={`flex h-11 items-center gap-3 rounded-xl px-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${active ? "bg-primary-soft text-primary" : "text-heading hover:bg-surface"
+                    }`}
                 >
                   <span
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${
-                      active ? "bg-primary text-primary-foreground" : "bg-surface text-muted"
-                    }`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${active ? "bg-primary text-primary-foreground" : "bg-surface text-muted"
+                      }`}
                   >
                     <Icon aria-hidden className="size-4" />
                   </span>

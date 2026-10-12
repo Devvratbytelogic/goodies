@@ -1,5 +1,11 @@
-import { OrderDetails, OrderDetailsResponse, PlacedOrder, PlaceOrderPayload, PlaceOrderResponse } from "@/server/types/order";
+import { OrderDetails, OrderDetailsResponse, PlacedOrder, PlaceOrderPayload, PlaceOrderResponse, UserOrdersData, UserOrdersResponse } from "@/server/types/order";
 import { api } from "../api";
+
+export type UserOrdersArgs = {
+  status?: string;
+  page?: number;
+  limit?: number;
+};
 
 export const orderApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -11,6 +17,18 @@ export const orderApi = api.injectEndpoints({
       }),
       transformResponse: (res: PlaceOrderResponse) => res.data,
       invalidatesTags: ["Cart"],
+    }),
+    getUserOrders: build.query<UserOrdersData, UserOrdersArgs | void>({
+      query: (args) => {
+        const { status = "all", page = 1, limit = 10 } = args ?? {};
+        const params = new URLSearchParams({
+          status,
+          page: String(page),
+          limit: String(limit),
+        });
+        return `/user/all-order?${params}`;
+      },
+      transformResponse: (res: UserOrdersResponse) => res.data,
     }),
     getOrderDetails: build.query<OrderDetails, string>({
       query: (orderId) => `/user/order-details/${encodeURIComponent(orderId)}`,
@@ -26,4 +44,4 @@ export const orderApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetOrderDetailsQuery, usePlaceOrderMutation, useDownloadOrderInvoiceMutation } = orderApi;
+export const { useGetUserOrdersQuery, useGetOrderDetailsQuery, usePlaceOrderMutation, useDownloadOrderInvoiceMutation } = orderApi;

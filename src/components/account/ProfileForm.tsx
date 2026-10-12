@@ -6,14 +6,17 @@ import { useTranslations } from "next-intl";
 import { LuCamera, LuEye, LuEyeOff, LuX } from "react-icons/lu";
 import type { InferType } from "yup";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { RequiredMark } from "@/components/form/RequiredMark";
-import { useAccountProfile } from "@/components/account/AccountProfileProvider";
+import { useRouter } from "@/i18n/navigation";
+import { useChangePasswordMutation, useDeleteUserAccountMutation, useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/store/endpoints/userApi";
+import { getHomeRoutePath } from "@/utils/routes";
 import { changePasswordValidationSchema, profileValidationSchema } from "@/validations";
 
 type ProfileValues = InferType<typeof profileValidationSchema>;
 type PasswordValues = InferType<typeof changePasswordValidationSchema>;
 type ProfileMessageKey = "required" | "emailInvalid" | "phoneInvalid" | "invalidText" | "tooLong";
-type PasswordMessageKey = "required" | "tooShort" | "lowercase" | "uppercase" | "number" | "special" | "passwordMismatch" | "currentInvalid";
+type PasswordMessageKey = "required" | "tooShort" | "lowercase" | "uppercase" | "number" | "special" | "passwordMismatch" | "passwordSame" | "currentInvalid";
 
 const maxPhotoBytes = 2 * 1024 * 1024;
 
@@ -24,59 +27,80 @@ const labelClassName = "block text-[13px] font-semibold text-heading";
 
 export default function ProfileForm() {
   const t = useTranslations("AccountPage");
-  const { profile, password, updateProfile, changePassword } = useAccountProfile();
+  const router = useRouter();
+  const { token, logout } = useAuth();
+  const { data: profile } = useGetUserProfileQuery(undefined, { skip: !token });
+  const [updateUserProfile, { isLoading: isSavingProfile }] = useUpdateUserProfileMutation();
+  const [changePassword, { isLoading: isSavingPassword }] = useChangePasswordMutation();
+  const [deleteAccount, { isLoading: isDeleting }] = useDeleteUserAccountMutation();
   const fileInput = useRef<HTMLInputElement>(null);
-  const [photo, setPhoto] = useState(profile.photo);
+  const photoFile = useRef<File | null>(null);
+  const photoTouched = useRef(false);
+  const [photo, setPhoto] = useState<string | null>(profile?.profile_pic ?? null);
   const [photoError, setPhotoError] = useState<string>();
   const [profileSaved, setProfileSaved] = useState(false);
   const [passwordSaved, setPasswordSaved] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [showCurrent, setShowCurrent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const profileForm = useFormik<ProfileValues>({
     initialValues: {
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      email: profile.email,
-      phone: profile.phone,
+      firstName: profile?.name ?? "",
+      lastName: profile?.last_name ?? "",
+      email: profile?.email ?? "",
+      phone: profile?.phone_number ?? "",
     },
     enableReinitialize: true,
     validationSchema: profileValidationSchema,
-    onSubmit: (values) => {
-      updateProfile({
-        firstName: values.firstName.trim(),
-        lastName: values.lastName.trim(),
-        email: values.email.trim(),
-        phone: values.phone.trim(),
-        photo,
-      });
-      setProfileSaved(true);
+    onSubmit: async (values) => {
+      const body = new FormData();
+      body.append("name", values.firstName.trim());
+      body.append("last_name", values.lastName.trim());
+      if (photoFile.current) body.append("profile_pic", photoFile.current);
+
+      try {
+        await updateUserProfile(body).unwrap();
+        photoFile.current = null;
+        photoTouched.current = false;
+        setProfileSaved(true);
+      } catch {
+        setProfileSaved(false);
+      }
     },
   });
 
   const passwordForm = useFormik<PasswordValues>({
     initialValues: { currentPassword: "", password: "", confirmPassword: "" },
     validationSchema: changePasswordValidationSchema,
-    onSubmit: (values, helpers) => {
-      if (values.currentPassword !== password) {
-        helpers.setFieldError("currentPassword", "currentInvalid");
-        return;
+    onSubmit: async (values, helpers) => {
+      try {
+        await changePassword({
+          current_password: values.currentPassword,
+          password: values.password,
+          password_confirmation: values.confirmPassword,
+        }).unwrap();
+        helpers.resetForm();
+        setPasswordSaved(true);
+      } catch {
+        setPasswordSaved(false);
       }
-
-      changePassword(values.password);
-      helpers.resetForm();
-      setPasswordSaved(true);
     },
   });
 
   useEffect(() => {
+    if (photoTouched.current) return;
+    setPhoto(profile?.profile_pic ?? null);
+  }, [profile?.profile_pic]);
+
+  useEffect(() => {
     return () => {
-      if (photo && photo.startsWith("blob:") && photo !== profile.photo) {
+      if (photo?.startsWith("blob:")) {
         URL.revokeObjectURL(photo);
       }
     };
-  }, [photo, profile.photo]);
+  }, [photo]);
 
   function profileError(name: keyof ProfileValues) {
     const error = profileForm.touched[name] ? profileForm.errors[name] : undefined;
@@ -101,11 +125,13 @@ export default function ProfileForm() {
     }
 
     setPhotoError(undefined);
+    photoTouched.current = true;
     setPhoto((current) => {
-      if (current && current.startsWith("blob:") && current !== profile.photo) {
+      if (current?.startsWith("blob:")) {
         URL.revokeObjectURL(current);
       }
 
+      photoFile.current = file;
       return URL.createObjectURL(file);
     });
   }
@@ -136,7 +162,7 @@ export default function ProfileForm() {
             className="absolute inset-0 z-10 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span aria-hidden className="absolute inset-0 rounded-full bg-heading/40 opacity-0 transition-opacity group-hover:opacity-100" />
-            <span className="absolute -end-1 -bottom-1 flex size-8 items-center justify-center rounded-full border-2 border-background bg-background text-primary shadow-sm transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            <span className="absolute -inset-e-1 -bottom-1 flex size-8 items-center justify-center rounded-full border-2 border-background bg-background text-primary shadow-sm transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
               <LuCamera aria-hidden className="size-4" />
             </span>
           </button>
@@ -145,11 +171,13 @@ export default function ProfileForm() {
               type="button"
               aria-label={t("removePhoto")}
               onClick={() => {
+                photoFile.current = null;
+                photoTouched.current = true;
                 setPhoto(null);
                 setPhotoError(undefined);
                 setProfileSaved(false);
               }}
-              className="absolute -end-1 -top-1 z-20 flex size-7 items-center justify-center rounded-full border-2 border-background bg-background text-heading shadow-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="absolute -inset-e-1 -top-1 z-20 flex size-7 items-center justify-center rounded-full border-2 border-background bg-background text-heading shadow-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <LuX aria-hidden className="size-3.5" />
             </button>
@@ -197,7 +225,7 @@ export default function ProfileForm() {
               name="email"
               type="email"
               autoComplete="email"
-              value={profile.email}
+              value={profile?.email ?? ""}
               readOnly
               aria-readonly="true"
               className={`${fieldClassName} mt-1 cursor-default text-muted`}
@@ -210,7 +238,7 @@ export default function ProfileForm() {
               type="tel"
               autoComplete="tel"
               dir="ltr"
-              value={profile.phone}
+              value={profile?.phone_number ?? ""}
               readOnly
               aria-readonly="true"
               className={`${fieldClassName} mt-1 cursor-default text-muted`}
@@ -220,7 +248,8 @@ export default function ProfileForm() {
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            disabled={isSavingProfile}
+            className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
           >
             {t("save")}
           </button>
@@ -234,7 +263,6 @@ export default function ProfileForm() {
 
       <form noValidate onSubmit={passwordForm.handleSubmit} className="rounded-2xl border border-border bg-background px-5 py-5">
         <h2 className="text-lg font-bold text-heading">{t("changePassword")}</h2>
-        <p className="mt-1 text-sm text-muted">{t("samplePassword", { password })}</p>
         <div className="mt-5 grid gap-4">
           <PasswordField
             label={t("currentPassword")}
@@ -288,7 +316,8 @@ export default function ProfileForm() {
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            disabled={isSavingPassword}
+            className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
           >
             {t("updatePassword")}
           </button>
@@ -299,6 +328,49 @@ export default function ProfileForm() {
           ) : null}
         </div>
       </form>
+
+      <section className="rounded-2xl border border-border bg-background px-5 py-5">
+        <h2 className="text-lg font-bold text-heading">{t("deleteAccount")}</h2>
+        <p className="mt-1 text-sm text-muted">{t("deleteAccountNote")}</p>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          {confirmDelete ? (
+            <>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={async () => {
+                  try {
+                    await deleteAccount(undefined).unwrap();
+                    logout();
+                    router.push(getHomeRoutePath());
+                  } catch {
+                    // The request toast already reports the failure.
+                  }
+                }}
+                className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {t("confirmDelete")}
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setConfirmDelete(false)}
+                className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold text-heading transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {t("cancel")}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {t("deleteAccount")}
+            </button>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

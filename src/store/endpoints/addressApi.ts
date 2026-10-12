@@ -15,7 +15,7 @@ export const addressApi = api.injectEndpoints({
         body,
       }),
       transformResponse: (res: { data?: AddressEntity | null }) => res.data ?? null,
-      invalidatesTags: ["Address", "Cart"],
+      invalidatesTags: ["Address", "Cart", "User"],
     }),
     updateAddress: build.mutation({
       query: ({ addressId, ...body }) => ({
@@ -23,14 +23,14 @@ export const addressApi = api.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["Address", "Cart"],
+      invalidatesTags: ["Address", "Cart", "User"],
     }),
     deleteAddress: build.mutation({
       query: (addressId: string) => ({
         url: `/user/delete-address/${addressId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Address", "Cart"],
+      invalidatesTags: ["Address", "Cart", "User"],
     }),
   }),
 });
