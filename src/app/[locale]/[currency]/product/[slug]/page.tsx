@@ -12,6 +12,9 @@ type ProductPageProps = {
   params: Promise<{ locale: string; currency: string; slug: string }>;
 };
 
+// A slug added or renamed in admin was not in the build list, so allow it on demand.
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   try {
     const products = (await getProducts()) ?? [];

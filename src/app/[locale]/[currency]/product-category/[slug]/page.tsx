@@ -10,6 +10,9 @@ import { HomeProduct } from "@/server/types/Home";
 
 export const revalidate = 600;
 
+// A slug added or renamed in admin was not in the build list, so allow it on demand.
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   try {
     const categories = (await getCategories(defaultCurrency)) ?? [];

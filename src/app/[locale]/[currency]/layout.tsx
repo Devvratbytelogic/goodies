@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
 import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
@@ -10,8 +11,6 @@ export function generateStaticParams() {
   return currencies.map((currency) => ({ currency }));
 }
 
-export const dynamicParams = false;
-
 export default async function CurrencyLayout({
   children,
   params,
@@ -20,6 +19,7 @@ export default async function CurrencyLayout({
   params: Promise<{ currency: string }>;
 }) {
   const { currency } = await params;
+  if (!(currencies as readonly string[]).includes(currency)) notFound();
   const country = toCurrency(currency);
   const categories = ((await getCategories(country)) ?? [])
     .map((category) => ({
