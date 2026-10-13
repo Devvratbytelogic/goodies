@@ -75,6 +75,7 @@ export function getProduct(country: string, slug: string) {
   return unstable_cache(
     () => getData<SingleProductData>(`/user/product/${encodeURIComponent(decoded)}`, country),
     ["product", decoded, country],
-    { tags: [`product:${decoded}`], revalidate: 600 },
+    // "products" is already cleared on save, so bundle pages refresh with the edited item.
+    { tags: ["products", `product:${decoded}`], revalidate: 600 },
   )();
 }
