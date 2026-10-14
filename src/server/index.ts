@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { defaultCurrency } from "@/utils/currency";
 import { api } from "./api";
 import { HomeCategory, HomePageData } from "./types/Home";
+import { GlobalData } from "./types/global";
 import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
@@ -33,6 +34,14 @@ export const getProducts = unstable_cache(
   ["products"],
   { tags: ["products"], revalidate: 600 },
 );
+
+export function getGlobal(country: string) {
+  return unstable_cache(
+    () => getData<GlobalData>("/user/get-global", country),
+    ["get-global", country],
+    { tags: ["get-global"], revalidate: 600 },
+  )();
+}
 
 export function getHomePage(country: string) {
   return unstable_cache(
