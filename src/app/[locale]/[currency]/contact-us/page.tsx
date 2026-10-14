@@ -3,8 +3,13 @@ import { LuMail, LuMapPin, LuPhone } from "react-icons/lu";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import ContactForm from "@/components/page-components/contact/ContactForm";
-import { EMAIL, PHONE_HREF, PHONE_LABEL } from "@/constants/contact";
+import { getGlobalSettings } from "@/server";
+import { toCurrency } from "@/utils/currency";
 import { getHomeRoutePath } from "@/utils/routes";
+
+type ContactUsPageProps = {
+  params: Promise<{ currency: string }>;
+};
 
 export async function generateMetadata() {
   const t = await getTranslations("ContactUsPage");
@@ -14,31 +19,35 @@ export async function generateMetadata() {
   };
 }
 
-export default async function ContactUsPage() {
+export default async function ContactUsPage({ params }: ContactUsPageProps) {
+  const { currency } = await params;
   const t = await getTranslations("ContactUsPage");
   const nav = await getTranslations("Nav");
   const love = await getTranslations("MadeWithLoveSection");
+  const settings = await getGlobalSettings(toCurrency(currency));
+  const email = settings?.email?.trim() || "";
+  const phone = settings?.phone?.trim() || "";
 
   const details = [
     {
       key: "address" as const,
-      value: t("addressValue"),
+      value: settings?.address?.trim() || '',
       href: null,
       icon: LuMapPin,
     },
     {
       key: "phone" as const,
-      value: PHONE_LABEL,
-      href: `tel:${PHONE_HREF}`,
+      value: phone,
+      href: phone ? `tel:${phone}` : null,
       icon: LuPhone,
     },
     {
       key: "email" as const,
-      value: EMAIL,
-      href: `mailto:${EMAIL}`,
+      value: email,
+      href: email ? `mailto:${email}` : null,
       icon: LuMail,
     },
-  ];
+  ].filter((item) => item.value);
 
   return (
     <div>
