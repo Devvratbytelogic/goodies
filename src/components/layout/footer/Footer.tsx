@@ -4,7 +4,6 @@ import { FaInstagram, FaWhatsapp, FaYoutube } from "react-icons/fa6";
 import { LuHeart, LuMail, LuMapPin, LuPhone } from "react-icons/lu";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
-import { EMAIL, PHONE_HREF, PHONE_LABEL, WHATSAPP_URL } from "@/constants/contact";
 import {
   getAboutUsRoutePath,
   getContactUsRoutePath,
@@ -18,6 +17,14 @@ type FooterCategory = {
   label: string;
 };
 
+export type FooterContact = {
+  email: string;
+  phone: string;
+  address: string;
+  instagram: string;
+  whatsapp: string;
+};
+
 const quickLinks = [
   { key: "home" as const, href: getHomeRoutePath() },
   { key: "aboutUs" as const, href: getAboutUsRoutePath() },
@@ -26,23 +33,27 @@ const quickLinks = [
   { key: "contactUs" as const, href: getContactUsRoutePath() },
 ];
 
-const socialLinks: { key: "instagram" | "youtube" | "whatsapp"; href: string; icon: IconType }[] = [
-  {
-    key: "instagram",
-    href: "https://www.instagram.com/qarqusha.goodies",
-    icon: FaInstagram,
-  },
-  {
-    key: "youtube",
-    href: "https://www.youtube.com/@zeinashrem7499",
-    icon: FaYoutube,
-  },
-  {
-    key: "whatsapp",
-    href: WHATSAPP_URL,
-    icon: FaWhatsapp,
-  },
-];
+type SocialKey = "instagram" | "youtube" | "whatsapp";
+
+function socialLinks(contact: FooterContact): { key: SocialKey; href: string; icon: IconType }[] {
+  return [
+    {
+      key: "instagram",
+      href: contact.instagram,
+      icon: FaInstagram,
+    },
+    {
+      key: "youtube",
+      href: "https://www.youtube.com/@zeinashrem7499",
+      icon: FaYoutube,
+    },
+    {
+      key: "whatsapp",
+      href: contact.whatsapp,
+      icon: FaWhatsapp,
+    },
+  ];
+}
 
 const columnTitleClass =
   "text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-deep";
@@ -51,7 +62,7 @@ const footerLinkClass =
 const socialButtonClass =
   "flex size-10 items-center justify-center rounded-full bg-background text-primary shadow-[0_4px_12px_rgba(15,23,42,0.06)] ring-1 ring-border/70 transition-colors hover:bg-primary hover:text-primary-foreground hover:ring-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-const mobileSocialClass: Record<(typeof socialLinks)[number]["key"], string> = {
+const mobileSocialClass: Record<SocialKey, string> = {
   instagram:
     "bg-linear-to-br from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white shadow-[0_8px_18px_rgba(238,42,123,0.28)]",
   youtube: "bg-[#ff0033] text-white shadow-[0_8px_18px_rgba(255,0,51,0.28)]",
@@ -79,12 +90,12 @@ function BrandMark({ logoClassName }: { logoClassName: string }) {
   );
 }
 
-function SocialLinks() {
+function SocialLinks({ contact }: { contact: FooterContact }) {
   const t = useTranslations("Footer");
 
   return (
     <ul className="flex items-center gap-2.5">
-      {socialLinks.map(({ key, href, icon: Icon }) => (
+      {socialLinks(contact).map(({ key, href, icon: Icon }) => (
         <li key={key}>
           <a
             href={href}
@@ -101,61 +112,59 @@ function SocialLinks() {
   );
 }
 
-function ContactList() {
-  const t = useTranslations("Footer");
-
+function ContactList({ contact }: { contact: FooterContact }) {
   return (
     <ul className="flex flex-col gap-3">
       <li>
         <a
-          href={`mailto:${EMAIL}`}
+          href={`mailto:${contact.email}`}
           className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
         >
           <LuMail aria-hidden className="size-4 shrink-0 text-primary" />
-          {EMAIL}
+          {contact.email}
         </a>
       </li>
       <li>
         <a
-          href={`tel:${PHONE_HREF}`}
+          href={`tel:${contact.phone}`}
           className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
         >
           <LuPhone aria-hidden className="size-4 shrink-0 text-primary" />
-          {PHONE_LABEL}
+          {contact.phone}
         </a>
       </li>
       <li className="inline-flex items-center gap-2.5 text-sm text-muted">
         <LuMapPin aria-hidden className="size-4 shrink-0 text-primary" />
-        {t("location")}
+        {contact.address}
       </li>
     </ul>
   );
 }
 
-function MobileFooter() {
+function MobileFooter({ contact }: { contact: FooterContact }) {
   const t = useTranslations("Footer");
   const tHeader = useTranslations("Header");
 
   const contactItems = [
     {
       key: "email",
-      href: `mailto:${EMAIL}`,
+      href: `mailto:${contact.email}`,
       icon: LuMail,
-      label: EMAIL,
+      label: contact.email,
       bubbleClass: "bg-primary-soft text-primary",
     },
     {
       key: "phone",
-      href: `tel:${PHONE_HREF}`,
+      href: `tel:${contact.phone}`,
       icon: LuPhone,
-      label: PHONE_LABEL,
+      label: contact.phone,
       bubbleClass: "bg-accent/15 text-accent-deep",
     },
     {
       key: "location",
       href: null,
       icon: LuMapPin,
-      label: t("location"),
+      label: contact.address,
       bubbleClass: "bg-primary-soft text-primary",
     },
   ] as const;
@@ -192,7 +201,7 @@ function MobileFooter() {
 
           <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
           <ul className="mt-3 flex items-center gap-3">
-            {socialLinks.map(({ key, href, icon: Icon }) => (
+            {socialLinks(contact).map(({ key, href, icon: Icon }) => (
               <li key={key}>
                 <a
                   href={href}
@@ -242,7 +251,7 @@ function MobileFooter() {
   );
 }
 
-export default function Footer({ categories }: { categories: FooterCategory[] }) {
+export default function Footer({ categories, contact }: { categories: FooterCategory[]; contact: FooterContact }) {
   const t = useTranslations("Footer");
   const year = new Date().getFullYear();
   const shopLinks = [
@@ -252,7 +261,7 @@ export default function Footer({ categories }: { categories: FooterCategory[] })
 
   return (
     <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface">
-      <MobileFooter />
+      <MobileFooter contact={contact} />
 
       <div className="container hidden gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid lg:gap-8 lg:py-14 xl:grid-cols-4">
         <div>
@@ -262,7 +271,7 @@ export default function Footer({ categories }: { categories: FooterCategory[] })
 
           <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
           <div className="mt-3">
-            <SocialLinks />
+            <SocialLinks contact={contact} />
           </div>
         </div>
 
@@ -299,7 +308,7 @@ export default function Footer({ categories }: { categories: FooterCategory[] })
         <div>
           <h2 className={columnTitleClass}>{t("contact")}</h2>
           <div className="mt-4">
-            <ContactList />
+            <ContactList contact={contact} />
           </div>
         </div>
       </div>

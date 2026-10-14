@@ -43,6 +43,17 @@ export function getGlobal(country: string) {
   )();
 }
 
+export async function getGlobalSettings(country: string) {
+  try {
+    return await getGlobal(country);
+  } catch (error) {
+    const digest = typeof error === "object" && error && "digest" in error ? String(error.digest) : "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw error;
+    console.error(`get-global failed: ${error instanceof Error ? error.message : "request failed"}`);
+    return null;
+  }
+}
+
 export function getHomePage(country: string) {
   return unstable_cache(
     () => getData<HomePageData>("/user/home-page", country),

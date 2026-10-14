@@ -16,7 +16,6 @@ export interface GlobalData {
   microsoft_clarity: string;
   meta_pixel: string;
   meta_domain_verification: string;
-  marketplace_name: string;
   meta_description: string;
   meta_keywords: string;
   meta_title: string;
@@ -27,7 +26,6 @@ export interface GlobalData {
   twitter_description: string;
   twitter_image: string;
   twitter_title: string;
-  json_ld: string;
   phone: string;
   schema_markup: string;
   search_console: string;

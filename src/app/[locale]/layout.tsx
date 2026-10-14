@@ -5,8 +5,11 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ModalProvider } from "@/components/layout/common/ModalProvider";
+import { TrackingScripts } from "@/components/layout/TrackingScripts";
 import { StoreProvider } from "@/store/StoreProvider";
 import { routing } from "@/i18n/routing";
+import { getGlobalSettings } from "@/server";
+import { defaultCurrency } from "@/utils/currency";
 import "../../styles/globals.css";
 
 const geistSans = Geist({
@@ -43,8 +46,18 @@ export async function generateMetadata({
   }
 
   const t = await getTranslations({ locale, namespace: "Metadata" });
-  const title = t("title");
-  const description = t("description");
+  const settings = await getGlobalSettings(defaultCurrency);
+  const title = settings?.meta_title?.trim() || settings?.platformName?.trim() || t("title");
+  const description = settings?.meta_description?.trim() || t("description");
+  const keywords = settings?.meta_keywords?.trim();
+  const ogTitle = settings?.og_title?.trim() || settings?.og_tag?.trim() || title;
+  const ogDescription = settings?.og_description?.trim() || description;
+  const ogImage = settings?.og_image?.trim();
+  const twitterTitle = settings?.twitter_title?.trim() || title;
+  const twitterDescription = settings?.twitter_description?.trim() || description;
+  const twitterImage = settings?.twitter_image?.trim() || ogImage;
+  const googleVerification = settings?.search_console?.trim();
+  const metaVerification = settings?.meta_domain_verification?.trim();
 
   return {
     metadataBase: new URL(
@@ -56,7 +69,12 @@ export async function generateMetadata({
       template: `%s · ${title}`,
     },
     description,
+    keywords: keywords || undefined,
     category: "shopping",
+    verification: {
+      ...(googleVerification ? { google: googleVerification } : {}),
+      ...(metaVerification ? { other: { "facebook-domain-verification": metaVerification } } : {}),
+    },
     icons: {
       icon: [
         { url: "/favicon.ico", sizes: "any" },
@@ -76,15 +94,17 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "website",
-      siteName: title,
-      title,
-      description,
+      siteName: settings?.platformName?.trim() || title,
+      title: ogTitle,
+      description: ogDescription,
+      images: ogImage ? [ogImage] : undefined,
       locale: locale === "ar" ? "ar_AR" : "en_US",
     },
     twitter: {
-      card: "summary",
-      title,
-      description,
+      card: twitterImage ? "summary_large_image" : "summary",
+      title: twitterTitle,
+      description: twitterDescription,
+      images: twitterImage ? [twitterImage] : undefined,
     },
     alternates: {
       languages: {
@@ -104,6 +124,9 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const settings = await getGlobalSettings(defaultCurrency);
+  const schemaMarkup = settings?.schema_markup?.trim();
+  const jsonLd = schemaMarkup && /^[\[{]/.test(schemaMarkup) ? schemaMarkup : "";
 
   // if (!hasLocale(routing.locales, locale)) {
   //   notFound();
@@ -117,6 +140,13 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        {jsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /> : null}
+        <TrackingScripts
+          googleAnalyticsId={settings?.google_analytics_id}
+          googleTagManagerId={settings?.google_tag_manager}
+          clarityId={settings?.microsoft_clarity}
+          metaPixelId={settings?.meta_pixel}
+        />
         <NextIntlClientProvider>
           <StoreProvider>
             <AuthProvider>

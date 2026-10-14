@@ -2,14 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { FaWhatsapp } from "react-icons/fa6";
-import { WHATSAPP_URL } from "@/constants/contact";
-
-export function WhatsAppFloatingButton() {
+export function WhatsAppFloatingButton({ href }: { href: string }) {
   const t = useTranslations("Footer");
 
   return (
     <a
-      href={WHATSAPP_URL}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t("whatsapp")}
