@@ -25,6 +25,7 @@ type ZiinaReturnProps = {
   message: string;
   shopHref: string;
   checkoutHref: string;
+  method?: "ziina" | "tabby";
 };
 
 function OrderDetailsSkeleton() {
@@ -65,8 +66,13 @@ function OrderDetailsSkeleton() {
   );
 }
 
-export default function ZiinaReturn({ status, orderId, orderNumber, message, shopHref, checkoutHref }: ZiinaReturnProps) {
+export default function ZiinaReturn({ status, orderId, orderNumber, message, shopHref, checkoutHref, method = "ziina" }: ZiinaReturnProps) {
   const t = useTranslations("CheckoutClassicPage");
+  const cancelledTitle = method === "tabby" ? t("tabbyCancelledTitle") : t("ziinaCancelledTitle");
+  const cancelledNote = method === "tabby" ? t("tabbyCancelledNote") : t("ziinaCancelledNote");
+  const failedTitle = method === "tabby" ? t("tabbyFailedTitle") : t("ziinaFailedTitle");
+  const failedNote = method === "tabby" ? t("tabbyFailedNote") : t("ziinaFailedNote");
+  const paymentFallback = method === "tabby" ? t("payTabby") : t("payZiina");
   const cart = useTranslations("CartPage");
   const dispatch = useAppDispatch();
   const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();
@@ -108,8 +114,8 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
         <div className="flex items-start gap-3">
           <LuCircleX aria-hidden className="mt-0.5 size-7 shrink-0 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">{t("ziinaCancelledTitle")}</h1>
-            <p className="mt-2 max-w-md text-sm text-muted">{t("ziinaCancelledNote")}</p>
+            <h1 className="text-2xl font-bold">{cancelledTitle}</h1>
+            <p className="mt-2 max-w-md text-sm text-muted">{cancelledNote}</p>
           </div>
         </div>
         <Link href={checkoutHref} className={buttonClassName}>
@@ -125,8 +131,8 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
         <div className="flex items-start gap-3">
           <LuCircleX aria-hidden className="mt-0.5 size-7 shrink-0 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">{t("ziinaFailedTitle")}</h1>
-            <p className="mt-2 max-w-md text-sm text-muted">{message || t("ziinaFailedNote")}</p>
+            <h1 className="text-2xl font-bold">{failedTitle}</h1>
+            <p className="mt-2 max-w-md text-sm text-muted">{message || failedNote}</p>
           </div>
         </div>
         <Link href={checkoutHref} className={buttonClassName}>
@@ -208,7 +214,7 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
             <div>
               <dt className="text-muted">{t("paymentLabel")}</dt>
               <dd className="mt-0.5 flex flex-wrap items-center gap-2 font-semibold text-heading">
-                <span>{order.payment_method_title || t("payZiina")}</span>
+                <span>{order.payment_method_title || paymentFallback}</span>
                 {paid ? <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">{t("paid")}</span> : null}
               </dd>
             </div>

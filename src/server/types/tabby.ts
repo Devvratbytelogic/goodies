@@ -21,14 +21,3 @@ export interface TabbySession {
     amount: number;
     currency: string;
 }
-
-export interface TabbyPaymentResponse {
-    success: boolean;
-    message: string;
-    data: TabbyPayment;
-}
-export interface TabbyPayment {
-    payment_id: string;
-    status: "CREATED" | "AUTHORIZED" | "CLOSED" | "REJECTED" | "EXPIRED";
-    order_id?: string | null;
-}

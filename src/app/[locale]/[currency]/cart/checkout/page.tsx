@@ -7,6 +7,7 @@ import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getSho
 
 type CheckoutSearchParams = {
   ziina?: string;
+  tabby?: string;
   order_id?: string;
   order_number?: string;
   message?: string;
@@ -15,9 +16,11 @@ type CheckoutSearchParams = {
 export async function generateMetadata({ searchParams }: { searchParams: Promise<CheckoutSearchParams> }): Promise<Metadata> {
   const t = await getTranslations("CheckoutClassicPage");
   const query = await searchParams;
-  if (query.ziina) {
+  const paymentStatus = query.tabby || query.ziina;
+  if (paymentStatus) {
+    const resultTitle = query.tabby ? t("tabbyResultTitle") : t("ziinaResultTitle");
     return {
-      title: query.ziina === "success" ? t("received") : t("ziinaResultTitle"),
+      title: paymentStatus === "success" ? t("received") : resultTitle,
       robots: { index: false, follow: false },
     };
   }
@@ -32,6 +35,7 @@ export default async function CheckoutClassicPage({ searchParams }: { searchPara
   const nav = await getTranslations("Nav");
   const cart = await getTranslations("CartPage");
   const query = await searchParams;
+  const paymentStatus = query.tabby || query.ziina;
 
   return (
     <div className="container section_y_space">
@@ -40,13 +44,14 @@ export default async function CheckoutClassicPage({ searchParams }: { searchPara
         items={[
           { label: nav("home"), href: getHomeRoutePath() },
           { label: cart("title"), href: getCartRoutePath() },
-          { label: query.ziina === "success" ? t("received") : t("title") },
+          { label: paymentStatus === "success" ? t("received") : t("title") },
         ]}
       />
-      {query.ziina ? (
+      {paymentStatus ? (
         <div className="mx-auto mt-6 max-w-3xl">
           <ZiinaReturn
-            status={query.ziina}
+            status={paymentStatus}
+            method={query.tabby ? "tabby" : "ziina"}
             orderId={query.order_id ?? ""}
             orderNumber={query.order_number ?? ""}
             message={query.message ?? ""}

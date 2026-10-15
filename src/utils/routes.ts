@@ -55,10 +55,6 @@ export function getCheckoutClassicRoutePath(): string {
   return "/cart/checkout";
 }
 
-export function getTabbyResultRoutePath(): string {
-  return "/cart/checkout/tabby";
-}
-
 // ─── Dynamic Routes ─────────────────────────────────────────────────────────
 
 export function getProductCategoryRoutePath(category: string): string {
