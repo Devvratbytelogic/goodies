@@ -18,7 +18,7 @@ const buttonClassName =
 const actionClassName =
   "inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70";
 
-type ZiinaReturnProps = {
+type PaymentReturnProps = {
   status: string;
   orderId: string;
   orderNumber: string;
@@ -66,7 +66,7 @@ function OrderDetailsSkeleton() {
   );
 }
 
-export default function ZiinaReturn({ status, orderId, orderNumber, message, shopHref, checkoutHref, method = "ziina" }: ZiinaReturnProps) {
+export default function PaymentReturn({ status, orderId, orderNumber, message, shopHref, checkoutHref, method = "ziina" }: PaymentReturnProps) {
   const t = useTranslations("CheckoutClassicPage");
   const cancelledTitle = method === "tabby" ? t("tabbyCancelledTitle") : t("ziinaCancelledTitle");
   const cancelledNote = method === "tabby" ? t("tabbyCancelledNote") : t("ziinaCancelledNote");
@@ -146,7 +146,7 @@ export default function ZiinaReturn({ status, orderId, orderNumber, message, sho
   const items = order?.items ?? [];
   const shippingAddress = order?.shipping_address;
   const billingAddress = order?.billing_address;
-  const currency = summary?.currency || items[0]?.currency || "";
+  const currency = summary?.currency_symbol || "";
   const paid = order?.payment_status?.toLowerCase() === "paid";
   const isCod = order?.payment_method === "cod";
   const shownOrderNumber = order?.order_number ?? orderNumber;

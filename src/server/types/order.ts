@@ -125,6 +125,7 @@ export interface OrderDetailsSummary {
     grand_total: number;
     tax_amount: number;
     currency: string;
+    currency_symbol: string;
 }
 
 export interface OrderDetailsAddress {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import CheckoutView from "@/components/checkout/CheckoutView";
-import ZiinaReturn from "@/components/checkout/ZiinaReturn";
+import PaymentReturn from "@/components/checkout/PaymentReturn";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
 
@@ -49,7 +49,7 @@ export default async function CheckoutClassicPage({ searchParams }: { searchPara
       />
       {paymentStatus ? (
         <div className="mx-auto mt-6 max-w-3xl">
-          <ZiinaReturn
+          <PaymentReturn
             status={paymentStatus}
             method={query.tabby ? "tabby" : "ziina"}
             orderId={query.order_id ?? ""}

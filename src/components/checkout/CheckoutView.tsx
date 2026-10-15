@@ -3,7 +3,7 @@
 import { useState } from "react";
 import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
-import ZiinaReturn from "@/components/checkout/ZiinaReturn";
+import PaymentReturn from "@/components/checkout/PaymentReturn";
 import { PlacedOrder } from "@/server/types/order";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
@@ -13,7 +13,7 @@ export default function CheckoutView({ shopHref }: { shopHref: string }) {
   if (placedOrder) {
     return (
       <div className="mx-auto mt-6 max-w-3xl">
-        <ZiinaReturn
+        <PaymentReturn
           status="success"
           orderId={placedOrder.order_id}
           orderNumber={String(placedOrder.order_number)}
