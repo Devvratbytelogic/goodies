@@ -1,14 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import moment from "moment";
 import { useLocale, useTranslations } from "next-intl";
 import { LuChevronRight } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useGetUserOrdersQuery } from "@/store/endpoints/orderApi";
+import { useGetUserOrdersQuery, useDownloadOrderInvoiceMutation } from "@/store/endpoints/orderApi";
 import type { UserOrder } from "@/server/types/order";
-import { getAccountOrderRoutePath } from "@/utils/routes";
+import { getAccountOrderRoutePath, getProductRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
 import { AccountRecentOrdersSkeleton, AccountStatValueSkeleton } from "@/components/skeletons/AccountSkeletons";
 
@@ -21,6 +22,9 @@ const statusClassName = {
   failed: "bg-primary-soft text-primary",
   on_hold: "bg-surface text-muted",
   processing: "bg-primary-soft text-primary",
+  paid: "bg-surface-soft text-accent-deep",
+  tamara_p_canceled: "bg-surface text-muted",
+  tamara_p_failed: "bg-primary-soft text-primary",
 } as const;
 
 const statusLabel = {
@@ -30,6 +34,9 @@ const statusLabel = {
   failed: "statusFailed",
   on_hold: "statusOnHold",
   processing: "statusProcessing",
+  paid: "statusPaid",
+  tamara_p_canceled: "statusTamaraCanceled",
+  tamara_p_failed: "statusTamaraFailed",
 } as const;
 
 function useRecentOrders() {
@@ -45,8 +52,6 @@ export function AccountOrdersCount() {
 
 export function AccountRecentOrders() {
   const t = useTranslations("AccountPage");
-  const cards = useTranslations("ProductCard");
-  const locale = useLocale();
   const { data, isLoading, isUninitialized } = useRecentOrders();
   const orders = data?.orders ?? [];
 
@@ -59,7 +64,7 @@ export function AccountRecentOrders() {
   return (
     <ul className="grid gap-4">
       {orders.map((order) => (
-        <OrderCard key={order._id} order={order} locale={locale} t={t} cards={cards} />
+        <OrderCard key={order._id} order={order} t={t} />
       ))}
     </ul>
   );
@@ -67,56 +72,133 @@ export function AccountRecentOrders() {
 
 function OrderCard({
   order,
-  locale,
   t,
-  cards,
 }: {
   order: UserOrder;
-  locale: string;
   t: ReturnType<typeof useTranslations<"AccountPage">>;
-  cards: ReturnType<typeof useTranslations<"ProductCard">>;
 }) {
-  const images = (order.preview_images ?? []).filter(Boolean);
   const status = order.status;
+  const paymentStatus = order.payment_status;
+  const paymentMethod = order.payment_method?.replaceAll("_", " ").replace(/^\w/, (letter) => letter.toUpperCase());
+  const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();
+  const [pdfError, setPdfError] = useState(false);
+
+  async function onDownload() {
+    const invoiceId = order.order_id || order._id;
+    if (!invoiceId || downloading) return;
+    setPdfError(false);
+    try {
+      const blob = await downloadInvoice(invoiceId).unwrap();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `goodies-order-${order.order_number || invoiceId}.pdf`;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setPdfError(true);
+    }
+  }
 
   return (
     <li className="overflow-hidden rounded-2xl border border-border bg-background">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
-        <div>
+      <div className="border-b border-border px-4 py-3 sm:px-5">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href={getAccountOrderRoutePath(order._id)}
-            className="font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="shrink-0 font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {t("order", { id: order.order_code || order.order_number })}
           </Link>
-          <p className="mt-0.5 text-sm text-muted">{t("placedOn", { date: order.order_date })}</p>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs ${statusClassName[status]}`}>
+              <span className="font-medium opacity-70">{t("orderStatus")}</span>
+              <span className="font-semibold">{t(statusLabel[status])}</span>
+            </span>
+            {paymentStatus ? (
+              <span className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs ${statusClassName[paymentStatus]}`}>
+                <span className="font-medium opacity-70">{t("paymentStatus")}</span>
+                <span className="font-semibold">{t(statusLabel[paymentStatus])}</span>
+              </span>
+            ) : null}
+          </div>
         </div>
-        <span className={`inline-flex h-7 items-center rounded-full px-3 text-xs font-semibold ${statusClassName[status]}`}>
-          {t(statusLabel[status])}
-        </span>
+        <p className="mt-0.5 text-sm text-muted">{t("placedOn", { date: order.order_date })}</p>
+        {paymentMethod ? <p className="mt-0.5 text-sm font-medium text-heading">{paymentMethod}</p> : null}
+        {order.payment_method_title ? <p className="mt-0.5 text-sm text-muted">{order.payment_method_title}</p> : null}
       </div>
-      {images.length > 0 ? (
-        <ul className="flex gap-3 px-4 py-3 sm:px-5">
-          {images.map((src) => (
-            <li key={src} className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70">
-              <ImageComponent src={src} alt="" width={112} height={112} sizes="56px" objectFit="cover" />
-            </li>
-          ))}
+      {order.items && order.items.length > 0 ? (
+        <ul className="divide-y divide-border">
+          {order.items.map((item) => {
+            const image = item.image || item.thumbnail || "";
+            const title = <span className="line-clamp-2 font-medium text-heading group-hover:text-primary">{item.title}</span>;
+
+            return (
+              <li key={item.item_id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
+                <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70">
+                  {item.slug ? (
+                    <Link
+                      href={getProductRoutePath(item.slug)}
+                      aria-label={item.title}
+                      className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      <ImageComponent src={image} alt="" width={112} height={112} sizes="56px" objectFit="cover" />
+                    </Link>
+                  ) : (
+                    <ImageComponent src={image} alt="" width={112} height={112} sizes="56px" objectFit="cover" />
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  {item.slug ? (
+                    <Link
+                      href={getProductRoutePath(item.slug)}
+                      className="group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {title}
+                    </Link>
+                  ) : (
+                    title
+                  )}
+                  <p className="mt-0.5 text-sm text-muted">{t("lineQuantity", { count: item.quantity })}</p>
+                </div>
+                <p className="shrink-0 text-sm font-semibold tabular-nums text-price">
+                  {formatAmount(item.line_total, item.currency_symbol || order.currency)}
+                </p>
+              </li>
+            );
+          })}
         </ul>
       ) : null}
-      <div className="flex items-center justify-between gap-4 border-t border-border bg-surface/60 px-4 py-3.5 sm:px-5">
-        <div>
-          <p className="text-xs font-medium text-muted">{t("orderTotal")}</p>
-          <p className="mt-0.5 text-lg font-bold tabular-nums text-price">{formatAmount(order.total_amount, order.currency)}</p>
-          <p className="mt-0.5 text-xs text-muted">{t("items", { count: order.item_count })}</p>
+      <div className="border-t border-border bg-surface/60 px-4 py-3.5 sm:px-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium text-muted">{t("orderTotal")}</p>
+            <p className="mt-0.5 text-lg font-bold tabular-nums text-price">{formatAmount(order.total_amount, order.summary?.currency_symbol || order.currency)}</p>
+            <p className="mt-0.5 text-xs text-muted">{t("items", { count: order.item_count })}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={downloading}
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-full border border-border bg-background px-4 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
+            >
+              {downloading ? t("downloadingInvoice") : t("downloadInvoice")}
+            </button>
+            <Link
+              href={getAccountOrderRoutePath(order._id)}
+              className="inline-flex h-10 items-center gap-1 whitespace-nowrap rounded-full border border-border bg-background px-4 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {t("viewDetails")}
+              <LuChevronRight aria-hidden className="size-4 rtl:-scale-x-100" />
+            </Link>
+          </div>
         </div>
-        <Link
-          href={getAccountOrderRoutePath(order._id)}
-          className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full border border-border bg-background px-4 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          {t("viewDetails")}
-          <LuChevronRight aria-hidden className="size-4 rtl:-scale-x-100" />
-        </Link>
+        {pdfError ? (
+          <p role="alert" className="mt-2 text-sm text-primary">
+            {t("downloadInvoiceError")}
+          </p>
+        ) : null}
       </div>
     </li>
   );

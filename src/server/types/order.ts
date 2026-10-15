@@ -159,15 +159,107 @@ export interface UserOrdersData {
     pagination: UserOrdersPagination;
 }
 
+export interface UserOrderItemVariant {
+    sku?: string | null;
+    stock?: number | null;
+    price?: number | null;
+    max_price?: number | null;
+}
+
+export interface UserOrderItem {
+    item_id: string;
+    product_id?: string | null;
+    title: string;
+    slug?: string | null;
+    sku?: string | null;
+    image?: string | null;
+    thumbnail?: string | null;
+    images?: string[] | null;
+    size?: string | null;
+    product_type?: string | null;
+    quantity: number;
+    unit_price: number;
+    mrp?: number | null;
+    line_total: number;
+    tax?: number | null;
+    currency?: string | null;
+    currency_symbol?: string | null;
+    exchange_rate?: number | null;
+    variant_sku?: string | null;
+    variant_key?: string | null;
+    selected_attributes?: Record<string, string> | null;
+    bundle_selections?: unknown[] | null;
+    variant?: UserOrderItemVariant | null;
+    variants?: unknown[] | null;
+    sizes?: unknown[] | null;
+    colors?: unknown[] | null;
+    is_variant?: boolean | null;
+}
+
+export interface UserOrderSummary {
+    order_total: number;
+    discount_amount: number;
+    coupon_code?: string | null;
+    coupon_type?: string | null;
+    coupon_discount?: number | null;
+    shipping_amount: number;
+    fee_amount: number;
+    tax_amount: number;
+    grand_total: number;
+    currency: string;
+    currency_symbol?: string | null;
+}
+
+export interface UserOrderAddress {
+    first_name?: string | null;
+    last_name?: string | null;
+    full_name?: string | null;
+    street_address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    state_code?: string | null;
+    country?: string | null;
+    postal_code?: string | null;
+    phone_number?: string | null;
+    phone_country_code?: string | null;
+    country_code?: string | null;
+    email?: string | null;
+}
+
 export interface UserOrder {
     _id: string;
+    order_id: string;
     order_number: number;
     order_code: string;
+    invoice_number?: number | null;
     order_date: string;
-    status: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing";
+    created_at?: string | null;
+    status: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing" | "tamara_p_canceled" | "tamara_p_failed";
     item_count: number;
-    total_amount: number;
     currency: string;
+    currency_symbol?: string | null;
+    exchange_rate?: number | null;
+    customer_email?: string | null;
+    customer_note?: string | null;
+    payment_method?: string | null;
+    payment_method_title?: string | null;
+    payment_status?: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing" | "paid" | "tamara_p_canceled" | "tamara_p_failed" | null;
+    transaction_id?: string | null;
+    paid_at?: string | null;
+    shipping_method_id?: string | null;
+    shipping_method_title?: string | null;
+    courier_name?: string | null;
+    tracking_id?: string | null;
+    summary?: UserOrderSummary | null;
+    subtotal_amount?: number | null;
+    discount_amount?: number | null;
+    shipping_amount?: number | null;
+    fee_amount?: number | null;
+    tax_amount?: number | null;
+    total_amount: number;
+    shipping_address?: UserOrderAddress | null;
+    billing_address?: UserOrderAddress | null;
+    items?: UserOrderItem[] | null;
     preview_images?: string[] | null;
 }
 

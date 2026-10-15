@@ -109,9 +109,13 @@ export function AccountRecentOrdersSkeleton({ count = 2, quiet = false }: { coun
             </div>
             <Bone className="h-7 w-20 rounded-full" />
           </div>
-          <div className="flex gap-3 px-4 py-3 sm:px-5">
-            <Bone className="size-14 rounded-xl" />
-            <Bone className="size-14 rounded-xl" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
+            <Bone className="size-14 shrink-0 rounded-xl" />
+            <div className="min-w-0 flex-1">
+              <Bone className="h-4 w-4/5" />
+              <Bone className="mt-2 h-3 w-16" />
+            </div>
+            <Bone className="h-4 w-14" />
           </div>
           <div className="flex items-center justify-between gap-4 border-t border-border bg-surface/60 px-4 py-3.5 sm:px-5">
             <div>
