@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import moment from "moment";
-import { useLocale, useTranslations } from "next-intl";
-import { LuChevronRight } from "react-icons/lu";
+import { useTranslations } from "next-intl";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -13,7 +12,7 @@ import { getAccountOrderRoutePath, getProductRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
 import { AccountRecentOrdersSkeleton, AccountStatValueSkeleton } from "@/components/skeletons/AccountSkeletons";
 
-const recentOrdersArgs = { status: "all", page: 1, limit: 2 };
+const countArgs = { status: "all", page: 1, limit: 2 };
 
 const statusClassName = {
   completed: "bg-surface-soft text-accent-deep",
@@ -39,34 +38,72 @@ const statusLabel = {
   tamara_p_failed: "statusTamaraFailed",
 } as const;
 
-function useRecentOrders() {
+function useOrderCount() {
   const { token } = useAuth();
-  return useGetUserOrdersQuery(recentOrdersArgs, { skip: !token });
+  return useGetUserOrdersQuery(countArgs, { skip: !token });
 }
 
 export function AccountOrdersCount() {
-  const { data, isLoading, isUninitialized } = useRecentOrders();
+  const { data, isLoading, isUninitialized } = useOrderCount();
   if (!data && (isLoading || isUninitialized)) return <AccountStatValueSkeleton />;
   return data?.pagination.totalItems ?? 0;
 }
 
-export function AccountRecentOrders() {
+export function AccountOrderList({ limit = 10, paginated = false }: { limit?: number; paginated?: boolean }) {
   const t = useTranslations("AccountPage");
-  const { data, isLoading, isUninitialized } = useRecentOrders();
+  const { token } = useAuth();
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isUninitialized, isFetching } = useGetUserOrdersQuery(
+    { status: "all", page: paginated ? page : 1, limit },
+    { skip: !token },
+  );
   const orders = data?.orders ?? [];
+  const totalPages = data?.pagination.totalPages ?? 1;
 
-  if ((isLoading || isUninitialized) && !data) return <AccountRecentOrdersSkeleton />;
+  function showPage(next: number) {
+    setPage(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  if ((isLoading || isUninitialized) && !data) return <AccountRecentOrdersSkeleton count={paginated ? 3 : limit} />;
 
   if (orders.length === 0) {
     return <p className="text-sm text-muted">{t("noOrders")}</p>;
   }
 
   return (
-    <ul className="grid gap-4">
-      {orders.map((order) => (
-        <OrderCard key={order._id} order={order} t={t} />
-      ))}
-    </ul>
+    <div>
+      <ul className="grid gap-4">
+        {orders.map((order) => (
+          <OrderCard key={order._id} order={order} t={t} />
+        ))}
+      </ul>
+      {paginated && totalPages > 1 ? (
+        <nav aria-label={t("pagination")} className="mt-6 flex items-center justify-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => showPage(page - 1)}
+            disabled={page <= 1 || isFetching}
+            aria-label={t("previous")}
+            className="inline-flex size-10 items-center justify-center rounded-full border border-border text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-35"
+          >
+            <LuChevronLeft aria-hidden className="size-4 rtl:-scale-x-100" />
+          </button>
+          <span className="px-2 text-sm font-semibold text-heading">
+            {page} / {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => showPage(page + 1)}
+            disabled={page >= totalPages || isFetching}
+            aria-label={t("next")}
+            className="inline-flex size-10 items-center justify-center rounded-full border border-border text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-35"
+          >
+            <LuChevronRight aria-hidden className="size-4 rtl:-scale-x-100" />
+          </button>
+        </nav>
+      ) : null}
+    </div>
   );
 }
 

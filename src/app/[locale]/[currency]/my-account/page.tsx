@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AccountDefaultAddress, AccountGreeting, AccountProfileSummary } from "@/components/account/AccountProfileSummary";
 import { AccountAddressCount } from "@/components/account/AccountAddresses";
-import { AccountOrdersCount, AccountRecentOrders } from "@/components/account/AccountRecentOrders";
+import { AccountOrdersCount, AccountOrderList } from "@/components/account/AccountOrderList";
 import { AccountWishlistCount } from "@/components/account/AccountWishlistCount";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { Link } from "@/i18n/navigation";
@@ -70,7 +70,7 @@ export default async function MyAccountPage() {
               {t("viewAll")}
             </Link>
           </div>
-          <AccountRecentOrders />
+          <AccountOrderList limit={2} />
         </section>
 
         <div className="grid gap-4">
