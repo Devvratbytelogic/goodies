@@ -113,6 +113,7 @@ export interface OrderDetailsItem {
     unit_price: number;
     line_total: number;
     currency?: string;
+    currency_symbol?: string;
 }
 
 export interface OrderDetailsSummary {

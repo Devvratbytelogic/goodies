@@ -267,7 +267,7 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
                         </p>
                       </div>
                       <p className="shrink-0 text-sm font-semibold tabular-nums text-price">
-                        {formatAmount(item.line_total ?? 0, item.currency || currency)}
+                        {formatAmount(item.line_total ?? 0, item.currency_symbol || currency)}
                       </p>
                     </li>
                   );
