@@ -152,6 +152,7 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
   const shownOrderNumber = order?.order_number ?? orderNumber;
   const discount = (summary?.discount_amount ?? 0) > 0 ? summary?.discount_amount ?? 0 : summary?.coupon_discount ?? 0;
   const itemCount = items.reduce((sum, item) => sum + (item.quantity ?? 0), 0);
+  const paymentMethodName = order?.payment_method?.replaceAll("_", " ").replace(/^\w/, (letter) => letter.toUpperCase());
 
   async function onDownload() {
     const invoiceId = order?.order_id || orderId;
@@ -218,6 +219,12 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
                 {paid ? <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">{t("paid")}</span> : null}
               </dd>
             </div>
+            {order.payment_method ? (
+              <div>
+                <dt className="text-muted">{t("paymentMethod")}</dt>
+                <dd className="mt-0.5 font-semibold text-heading">{paymentMethodName}</dd>
+              </div>
+            ) : null}
             {summary ? (
               <div>
                 <dt className="text-muted">{cart("total")}</dt>
