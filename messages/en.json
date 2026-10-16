@@ -337,7 +337,11 @@
     "cod": "COD charge",
     "free": "Free",
     "total": "Total",
-    "checkout": "Proceed to checkout"
+    "checkout": "Proceed to checkout",
+    "suggested": "You may also like",
+    "suggestedSeeAll": "See All",
+    "suggestedPrevious": "Previous products",
+    "suggestedNext": "Next products"
   },
   "MiniCart": {
     "title": "Your cart",

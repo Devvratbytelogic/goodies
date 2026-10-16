@@ -1,4 +1,5 @@
 import { CartApiResponse, CartApiResponseData } from "@/server/types/cart";
+import { HomeProduct } from "@/server/types/Home";
 import { api } from "../api";
 import { CouponApiResponse, CouponApiResponseDataEntity } from "@/server/types/coupon";
 
@@ -7,6 +8,11 @@ export const cartApi = api.injectEndpoints({
     getCart: build.query<CartApiResponseData, void>({
       query: () => "/user/cart",
       transformResponse: (res: CartApiResponse) => res.data,
+      providesTags: ["Cart"],
+    }),
+    getCartProducts: build.query<HomeProduct[], void>({
+      query: () => "/user/cart-products?limit=8",
+      transformResponse: (res: { data?: HomeProduct[] | null }) => res.data ?? [],
       providesTags: ["Cart"],
     }),
     addToCart: build.mutation({
@@ -68,6 +74,7 @@ export const cartApi = api.injectEndpoints({
 
 export const {
   useGetCartQuery,
+  useGetCartProductsQuery,
   useAddToCartMutation,
   useRemoveFromCartMutation,
   useMoveCartItemToWishlistMutation,

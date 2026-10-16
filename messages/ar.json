@@ -337,7 +337,11 @@
     "cod": "رسوم الدفع عند الاستلام",
     "free": "مجاني",
     "total": "الإجمالي",
-    "checkout": "متابعة الدفع"
+    "checkout": "متابعة الدفع",
+    "suggested": "قد يعجبك أيضًا",
+    "suggestedSeeAll": "عرض الكل",
+    "suggestedPrevious": "المنتجات السابقة",
+    "suggestedNext": "المنتجات التالية"
   },
   "MiniCart": {
     "title": "سلتك",
