@@ -11,6 +11,7 @@ export interface HomePageData {
     new_arrivals?: (HomeProduct)[] | null;
     categories?: (HomeCategory)[] | null;
     home_page_banner: string;
+    home_page_banner_mobile: string;
 }
 export interface HomeProduct {
     variant: HomeProductVariant;

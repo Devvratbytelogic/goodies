@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AccountDefaultAddress, AccountGreeting, AccountProfileSummary } from "@/components/account/AccountProfileSummary";
 import { AccountAddressCount } from "@/components/account/AccountAddresses";
+import { AccountCouponsCount } from "@/components/account/AccountCoupons";
 import { AccountOrdersCount, AccountOrderList } from "@/components/account/AccountOrderList";
 import { AccountWishlistCount } from "@/components/account/AccountWishlistCount";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { Link } from "@/i18n/navigation";
-import { sampleCoupons } from "@/data/sampleAccount";
 import {
   getAccountAddressRoutePath,
   getAccountCouponsRoutePath,
@@ -30,7 +30,7 @@ export default async function MyAccountPage() {
     { href: getAccountOrdersRoutePath(), label: t("orders"), value: <AccountOrdersCount /> },
     { href: getWishlistRoutePath(), label: t("wishlist"), value: <AccountWishlistCount /> },
     { href: getAccountAddressRoutePath(), label: t("addresses"), value: <AccountAddressCount /> },
-    { href: getAccountCouponsRoutePath(), label: t("coupons"), value: sampleCoupons.length },
+    { href: getAccountCouponsRoutePath(), label: t("coupons"), value: <AccountCouponsCount /> },
   ];
 
   return (

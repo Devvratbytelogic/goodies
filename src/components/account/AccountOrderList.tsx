@@ -142,7 +142,7 @@ function OrderCard({
       <div className="border-b border-border px-4 py-3 sm:px-5">
         <div className="flex items-center justify-between gap-3">
           <Link
-            href={getAccountOrderRoutePath(order._id)}
+            href={getAccountOrderRoutePath(order.order_id || order._id)}
             className="shrink-0 font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {t("order", { id: order.order_code || order.order_number })}
@@ -223,7 +223,7 @@ function OrderCard({
               {downloading ? t("downloadingInvoice") : t("downloadInvoice")}
             </button>
             <Link
-              href={getAccountOrderRoutePath(order._id)}
+              href={getAccountOrderRoutePath(order.order_id || order._id)}
               className="inline-flex h-10 items-center gap-1 whitespace-nowrap rounded-full border border-border bg-background px-4 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {t("viewDetails")}

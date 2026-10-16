@@ -16,7 +16,7 @@ export default async function Home({ params }: { params: Promise<{ currency: str
   return (
     <>
       <div className="">
-        <MainBanner banner={homePage?.home_page_banner} />
+        <MainBanner banner={homePage?.home_page_banner} bannerMobile={homePage?.home_page_banner_mobile} />
         <CategorySection categories={homePage?.categories ?? []} />
         <BestSellerSection bestSellers={homePage?.best_sellers ?? []} />
         <TastyChoicesSection />

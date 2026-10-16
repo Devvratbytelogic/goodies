@@ -82,6 +82,16 @@ export const contactUsValidationSchema = Yup.object({
   message: requiredString("required", 500),
 });
 
+export const cancelOrderValidationSchema = Yup.object({
+  order_item_ids: Yup.array().of(Yup.string().required()).min(1, "required"),
+  reason: Yup.string().required("required"),
+  description: Yup.string().when("reason", {
+    is: "other",
+    then: (schema) => schema.trim().required("required").max(500, "tooLong"),
+    otherwise: (schema) => schema.trim().max(500, "tooLong"),
+  }),
+});
+
 export const checkoutValidationSchema = (getStatesOfCountry: (countryCode: string) => readonly { isoCode: string }[]) =>
   Yup.object({
     firstName: requiredString("required", 40),

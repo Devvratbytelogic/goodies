@@ -28,8 +28,10 @@ type ApiBody = {
 const baseQuery = async (args: any, api: any, extraOptions: any) => {
   const result = await rawBaseQuery(args, api, extraOptions);
   const method = typeof args === "string" ? "GET" : args.method || "GET";
+  const url = typeof args === "string" ? args : args.url || "";
+  const toast = method === "POST" || method === "DELETE" || (method === "PUT" && String(url).endsWith("/cancel"));
 
-  if (method !== "POST" && method !== "DELETE") return result;
+  if (!toast) return result;
 
   const body = (result.error?.data ?? result.data) as ApiBody | undefined;
   const message = body?.message || (result.error ? "Request failed" : "Done");
@@ -42,6 +44,6 @@ const baseQuery = async (args: any, api: any, extraOptions: any) => {
 export const api = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Cart", "Wishlist", "Address", "User"],
+  tagTypes: ["Cart", "Wishlist", "Address", "User", "Order"],
   endpoints: () => ({}),
 });

@@ -337,29 +337,18 @@ export function AccountOrdersSkeleton() {
   );
 }
 
-export function AccountOrderDetailSkeleton() {
+export function AccountOrderDetailSkeleton({ embedded = false }: { embedded?: boolean }) {
   const label = useLoadingLabel();
 
   return (
     <Status label={label}>
-      <PageHeading lines={1} />
+      {embedded ? <Bone className="h-8 w-44" /> : <PageHeading lines={1} />}
       <Bone className="mt-2 h-4 w-40" />
-      <div className="mt-6 grid gap-4">
-        <div className="rounded-2xl border border-border bg-background px-5 py-4">
-          <Bone className="h-4 w-24" />
-          <div className="mt-4 grid gap-4">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div key={index} className="flex gap-3">
-                <Bone className="size-5 rounded-full" />
-                <div className="flex-1">
-                  <Bone className="h-4 w-28" />
-                  <Bone className="mt-2 h-3 w-40" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_17rem]">
+      <div className="mt-4 rounded-2xl border border-border bg-background px-5 py-4">
+        <Bone className="h-5 w-28" />
+        <Bone className="mt-2 h-3 w-56" />
+      </div>
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="overflow-hidden rounded-2xl border border-border bg-background">
             <div className="border-b border-border px-4 py-3 sm:px-5">
               <Bone className="h-4 w-24" />
@@ -389,7 +378,6 @@ export function AccountOrderDetailSkeleton() {
               <Bone className="mt-3 h-10 w-full rounded-xl" />
             </div>
           </div>
-        </div>
       </div>
     </Status>
   );
@@ -470,21 +458,6 @@ export function AccountCouponsSkeleton() {
             <li key={index} className="rounded-2xl border border-dashed border-border bg-background px-5 py-4">
               <Bone className="h-4 w-24" />
               <Bone className="mt-3 h-4 w-40" />
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="mt-8">
-        <Bone className="h-4 w-24" />
-        <ul className="mt-3 grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 2 }, (_, index) => (
-            <li key={index} className="rounded-2xl border border-border bg-surface px-5 py-4">
-              <div className="flex items-center justify-between gap-3">
-                <Bone className="h-4 w-24" />
-                <Bone className="h-6 w-16 rounded-full" />
-              </div>
-              <Bone className="mt-3 h-4 w-40" />
-              <Bone className="mt-3 h-3 w-48" />
             </li>
           ))}
         </ul>

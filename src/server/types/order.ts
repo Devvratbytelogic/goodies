@@ -108,12 +108,45 @@ export interface OrderDetailsItem {
     title: string;
     slug?: string | null;
     image?: string | null;
+    thumbnail?: string | null;
     size?: string | null;
+    product_type?: string | null;
     quantity: number;
     unit_price: number;
     line_total: number;
     currency?: string;
     currency_symbol?: string;
+    variants?: unknown[] | null;
+    is_variant?: boolean | null;
+    variant?: UserOrderItemVariant | null;
+    sizes?: unknown[] | null;
+    cancelled?: boolean;
+    reason?: string | null;
+    description?: string | null;
+}
+
+export interface OrderStatusBanner {
+    title?: string | null;
+    subtitle?: string | null;
+    courier?: string | null;
+    tracking_id?: string | null;
+}
+
+export interface OrderTimelineEvent {
+    status: string;
+    message?: string | null;
+    reason?: string | null;
+    description?: string | null;
+    at: string;
+}
+export interface OrderChangeRequest {
+    _id?: string;
+    status?: string | null;
+    type?: string | null;
+    reason?: string | null;
+    message?: string | null;
+    created_at?: string | null;
+    createdAt?: string | null;
 }
 
 export interface OrderDetailsSummary {
@@ -274,11 +307,22 @@ export interface OrderDetails {
     order_id: string;
     order_number: number | string;
     order_code?: string;
-    status?: string;
+    status?: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing" | "tamara_p_canceled" | "tamara_p_failed";
+    can_cancel?: boolean;
+    can_return_replacement?: boolean;
+    cancel_message?: string | null;
+    cancellation_history?: boolean;
+    return_replacement_history?: boolean;
+    cancellation_requests?: OrderChangeRequest[] | null;
+    return_replacement_requests?: OrderChangeRequest[] | null;
     order_date?: string;
-    payment_method?: string;
-    payment_method_title?: string;
-    payment_status?: string;
+    customer_email?: string | null;
+    customer_note?: string | null;
+    payment_method?: string | null;
+    payment_method_title?: string | null;
+    payment_status?: "completed" | "pending" | "cancelled" | "failed" | "on_hold" | "processing" | "paid" | "tamara_p_canceled" | "tamara_p_failed" | null;
+    status_banner?: OrderStatusBanner | null;
+    timeline?: OrderTimelineEvent[] | null;
     summary?: OrderDetailsSummary | null;
     shipping_address?: OrderDetailsAddress | null;
     billing_address?: OrderDetailsAddress | null;

@@ -29,10 +29,20 @@ export const orderApi = api.injectEndpoints({
         return `/user/all-order?${params}`;
       },
       transformResponse: (res: UserOrdersResponse) => res.data,
+      providesTags: ["Order"],
     }),
     getOrderDetails: build.query<OrderDetails, string>({
       query: (orderId) => `/user/order-details/${encodeURIComponent(orderId)}`,
       transformResponse: (res: OrderDetailsResponse) => res.data,
+      providesTags: ["Order"],
+    }),
+    cancelOrder: build.mutation({
+      query: ({ orderId, reason, description, order_item_ids }) => ({
+        url: `/user/orders/${encodeURIComponent(orderId)}/cancel`,
+        method: "PUT",
+        body: { reason, description, order_item_ids },
+      }),
+      invalidatesTags: ["Order"],
     }),
     downloadOrderInvoice: build.mutation<Blob, string>({
       query: (orderId) => ({
@@ -44,4 +54,4 @@ export const orderApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetUserOrdersQuery, useGetOrderDetailsQuery, usePlaceOrderMutation, useDownloadOrderInvoiceMutation } = orderApi;
+export const { useGetUserOrdersQuery, useGetOrderDetailsQuery, usePlaceOrderMutation, useDownloadOrderInvoiceMutation, useCancelOrderMutation } = orderApi;
