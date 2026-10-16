@@ -19,6 +19,7 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, ma
   const t = useTranslations("ProductPage");
 
   const product = bundleItem.product_id;
+  const size = product.variant?.size?.trim() || "";
   const stockManage = product.variant?.stock_manage;
   const stockStatus = product.variant?.stock_status;
   // stock_manage false means the item stays available, same as the product card.
@@ -44,6 +45,13 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, ma
 
       <div className="flex flex-1 flex-col p-2.5">
         <p className={`line-clamp-2 text-sm font-semibold text-heading ${inStock ? "" : "line-through"}`}>{product.title}</p>
+        {size ? (
+          <p className="mt-1">
+            <span className="inline-flex rounded-md border border-primary bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
+              {t("size")}: {size}
+            </span>
+          </p>
+        ) : null}
         <p className="mt-1 text-sm font-semibold text-price">{formatAmount(product.variant?.price, currencySymbol)}</p>
 
         <div className="mt-auto pt-2.5">
