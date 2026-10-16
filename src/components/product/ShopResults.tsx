@@ -26,6 +26,9 @@ type ShopResultColumnProps = {
   sortOptions: SortOption[];
   filtersButton: ReactNode;
   priceLabel?: string;
+  priceMin?: number;
+  priceMax?: number;
+  currencySymbol?: string;
   removePriceLabel?: string;
   sortLabel?: string;
   removeSortLabel?: string;
@@ -41,6 +44,9 @@ export function ShopResultColumn({
   sortOptions,
   filtersButton,
   priceLabel,
+  priceMin,
+  priceMax,
+  currencySymbol,
   removePriceLabel,
   sortLabel,
   removeSortLabel,
@@ -69,7 +75,17 @@ export function ShopResultColumn({
                 aria-label={`${removePriceLabel}, ${priceLabel}`}
                 className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
-                <bdi>{priceLabel}</bdi>
+                <span dir="ltr" className="inline-flex items-center gap-1">
+                  <span className="inline-flex items-center gap-1">
+                    {currencySymbol ? <bdi>{currencySymbol}</bdi> : null}
+                    <span>{priceMin}</span>
+                  </span>
+                  <span aria-hidden>–</span>
+                  <span className="inline-flex items-center gap-1">
+                    {currencySymbol ? <bdi>{currencySymbol}</bdi> : null}
+                    <span>{priceMax}</span>
+                  </span>
+                </span>
                 <LuX aria-hidden className="size-3.5" />
               </button>
             </li>
@@ -186,6 +202,9 @@ export default function ShopResults({
       sortOptions={sortOptions}
       filtersButton={filtersButton}
       priceLabel={priceLabel}
+      priceMin={hasPrice ? minPrice : undefined}
+      priceMax={hasPrice ? maxPrice : undefined}
+      currencySymbol={currencySymbol}
       removePriceLabel={removePriceLabel}
       sortLabel={sortLabel}
       removeSortLabel={removeSortLabel}

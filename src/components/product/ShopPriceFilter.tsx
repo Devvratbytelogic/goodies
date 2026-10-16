@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { formatAmount } from "@/utils/price";
@@ -15,6 +15,8 @@ type ShopPriceFilterProps = {
   max: number;
   currencySymbol?: string;
 };
+
+const gap = 25;
 
 function clamp(value: number, lower: number, upper: number) {
   return Math.min(Math.max(value, lower), upper);
@@ -42,9 +44,13 @@ function PriceSlider({
   const [lowDraft, setLowDraft] = useState<string | null>(null);
   const [highDraft, setHighDraft] = useState<string | null>(null);
   const [active, setActive] = useState<"low" | "high">("high");
+  const dragging = useRef(false);
+  const commitRef = useRef<() => void>(() => {});
   const span = Math.max(max - min, 1);
   const lowPercent = ((low - min) / span) * 100;
   const highPercent = ((high - min) / span) * 100;
+  const lowStop = Math.max(min, high - gap);
+  const highStop = Math.min(max, low + gap);
 
   function valueFromClientX(clientX: number) {
     const track = trackRef.current;
@@ -65,16 +71,37 @@ function PriceSlider({
     router.push(shopSearchPath(pathname, window.location.search, updates), { scroll: false });
   }
 
+  function finishDrag() {
+    if (!dragging.current) return;
+    dragging.current = false;
+    commitRef.current();
+  }
+
+  commitRef.current = () => apply();
+
+  useEffect(() => {
+    window.addEventListener("pointerup", finishDrag, true);
+    window.addEventListener("pointercancel", finishDrag, true);
+    return () => {
+      window.removeEventListener("pointerup", finishDrag, true);
+      window.removeEventListener("pointercancel", finishDrag, true);
+    };
+  }, []);
+
+  function grab() {
+    dragging.current = true;
+  }
+
   function moveHandle(handle: "low" | "high", clientX: number) {
     const next = valueFromClientX(clientX);
     if (handle === "low") {
-      const value = Math.min(next, highRef.current);
+      const value = clamp(next, min, Math.max(min, highRef.current - gap));
       lowRef.current = value;
       setLowDraft(null);
       setLow(value);
       return;
     }
-    const value = Math.max(next, lowRef.current);
+    const value = clamp(next, Math.min(max, lowRef.current + gap), max);
     highRef.current = value;
     setHighDraft(null);
     setHigh(value);
@@ -82,7 +109,7 @@ function PriceSlider({
 
   function commitLow(value: string) {
     const next = Number(value);
-    const amount = Number.isFinite(next) ? clamp(Math.round(next), min, highRef.current) : lowRef.current;
+    const amount = value.trim() !== "" && Number.isFinite(next) ? clamp(Math.round(next), min, Math.max(min, highRef.current - gap)) : lowRef.current;
     lowRef.current = amount;
     setLow(amount);
     setLowDraft(null);
@@ -91,7 +118,7 @@ function PriceSlider({
 
   function commitHigh(value: string) {
     const next = Number(value);
-    const amount = Number.isFinite(next) ? clamp(Math.round(next), lowRef.current, max) : highRef.current;
+    const amount = value.trim() !== "" && Number.isFinite(next) ? clamp(Math.round(next), Math.min(max, lowRef.current + gap), max) : highRef.current;
     highRef.current = amount;
     setHigh(amount);
     setHighDraft(null);
@@ -115,26 +142,31 @@ function PriceSlider({
           className="absolute inset-x-2 top-0 h-full"
           onPointerDown={(event) => {
             if (event.target !== event.currentTarget) return;
+            grab();
+            event.currentTarget.setPointerCapture(event.pointerId);
             const next = valueFromClientX(event.clientX);
             const handle = Math.abs(next - lowRef.current) <= Math.abs(next - highRef.current) ? "low" : "high";
             setActive(handle);
             moveHandle(handle, event.clientX);
           }}
-          onPointerUp={() => apply()}
+          onLostPointerCapture={finishDrag}
         >
         <PriceHandle
           label={minLabel}
           value={low}
           min={min}
-          max={high}
+          max={lowStop}
           active={active === "low"}
           position={`${lowPercent}%`}
           onFocus={() => setActive("low")}
-          onPointerDown={() => setActive("low")}
+          onPointerDown={() => {
+            setActive("low");
+            grab();
+          }}
           onMove={(clientX) => moveHandle("low", clientX)}
-          onCommit={() => apply()}
+          onCommit={finishDrag}
           onStep={(delta) => {
-            const value = clamp(lowRef.current + delta, min, highRef.current);
+            const value = clamp(lowRef.current + delta, min, Math.max(min, highRef.current - gap));
             lowRef.current = value;
             setLowDraft(null);
             setLow(value);
@@ -144,16 +176,19 @@ function PriceSlider({
         <PriceHandle
           label={maxLabel}
           value={high}
-          min={low}
+          min={highStop}
           max={max}
           active={active === "high"}
           position={`${highPercent}%`}
           onFocus={() => setActive("high")}
-          onPointerDown={() => setActive("high")}
+          onPointerDown={() => {
+            setActive("high");
+            grab();
+          }}
           onMove={(clientX) => moveHandle("high", clientX)}
-          onCommit={() => apply()}
+          onCommit={finishDrag}
           onStep={(delta) => {
-            const value = clamp(highRef.current + delta, lowRef.current, max);
+            const value = clamp(highRef.current + delta, Math.min(max, lowRef.current + gap), max);
             highRef.current = value;
             setHighDraft(null);
             setHigh(value);
@@ -167,32 +202,14 @@ function PriceSlider({
           label={minLabel}
           symbol={currencySymbol}
           value={lowDraft ?? formatAmount(low)}
-          onChange={(raw) => {
-            setLowDraft(raw);
-            const next = Number(raw);
-            if (!Number.isFinite(next)) return;
-            const rounded = Math.round(next);
-            if (rounded >= min && rounded <= highRef.current) {
-              lowRef.current = rounded;
-              setLow(rounded);
-            }
-          }}
+          onChange={(raw) => setLowDraft(raw)}
           onBlur={commitLow}
         />
         <PriceAmount
           label={maxLabel}
           symbol={currencySymbol}
           value={highDraft ?? formatAmount(high)}
-          onChange={(raw) => {
-            setHighDraft(raw);
-            const next = Number(raw);
-            if (!Number.isFinite(next)) return;
-            const rounded = Math.round(next);
-            if (rounded >= lowRef.current && rounded <= max) {
-              highRef.current = rounded;
-              setHigh(rounded);
-            }
-          }}
+          onChange={(raw) => setHighDraft(raw)}
           onBlur={commitHigh}
         />
       </div>
@@ -288,9 +305,9 @@ function PriceHandle({
   onStep,
 }: PriceHandleProps) {
   return (
-    <button
-      type="button"
+    <div
       role="slider"
+      tabIndex={0}
       aria-label={label}
       aria-valuemin={min}
       aria-valuemax={max}
@@ -304,10 +321,7 @@ function PriceHandle({
         if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
         onMove(event.clientX);
       }}
-      onPointerUp={(event) => {
-        event.stopPropagation();
-        onCommit();
-      }}
+      onLostPointerCapture={onCommit}
       onKeyDown={(event) => {
         if (event.key === "ArrowRight" || event.key === "ArrowUp") {
           event.preventDefault();
