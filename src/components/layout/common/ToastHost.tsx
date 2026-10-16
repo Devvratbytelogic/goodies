@@ -35,7 +35,7 @@ export function ToastHost() {
     <div
       role="status"
       aria-live={isError ? "assertive" : "polite"}
-      className={`fixed inset-x-0 bottom-22 z-100 mx-auto flex w-[min(100%-2rem,24rem)] items-start gap-3 rounded-2xl border px-3 py-3 pe-5 shadow-[0_24px_60px_-28px_rgb(0_0_0/0.45)] lg:bottom-6 ${
+      className={`fixed inset-x-0 bottom-[calc(5.5rem+var(--purchase-bar-offset,0px))] z-100 mx-auto flex w-[min(100%-2rem,24rem)] items-start gap-3 rounded-2xl border px-3 py-3 pe-5 shadow-[0_24px_60px_-28px_rgb(0_0_0/0.45)] lg:bottom-[calc(1.5rem+var(--purchase-bar-offset,0px))] ${
         isError ? "border-primary/20 bg-primary-soft" : "border-accent/20 bg-surface-soft"
       }`}
     >

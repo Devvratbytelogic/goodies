@@ -107,7 +107,7 @@ export function InstallPrompt() {
       role="dialog"
       aria-labelledby="install-prompt-title"
       aria-describedby="install-prompt-description"
-      className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-border bg-background p-4 pt-5 shadow-lg lg:bottom-4"
+      className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+var(--purchase-bar-offset,0px))] left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-border bg-background p-4 pt-5 shadow-lg lg:bottom-[calc(1rem+var(--purchase-bar-offset,0px))]"
     >
       <button
         type="button"

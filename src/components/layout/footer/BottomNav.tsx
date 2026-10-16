@@ -109,8 +109,9 @@ export function BottomNav() {
       </nav>
       <div
         aria-hidden
-        className="h-[calc(3.5rem+env(safe-area-inset-bottom))] lg:hidden"
+        className="h-[calc(3.5rem+env(safe-area-inset-bottom)+var(--purchase-bar-offset,0px))] lg:hidden"
       />
+      <div aria-hidden className="hidden h-(--purchase-bar-offset,0px) lg:block" />
     </>
   );
 }

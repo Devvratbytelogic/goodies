@@ -11,6 +11,7 @@ export interface CartApiResponse {
 export interface CartApiResponseData {
     items?: (CartItem)[] | null;
     shipping_rate: ShippingRate;
+    cod_method: CodMethod;
     summary: Summary;
 }
 export interface CartItem {
@@ -151,6 +152,21 @@ export interface SelectedVariant {
 export interface AttributesOrSelectedAttributes1 {
     size: string;
 }
+export interface CodMethod {
+    _id: string;
+    country_code: string;
+    country: string;
+    method: string;
+    flat_cost?: null;
+    base_cost: number;
+    per_kg: number;
+    step_kg: number;
+    skip_kg: number;
+    is_free: boolean;
+    status: boolean;
+    currency: string;
+    charge: number;
+}
 export interface ShippingRate {
     id: string;
     title: string;
@@ -178,4 +194,5 @@ export interface Summary {
     exchange_rate: number;
     pricing_region: string;
     tax_breakdown: BreakdownOrSelectedAttributesOrTaxBreakdown;
+    cod_status: boolean;
 }

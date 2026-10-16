@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { LuMinus, LuPlus } from "react-icons/lu";
-import AddToCartButton from "@/components/product/AddToCartButton";
+import PurchaseActions from "@/components/product/PurchaseActions";
 import WishlistButton from "@/components/wishlist/WishlistButton";
 import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 import { formatAmount } from "@/utils/price";
@@ -232,66 +231,18 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
             </p>
           </div>
         ) : (
-        <div className="flex flex-col gap-2.5 @min-[30rem]:flex-row @min-[30rem]:items-center @min-[30rem]:gap-3">
-          <div className="inline-flex h-11 w-fit shrink-0 items-center rounded-full border border-border bg-background">
-            <button
-              type="button"
-              aria-label={t("decreaseQuantity")}
-              disabled={quantity <= 1}
-              onClick={() => {
-                setQuantity((current) => Math.max(1, current - 1));
-                setAdded(false);
-              }}
-              className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
-            >
-              <LuMinus aria-hidden className="size-4" />
-            </button>
-            <label className="sr-only" htmlFor="product-quantity">
-              {t("quantity", { name })}
-            </label>
-            <input
-              id="product-quantity"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              step={1}
-              value={quantity}
-              onChange={(event) => {
-                const next = Number.parseInt(event.target.value, 10);
-                setQuantity(Number.isFinite(next) && next > 0 ? Math.min(next, maxQuantity) : 1);
-                setAdded(false);
-              }}
-              className="h-11 w-10 border-0 bg-transparent text-center text-sm font-semibold text-heading outline-none [appearance:textfield] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            />
-            <button
-              type="button"
-              aria-label={t("increaseQuantity")}
-              disabled={quantity >= maxQuantity}
-              onClick={() => {
-                setQuantity((current) => current + 1);
-                setAdded(false);
-              }}
-              className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
-            >
-              <LuPlus aria-hidden className="size-4" />
-            </button>
-          </div>
-          <div className="grid w-full grid-cols-2 gap-2.5 @min-[30rem]:flex @min-[30rem]:w-auto @min-[30rem]:gap-3">
-            <AddToCartButton
-              variant="product"
-              disabled={addDisabled}
-              describedBy={needsSize ? "choose-size" : undefined}
-              payload={payload}
-            />
-            <AddToCartButton
-              variant="product"
-              action="buy"
-              disabled={addDisabled}
-              describedBy={needsSize ? "choose-size" : undefined}
-              payload={payload}
-            />
-          </div>
-        </div>
+          <PurchaseActions
+            name={name}
+            quantity={quantity}
+            maxQuantity={maxQuantity}
+            disabled={addDisabled}
+            needsSize={needsSize}
+            payload={payload}
+            onQuantityChange={(next) => {
+              setQuantity(next);
+              setAdded(false);
+            }}
+          />
         )}
         {!outOfStock && stockReached ? (
           <p aria-live="polite" className="mt-3 text-sm font-medium text-primary">
