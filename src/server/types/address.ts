@@ -21,6 +21,7 @@ export interface AddressEntity {
     postal_code: string;
     user_id?: string | null;
     is_default: boolean;
+    is_selected: boolean;
     deletedAt?: string | null;
     createdAt: string;
     updatedAt: string;

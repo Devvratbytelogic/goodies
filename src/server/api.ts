@@ -39,7 +39,13 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('error', error);
+    if (axios.isAxiosError(error)) {
+      const { method, baseURL, url } = error.config ?? {};
+      console.error(`${method?.toUpperCase()} ${baseURL ?? ""}${url ?? ""} — ${error.response?.status} ${error.response?.data?.message ?? error.message}`);
+    } else {
+      console.error(error);
+    }
+
     if (!axios.isAxiosError(error)) throw error;
     if (!error.response) {
       throw new ApiError(0, "The API server could not be reached.");

@@ -4,11 +4,13 @@ import { useState } from "react";
 import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { PlacedOrder } from "@/server/types/order";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
 export default function CheckoutView({ shopHref }: { shopHref: string }) {
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
 
   if (placedOrder) {
     return (
@@ -27,8 +29,8 @@ export default function CheckoutView({ shopHref }: { shopHref: string }) {
 
   return (
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <CheckoutForm onPlaced={setPlacedOrder} />
-      <CartSummary showItems />
+      <CheckoutForm onPlaced={setPlacedOrder} onPaymentMethodChange={setPaymentMethod} />
+      <CartSummary showItems paymentMethod={paymentMethod} />
     </div>
   );
 }

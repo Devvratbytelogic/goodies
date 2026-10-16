@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Country from "country-state-city/lib/country";
 import State from "country-state-city/lib/state";
 import { useFormik } from "formik";
@@ -18,6 +18,7 @@ import CheckoutFormSkeleton from "@/components/skeletons/CheckoutFormSkeleton";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
+import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { AddressEntity } from "@/server/types/address";
 import { PlacedOrder } from "@/server/types/order";
 import { checkoutValidationSchema } from "@/validations";
@@ -157,10 +158,23 @@ function AddressLines({ address, defaultLabel }: { address: AddressEntity; defau
   );
 }
 
-export default function CheckoutForm({ onPlaced }: { onPlaced: (order: PlacedOrder) => void }) {
+export default function CheckoutForm({
+  onPlaced,
+  onPaymentMethodChange,
+}: {
+  onPlaced: (order: PlacedOrder) => void;
+  onPaymentMethodChange?: (method: PaymentMethod) => void;
+}) {
   const t = useTranslations("CheckoutClassicPage");
   const locale = useLocale();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const { data: cart } = useGetCartQuery();
+  const selectedMethod = paymentMethod === "cod" && cart && !cart.summary?.cod_status ? "ziina" : paymentMethod;
+
+  useEffect(() => {
+    onPaymentMethodChange?.(selectedMethod);
+  }, [selectedMethod, onPaymentMethodChange]);
+  
   const { data: addresses = [], isLoading: isLoadingAddresses } = useGetAddressesQuery();
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -377,11 +391,11 @@ export default function CheckoutForm({ onPlaced }: { onPlaced: (order: PlacedOrd
           </div>
         ) : null}
 
-        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} onChange={setPaymentMethod} /> : null}
+        {addresses.length > 0 ? <PaymentMethods value={selectedMethod} onChange={setPaymentMethod} /> : null}
 
-        {paymentMethod === "tabby" ? (
+        {selectedMethod === "tabby" ? (
           <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} />
-        ) : paymentMethod === "ziina" ? (
+        ) : selectedMethod === "ziina" ? (
           <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} />
         ) : (
           <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} onPlaced={onPlaced} />

@@ -6,6 +6,7 @@ import CartCoupons from "@/components/cart/CartCoupons";
 import CartSummarySkeleton from "@/components/skeletons/CartSummarySkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { Link } from "@/i18n/navigation";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useApplyCouponMutation, useGetCartQuery, useRemoveCouponMutation } from "@/store/endpoints/cartApi";
 import { getProductRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
@@ -15,15 +16,18 @@ type CartSummaryProps = {
   checkoutHref?: string;
   // checkout page: shows the "Your order" product list
   showItems?: boolean;
+  // checkout page: COD charge only applies while cash on delivery is selected
+  paymentMethod?: PaymentMethod;
 };
 
-export default function CartSummary({ checkoutHref, showItems = false }: CartSummaryProps) {
+export default function CartSummary({ checkoutHref, showItems = false, paymentMethod }: CartSummaryProps) {
   const t = useTranslations("CartPage");
   const { data: cart, isLoading } = useGetCartQuery();
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
   const [removeCoupon, { isLoading: isRemovingCoupon }] = useRemoveCouponMutation();
   const cartItems = cart?.items ?? [];
   const cartSummary = cart?.summary ?? null;
+  const codMethod = cart?.cod_method ?? null;
   const cartShipping = cart?.shipping_rate ?? null;
 
   const applyCartCoupon = async (couponCode: string) => {
@@ -50,6 +54,8 @@ export default function CartSummary({ checkoutHref, showItems = false }: CartSum
   const couponValue = cartSummary?.coupon_value ?? 0;
   const shippingCharge = cartSummary?.shipping_charge ?? 0;
   const shippingRateTitle = cartShipping?.title ?? null;
+  const codCharge = codMethod?.charge ?? 0;
+  const codIsFree = codMethod?.is_free ?? false;
   const taxAmount = cartSummary?.tax_amount ?? 0;
   const totalAmount = cartSummary?.total_amount ?? 0;
   const currencySymbol = cartSummary?.currency_symbol ?? "";
@@ -126,13 +132,21 @@ export default function CartSummary({ checkoutHref, showItems = false }: CartSum
               </dd>
             </div>
           ) : null}
-          <div className="flex items-start justify-between gap-3">
-            <dt className="text-muted">
-              {t("shipping")}
-              <span className="mt-0.5 block text-xs text-muted/80">{shippingRateTitle}</span>
-            </dt>
-            <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
-          </div>
+          {paymentMethod === "cod" ? null : (
+            <div className="flex items-start justify-between gap-3">
+              <dt className="text-muted">
+                {t("shipping")}
+                <span className="mt-0.5 block text-xs text-muted/80">{shippingRateTitle}</span>
+              </dt>
+              <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
+            </div>
+          )}
+          {cartSummary?.cod_status && (paymentMethod ?? "cod") === "cod" ? (
+            <div className="flex items-center justify-between gap-3">
+              <dt className="text-muted">{t("cod")}</dt>
+              <dd className="font-semibold tabular-nums text-heading">{codIsFree ? t("free") : formatAmount(codCharge, currencySymbol)}</dd>
+            </div>
+          ) : null}
           {taxAmount > 0 ? (
             <div className="flex items-center justify-between gap-3">
               <dt className="text-muted">{t("tax")}</dt>

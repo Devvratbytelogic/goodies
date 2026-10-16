@@ -332,6 +332,8 @@
     "itemQty": "Qty {count}",
     "shipping": "Shipping",
     "shippingNote": "Flat rate",
+    "cod": "COD charge",
+    "free": "Free",
     "total": "Total",
     "checkout": "Proceed to checkout"
   },
@@ -589,6 +591,7 @@
     "paymentMethod": "Payment method",
     "placingOrder": "Placing order…",
     "payCod": "Cash on delivery",
+    "free": "Free",
     "payTabby": "Pay in 4 with Tabby",
     "payTabbyNote": "Split your purchase into 4 interest-free payments. You will be redirected to Tabby to complete your order.",
     "payZiina": "Pay with Ziina",
