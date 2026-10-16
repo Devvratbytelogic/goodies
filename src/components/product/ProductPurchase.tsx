@@ -69,8 +69,8 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
   const price = selectedVariant?.price ?? variant?.price ?? 0;
   const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
   const needsSize = sizes.length > 0 && !sizeName;
-  const showRange = isVariant && !sizeName;
-  const showMaxPrice = !showRange && maxPrice > 0 && maxPrice !== price;
+  const showRange = isVariant && !sizeName && !isBundle;
+  const showMaxPrice = !isBundle && !showRange && maxPrice > 0 && maxPrice !== price;
 
   function priceLabel() {
     if (showRange) {

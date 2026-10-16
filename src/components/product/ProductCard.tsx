@@ -11,7 +11,8 @@ import { HomeProduct } from "@/server/types/Home";
 export default function ProductCard({ product }: { product: HomeProduct }) {
   const t = useTranslations("ProductCard");
   const name = product?.title ?? "";
-  const isVariant = product?.is_variant || product?.product_type === "bundle";
+  const isBundle = product?.product_type === "bundle";
+  const isVariant = Boolean(product?.is_variant) || isBundle;
   // console.log('product', product);
   const isNew = product?.new_product;
   const variant = product?.variant;
@@ -74,7 +75,8 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
           <ProductPrice
             variant={variant}
             variants={variants.filter((item) => item != null)}
-            isVariant={isVariant}
+            isVariant={Boolean(product?.is_variant)}
+            hideMaxPrice={isBundle}
             currencySymbol={product.pricing_context?.currency_symbol}
           />
         </div>
