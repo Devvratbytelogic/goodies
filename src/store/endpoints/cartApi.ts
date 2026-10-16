@@ -26,6 +26,13 @@ export const cartApi = api.injectEndpoints({
       transformResponse: (res: CartApiResponse) => res.data,
       invalidatesTags: ["Cart"],
     }),
+    moveCartItemToWishlist: build.mutation({
+      query: (itemId: string) => ({
+        url: `/user/cart/${itemId}/move-to-wishlist`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Cart", "Wishlist"],
+    }),
     updateCartItemQuantity: build.mutation({
       query: ({ itemId, quantity }) => ({
         url: `/user/cart/${itemId}`,
@@ -63,6 +70,7 @@ export const {
   useGetCartQuery,
   useAddToCartMutation,
   useRemoveFromCartMutation,
+  useMoveCartItemToWishlistMutation,
   useUpdateCartItemQuantityMutation,
   useGetCouponsQuery,
   useApplyCouponMutation,

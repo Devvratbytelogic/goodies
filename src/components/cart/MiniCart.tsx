@@ -3,9 +3,11 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuShoppingBag, LuShoppingCart, LuTrash2 } from "react-icons/lu";
+import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link, usePathname } from "@/i18n/navigation";
-import { useGetCartQuery, useRemoveFromCartMutation } from "@/store/endpoints/cartApi";
+import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
 import { getCartRoutePath, getCheckoutClassicRoutePath, getProductRoutePath, getShopRoutePath } from "@/utils/routes";
 
@@ -33,7 +35,7 @@ export default function MiniCart({ className = "" }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [renderedPathname, setRenderedPathname] = useState(pathname);
   const { data: cart, isLoading } = useGetCartQuery();
-  const [removeFromCart, { isLoading: isRemoving }] = useRemoveFromCartMutation();
+  const { openModal } = useModal();
 
   const items = cart?.items ?? [];
   const count = items.reduce((total, item) => total + (item?.quantity ?? 0), 0);
@@ -63,12 +65,13 @@ export default function MiniCart({ className = "" }: { className?: string }) {
     };
   }, [open]);
 
-  async function removeItem(itemId: string) {
-    try {
-      await removeFromCart(itemId).unwrap();
-    } catch (error) {
-      console.error("Error removing cart item", error);
-    }
+  function removeItem(itemId: string, name: string) {
+    setOpen(false);
+    openModal({
+      title: cartText("removeTitle"),
+      size: "sm",
+      content: <RemoveCartItemConfirm itemId={itemId} name={name} />,
+    });
   }
 
   return (
@@ -146,8 +149,7 @@ export default function MiniCart({ className = "" }: { className?: string }) {
                       <button
                         type="button"
                         aria-label={cartText("remove", { name })}
-                        disabled={isRemoving}
-                        onClick={() => removeItem(item._id)}
+                        onClick={() => removeItem(item._id, name)}
                         className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <LuTrash2 aria-hidden className="size-4" />
