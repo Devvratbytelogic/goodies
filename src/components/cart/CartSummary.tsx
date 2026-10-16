@@ -148,7 +148,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
               </dd>
             </div>
           ) : null}
-          {paymentMethod === "cod" ? null : (
+          {paymentMethod !== "cod" && cartSummary?.shipping_rate_available ? (
             <div className="flex items-start justify-between gap-3">
               <dt className="text-muted">
                 {t("shipping")}
@@ -156,7 +156,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
               </dt>
               <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
             </div>
-          )}
+          ) : null}
           {cartSummary?.cod_status && (paymentMethod ?? "cod") === "cod" ? (
             <div className="flex items-center justify-between gap-3">
               <dt className="text-muted">{t("cod")}</dt>
