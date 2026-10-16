@@ -24,6 +24,12 @@ import { PlacedOrder } from "@/server/types/order";
 import { checkoutValidationSchema } from "@/validations";
 type SelectOption = { value: string; label: string };
 
+const addressPaymentMethod = {
+  cod: "COD",
+  tabby: "TABBY",
+  ziina: "ZIINA",
+} as const;
+
 function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
   return {
     control: (base, state) => ({
@@ -180,11 +186,16 @@ export default function CheckoutForm({
   const [formOpen, setFormOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<AddressEntity | null>(null);
   const [addAddress] = useAddAddressMutation();
-  const [updateAddress] = useUpdateAddressMutation();
+  const [updateAddress] = useUpdateAddressMutation({ fixedCacheKey: "selected-address" });
   const { openModal } = useModal();
-  // until the user picks one (or the picked one is deleted), use the default address (or the first one)
+  // until the user picks one, use the address already marked selected, then the default, then the first
   const pickedAddressId = addresses.find((address) => address._id === pickedId)?._id;
-  const selectedId = pickedAddressId ?? addresses.find((address) => address.is_default)?._id ?? addresses[0]?._id ?? null;
+  const selectedId =
+    pickedAddressId ??
+    addresses.find((address) => address.is_selected)?._id ??
+    // addresses.find((address) => address.is_default)?._id ??
+    // addresses[0]?._id ??
+    null;
   const [shipToDifferent, setShipToDifferent] = useState(false);
   const [shippingPickedId, setShippingPickedId] = useState<string | null>(null);
   const [addingFor, setAddingFor] = useState<"billing" | "shipping">("billing");
@@ -209,9 +220,13 @@ export default function CheckoutForm({
           await updateAddress({ addressId: editingAddress._id, ...payload }).unwrap();
           setPickedId(editingAddress._id);
         } else {
-          const newAddress = await addAddress(toAddressPayload(values, phoneCountryCode, isDefault, postalCode)).unwrap();
+          const newAddress = await addAddress({
+            ...toAddressPayload(values, phoneCountryCode, isDefault, postalCode),
+            is_selected: true,
+          }).unwrap();
           // select the new address in the list it was added from (only if the API returns its _id)
           if (addingFor === "shipping") {
+            keepBillingSelection();
             setShippingPickedId(newAddress?._id ?? null);
           } else {
             setPickedId(newAddress?._id ?? null);
@@ -288,6 +303,42 @@ export default function CheckoutForm({
     });
   }
 
+  function saveSelectedAddress(addressId: string) {
+    updateAddress({ addressId, is_selected: true })
+      .unwrap()
+      .catch((error) => {
+        console.error("Error selecting address", error);
+      });
+  }
+
+  function selectBillingAddress(addressId: string) {
+    setPickedId(addressId);
+    // billing is also the shipping address while "ship to a different address" is off
+    if (!shipToDifferent) saveSelectedAddress(addressId);
+  }
+
+  function keepBillingSelection() {
+    if (!pickedAddressId && selectedId) setPickedId(selectedId);
+  }
+
+  function selectShippingAddress(addressId: string) {
+    keepBillingSelection();
+    setShippingPickedId(addressId);
+    saveSelectedAddress(addressId);
+  }
+
+  function selectPaymentMethod(method: PaymentMethod) {
+    setPaymentMethod(method);
+    const selectedAddress = addresses.find((address) => address.is_selected);
+    if (!selectedAddress) return;
+
+    updateAddress({ addressId: selectedAddress._id, payment_method: addressPaymentMethod[method] })
+      .unwrap()
+      .catch((error) => {
+        console.error("Error updating payment method", error);
+      });
+  }
+
   if (!formOpen && isLoadingAddresses) {
     return <CheckoutFormSkeleton label={t("loadingAddresses")} />;
   }
@@ -303,6 +354,7 @@ export default function CheckoutForm({
           </button>
         </div>
         {addresses.length === 0 ? <p className="mt-4 text-sm text-muted">{t("emptyAddresses")}</p> : null}
+        {addresses.length > 0 && !selectedId ? <p className="mt-4 text-sm font-medium text-primary">{t("selectAddress")}</p> : null}
         <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("billingAddress")}>
           {addresses.map((address) => {
             const selected = address._id === selectedId;
@@ -318,7 +370,7 @@ export default function CheckoutForm({
                     name="saved-address"
                     value={address._id}
                     checked={selected}
-                    onChange={() => setPickedId(address._id)}
+                    onChange={() => selectBillingAddress(address._id)}
                     className="mt-1 size-4 accent-primary"
                   />
                   <AddressLines address={address} defaultLabel={t("defaultAddress")} />
@@ -350,7 +402,10 @@ export default function CheckoutForm({
             <input
               type="checkbox"
               checked={shipToDifferent}
-              onChange={(event) => setShipToDifferent(event.target.checked)}
+              onChange={(event) => {
+                if (event.target.checked) keepBillingSelection();
+                setShipToDifferent(event.target.checked);
+              }}
               className="size-4 accent-primary"
             />
             {t("shipToDifferent")}
@@ -380,7 +435,7 @@ export default function CheckoutForm({
                       name="shipping-address"
                       value={address._id}
                       checked={selected}
-                      onChange={() => setShippingPickedId(address._id)}
+                      onChange={() => selectShippingAddress(address._id)}
                       className="mt-1 size-4 accent-primary"
                     />
                     <AddressLines address={address} defaultLabel={t("defaultAddress")} />
@@ -391,7 +446,7 @@ export default function CheckoutForm({
           </div>
         ) : null}
 
-        {addresses.length > 0 ? <PaymentMethods value={selectedMethod} onChange={setPaymentMethod} /> : null}
+        {addresses.length > 0 ? <PaymentMethods value={selectedMethod} onChange={selectPaymentMethod} /> : null}
 
         {selectedMethod === "tabby" ? (
           <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} />

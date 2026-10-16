@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { PlacedOrder } from "@/server/types/order";
 import { usePlaceOrderMutation } from "@/store/endpoints/orderApi";
@@ -14,6 +15,7 @@ type CodCheckoutProps = {
 
 export default function CodCheckout({ billingAddressId, shippingAddressId, country, onPlaced }: CodCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
+  const totalsUpdating = useCheckoutTotalsUpdating();
   const [placeOrder, { isLoading }] = usePlaceOrderMutation();
 
   async function placeCodOrder() {
@@ -41,7 +43,7 @@ export default function CodCheckout({ billingAddressId, shippingAddressId, count
     <button
       type="button"
       onClick={requestPlace}
-      disabled={!billingAddressId || !shippingAddressId || isLoading}
+      disabled={!billingAddressId || !shippingAddressId || isLoading || totalsUpdating}
       className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
     >
       {isLoading ? t("placingOrder") : t("placeOrder")}

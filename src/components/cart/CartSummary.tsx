@@ -7,6 +7,7 @@ import CartSummarySkeleton from "@/components/skeletons/CartSummarySkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { Link } from "@/i18n/navigation";
 import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { useApplyCouponMutation, useGetCartQuery, useRemoveCouponMutation } from "@/store/endpoints/cartApi";
 import { getProductRoutePath } from "@/utils/routes";
 import { formatAmount } from "@/utils/price";
@@ -23,6 +24,7 @@ type CartSummaryProps = {
 export default function CartSummary({ checkoutHref, showItems = false, paymentMethod }: CartSummaryProps) {
   const t = useTranslations("CartPage");
   const { data: cart, isLoading } = useGetCartQuery();
+  const totalsUpdating = useCheckoutTotalsUpdating();
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
   const [removeCoupon, { isLoading: isRemovingCoupon }] = useRemoveCouponMutation();
   const cartItems = cart?.items ?? [];
@@ -104,6 +106,20 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
 
       <div className="p-5">
         <h2 className="text-lg font-bold tracking-tight">{t("summary")}</h2>
+        {totalsUpdating ? (
+          <div role="status" aria-busy="true" aria-label={t("loading")} className="mt-4 space-y-3.5">
+            <span className="sr-only">{t("loading")}</span>
+            <div className="flex items-center justify-between gap-3">
+              <div className="h-3.5 w-24 animate-pulse rounded bg-surface-muted" />
+              <div className="h-3.5 w-16 animate-pulse rounded bg-surface-muted" />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="h-3.5 w-20 animate-pulse rounded bg-surface-muted" />
+              <div className="h-3.5 w-14 animate-pulse rounded bg-surface-muted" />
+            </div>
+            <div className="h-12 animate-pulse rounded-xl bg-surface-muted" />
+          </div>
+        ) : (
         <dl className="mt-4 space-y-3.5 text-sm">
           <div className="flex items-center justify-between gap-3">
             <dt className="text-muted">
@@ -158,6 +174,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             <dd className="text-base font-bold tabular-nums text-price">{formatAmount(totalAmount, currencySymbol)}</dd>
           </div>
         </dl>
+        )}
         {checkoutHref && cartItems.length > 0 ? (
           <Link
             href={checkoutHref}

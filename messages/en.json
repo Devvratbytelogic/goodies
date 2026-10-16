@@ -568,6 +568,7 @@
     "saveAddress": "Save address",
     "cancel": "Cancel",
     "emptyAddresses": "You have no saved addresses yet.",
+    "selectAddress": "Please select an address.",
     "loadingAddresses": "Loading addresses…",
     "defaultAddress": "Default",
     "setDefault": "Set as default address",

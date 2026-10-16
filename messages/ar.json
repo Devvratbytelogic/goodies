@@ -568,6 +568,7 @@
     "saveAddress": "حفظ العنوان",
     "cancel": "إلغاء",
     "emptyAddresses": "لا توجد عناوين محفوظة بعد.",
+    "selectAddress": "يرجى اختيار عنوان.",
     "loadingAddresses": "جارٍ تحميل العناوين…",
     "defaultAddress": "افتراضي",
     "setDefault": "تعيين كعنوان افتراضي",
