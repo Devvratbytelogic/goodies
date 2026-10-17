@@ -342,6 +342,8 @@
     "itemQty": "Qty {count}",
     "shipping": "Shipping",
     "shippingNote": "Flat rate",
+    "shippingTitle": "Title",
+    "shippingZone": "Zone",
     "cod": "COD charge",
     "free": "Free",
     "total": "Total",

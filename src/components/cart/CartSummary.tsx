@@ -56,6 +56,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
   const couponValue = cartSummary?.coupon_value ?? 0;
   const shippingCharge = cartSummary?.shipping_charge ?? 0;
   const shippingRateTitle = cartShipping?.title ?? null;
+  const shippingRateZone = cartShipping?.zone_name ?? null;
   const codCharge = codMethod?.charge ?? 0;
   const codIsFree = codMethod?.is_free ?? false;
   const taxAmount = cartSummary?.tax_amount ?? 0;
@@ -152,7 +153,8 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
               <div className="flex items-start justify-between gap-3">
                 <dt className="text-muted">
                   {t("shipping")}
-                  <span className="mt-0.5 block text-xs text-muted/80">{shippingRateTitle}</span>
+                  {shippingRateZone ? <span className="mt-0.5 block text-xs text-muted/80">{t("shippingZone")}: {shippingRateZone}</span> : null}
+                  {shippingRateTitle ? <span className="mt-0.5 block text-xs text-muted/80">{t("shippingTitle")}: {shippingRateTitle}</span> : null}
                 </dt>
                 <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
               </div>

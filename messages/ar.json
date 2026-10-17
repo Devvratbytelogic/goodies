@@ -342,6 +342,8 @@
     "itemQty": "الكمية {count}",
     "shipping": "الشحن",
     "shippingNote": "سعر ثابت",
+    "shippingTitle": "الاسم",
+    "shippingZone": "المنطقة",
     "cod": "رسوم الدفع عند الاستلام",
     "free": "مجاني",
     "total": "الإجمالي",
