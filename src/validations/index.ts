@@ -74,6 +74,17 @@ export const registerValidationSchema = Yup.object({
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
 
+export const productReviewValidationSchema = Yup.object({
+  rating: Yup.number().min(1, "required").max(5).required("required"),
+  text: Yup.string()
+    .trim()
+    .required("required")
+    .max(1000, "tooLong")
+    .test("no-script", "invalidText", (value) => !value || !SCRIPT_PATTERN.test(value)),
+  name: requiredString("required", 80),
+  email: emailString("required", "emailInvalid"),
+});
+
 export const contactUsValidationSchema = Yup.object({
   firstName: requiredString("required", 40),
   lastName: requiredString("required", 40),

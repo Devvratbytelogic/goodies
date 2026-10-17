@@ -38,6 +38,7 @@ export interface SingleProductData {
   max_product_quantity: number;
   average_rating: number;
   total_reviews: number;
+  reviews?: (ReviewsEntity)[] | null;
   total_sales: number;
   transition: string;
   is_variant: boolean;
@@ -135,4 +136,14 @@ export interface VariantsEntity {
 export interface AttributesOrBreakdown {
 }
 export interface Breakdown {
+}
+export interface ReviewsEntity {
+  _id: string;
+  product_type: string;
+  variant_sku?: null;
+  variant_key?: null;
+  name: string;
+  rating: number;
+  text: string;
+  createdAt: string;
 }

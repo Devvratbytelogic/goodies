@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import ProductPurchase from "@/components/product/ProductPurchase";
 import ProductTabs from "@/components/product/ProductTabs";
-import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
+import { BundleItemsEntity, ReviewsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 
 type ProductSelectionProps = {
   children: ReactNode;
@@ -23,6 +23,9 @@ type ProductSelectionProps = {
   bundleStock: number;
   stockManage: boolean;
   stockStatus: "out_of_stock" | "in_stock";
+  reviews: ReviewsEntity[];
+  averageRating: number;
+  totalReviews: number;
 };
 
 export default function ProductSelection({
@@ -43,6 +46,9 @@ export default function ProductSelection({
   bundleStock,
   stockManage,
   stockStatus,
+  reviews,
+  averageRating,
+  totalReviews,
 }: ProductSelectionProps) {
   const [sizeName, setSizeName] = useState<string | null>(
     () => variants.find((item) => item.is_default)?.size ?? null,
@@ -86,7 +92,15 @@ export default function ProductSelection({
           />
         </div>
       </div>
-      <ProductTabs name={name} weight={shownWeight} size={sizeList} />
+      <ProductTabs
+        productId={productId}
+        name={name}
+        weight={shownWeight}
+        size={sizeList}
+        reviews={reviews}
+        averageRating={averageRating}
+        totalReviews={totalReviews}
+      />
     </>
   );
 }
