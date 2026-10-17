@@ -663,6 +663,7 @@
     "deliveryAddress": "Delivery address",
     "orderNumber": "Order number",
     "downloadPdf": "Download PDF",
+    "viewOrderDetails": "View order details",
     "downloadingPdf": "Preparing PDF…",
     "downloadPdfError": "We could not create the PDF. Please try again.",
     "shop": "Continue shopping"

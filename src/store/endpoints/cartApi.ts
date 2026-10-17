@@ -1,7 +1,7 @@
 import { CartApiResponse, CartApiResponseData } from "@/server/types/cart";
 import { HomeProduct } from "@/server/types/Home";
 import { api } from "../api";
-import { CouponApiResponse, CouponApiResponseDataEntity } from "@/server/types/coupon";
+import { CouponApiResponse, CouponApiResponseDataEntity, UsedCouponsArgs, UsedCouponsData, UsedCouponsResponse } from "@/server/types/coupon";
 
 export const cartApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -56,6 +56,16 @@ export const cartApi = api.injectEndpoints({
       query: () => "/user/all-coupons",
       transformResponse: (res: CouponApiResponse) => res.data ?? [],
     }),
+    getUsedCoupons: build.query<UsedCouponsData, UsedCouponsArgs | void>({
+      query: (args) => {
+        const { page = 1, limit = 10 } = args ?? {};
+        return {
+          url: "/user/used-coupons",
+          params: { page, limit },
+        };
+      },
+      transformResponse: (res: UsedCouponsResponse) => res.data ?? {},
+    }),
     applyCoupon: build.mutation<CartApiResponseData, string>({
       query: (couponCode) => ({
         url: "/user/cart/coupon",
@@ -84,6 +94,7 @@ export const {
   useMoveCartItemToWishlistMutation,
   useUpdateCartItemQuantityMutation,
   useGetCouponsQuery,
+  useGetUsedCouponsQuery,
   useApplyCouponMutation,
   useRemoveCouponMutation,
 } = cartApi;

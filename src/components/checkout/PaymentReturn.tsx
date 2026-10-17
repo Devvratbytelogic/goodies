@@ -10,7 +10,7 @@ import { api } from "@/store/api";
 import { useDownloadOrderInvoiceMutation, useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
 import { useAppDispatch } from "@/store/hooks";
 import { formatAmount } from "@/utils/price";
-import { getProductRoutePath } from "@/utils/routes";
+import { getAccountOrderRoutePath, getProductRoutePath } from "@/utils/routes";
 
 const buttonClassName =
   "mt-6 inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -352,6 +352,14 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
           >
             {downloading ? t("downloadingPdf") : t("downloadPdf")}
           </button>
+        ) : null}
+        {order?.order_id || orderId ? (
+          <Link
+            href={getAccountOrderRoutePath(order?.order_id || orderId)}
+            className={`${actionClassName} border border-border text-heading hover:border-primary hover:text-primary`}
+          >
+            {t("viewOrderDetails")}
+          </Link>
         ) : null}
         <Link href={shopHref} className={`${actionClassName} bg-primary text-white hover:bg-primary/90`}>
           {t("shop")}

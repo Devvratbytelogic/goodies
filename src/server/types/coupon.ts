@@ -29,3 +29,55 @@ export interface CouponApiResponseDataEntity {
     exchange_rate: number;
     base_currency: string;
 }
+
+export interface UsedCouponsArgs {
+    page?: number;
+    limit?: number;
+}
+
+export interface UsedCouponsResponse {
+    http_status_code: number;
+    http_status_msg: string;
+    success: boolean;
+    data?: UsedCouponsData | null;
+    message: string;
+    timestamp: string;
+}
+
+export interface UsedCouponsData {
+    coupons?: UsedCoupon[] | null;
+    pagination?: UsedCouponsPagination | null;
+}
+
+export interface UsedCoupon {
+    _id: string;
+    id: number;
+    order_id: string;
+    order_number: number;
+    order_status: string;
+    coupon?: UsedCouponDetails | null;
+    discount_amount: number;
+    cart_amount: number;
+    order_total: number;
+    currency: string;
+    used_at: string;
+}
+
+export interface UsedCouponDetails {
+    _id: string;
+    id: number;
+    coupon_code: string;
+    coupon_type: string;
+    value: number;
+    minimum_cart_value: number;
+    start_date: string;
+    expiry_date: string;
+    status: boolean;
+}
+
+export interface UsedCouponsPagination {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
