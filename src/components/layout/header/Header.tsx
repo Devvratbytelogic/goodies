@@ -6,9 +6,11 @@ import { HeaderBar } from "./HeaderBar";
 
 type HeaderProps = {
   currency: CurrencyCode;
+  headerTextFirst: string;
+  headerTextSecond: string;
 };
 
-export async function Header({ currency }: HeaderProps) {
+export async function Header({ currency, headerTextFirst, headerTextSecond }: HeaderProps) {
   const categoryList = (await getCategories(currency)) ?? [];
   const shopCategories = categoryList.map((category) => ({
     href: getProductCategoryRoutePath(category.slug),
@@ -17,7 +19,7 @@ export async function Header({ currency }: HeaderProps) {
 
   return (
     <>
-      <AnnouncementBar />
+      <AnnouncementBar headerTextFirst={headerTextFirst} headerTextSecond={headerTextSecond} />
       <HeaderBar currency={currency} shopCategories={shopCategories} />
     </>
   );

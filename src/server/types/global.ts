@@ -50,6 +50,8 @@ export interface GlobalData {
   currency: string;
   pricing_context: PricingContext;
   shipping_rate: ShippingRate;
+  header_text_first: string;
+  header_text_second: string;
 }
 export interface PricingContext {
   country: string;

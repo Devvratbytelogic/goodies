@@ -3,6 +3,7 @@ import type { ProductSearchApiResponse, ProductSearchData } from "@/server/types
 import type { CurrencyCode } from "@/utils/currency";
 import { api } from "../api";
 
+
 export type ShopProductsArgs = {
   currency: CurrencyCode;
   page: number;
@@ -40,7 +41,14 @@ export const productsApi = api.injectEndpoints({
       },
       transformResponse: (response: AllProductsApiResponse) => response.data,
     }),
+    createReview: build.mutation({
+      query: (body) => ({
+        url: "/user/review/create",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetShopProductsQuery, useGetProductSearchQuery } = productsApi;
+export const { useGetShopProductsQuery, useGetProductSearchQuery, useCreateReviewMutation } = productsApi;

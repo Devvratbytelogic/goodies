@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { LuHeart, LuTruck } from "react-icons/lu";
 
-export function AnnouncementBar() {
+export function AnnouncementBar({ headerTextFirst, headerTextSecond }: { headerTextFirst: string; headerTextSecond: string }) {
   const t = useTranslations("Header");
 
   return (
@@ -9,7 +9,7 @@ export function AnnouncementBar() {
       <div className="container flex h-9 items-center justify-center gap-4 text-[11px] font-medium tracking-wide sm:h-10 sm:gap-6 sm:text-xs">
         <p className="flex items-center gap-2">
           <LuTruck aria-hidden className="size-4 shrink-0" />
-          <span>{t("announcementDelivery")}</span>
+          <span>{headerTextFirst}</span>
         </p>
         <span
           aria-hidden
@@ -17,7 +17,7 @@ export function AnnouncementBar() {
         />
         <p className="hidden items-center gap-2 sm:flex">
           <LuHeart aria-hidden className="size-4 shrink-0 fill-current" />
-          <span>{t("announcementMadeWithLove")}</span>
+          <span>{headerTextSecond}</span>
         </p>
       </div>
     </div>
