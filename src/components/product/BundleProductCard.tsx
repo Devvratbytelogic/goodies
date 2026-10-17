@@ -3,8 +3,10 @@
 import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import { Link } from "@/i18n/navigation";
 import { BundleItemsEntity } from "@/server/types/singleProduct";
 import { formatAmount } from "@/utils/price";
+import { getProductRoutePath } from "@/utils/routes";
 
 interface BundleProductCardProps {
   bundleItem: BundleItemsEntity;
@@ -32,29 +34,36 @@ export default function BundleProductCard({ bundleItem, quantity, canAddMore, ma
 
   return (
     <div className={`flex flex-col overflow-hidden rounded-xl border bg-background ${quantity > 0 ? "border-primary" : "border-border"}`}>
-      <div className="relative aspect-square bg-surface">
-        <ImageComponent
-          src={product.thumbnail || "/images/image-fallback.svg"}
-          alt={product.title}
-          fill
-          objectFit="cover"
-          sizes="(max-width: 1024px) 45vw, 20vw"
-          className={inStock ? "" : "opacity-50"}
-        />
-      </div>
+      <Link
+        href={getProductRoutePath(product.slug)}
+        className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <div className="relative aspect-square bg-surface">
+          <ImageComponent
+            src={product.thumbnail || "/images/image-fallback.svg"}
+            alt={product.title}
+            fill
+            objectFit="cover"
+            sizes="(max-width: 1024px) 45vw, 20vw"
+            className={inStock ? "" : "opacity-50"}
+          />
+        </div>
 
-      <div className="flex flex-1 flex-col p-2.5">
-        <p className={`line-clamp-2 text-sm font-semibold text-heading ${inStock ? "" : "line-through"}`}>{product.title}</p>
-        {size ? (
-          <p className="mt-1">
-            <span className="inline-flex rounded-md border border-primary bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
-              {t("size")}: {size}
-            </span>
-          </p>
-        ) : null}
-        <p className="mt-1 text-sm font-semibold text-price">{formatAmount(product.variant?.price, currencySymbol)}</p>
+        <div className="p-2.5 pb-0">
+          <p className={`line-clamp-2 text-sm font-semibold text-heading group-hover:text-primary ${inStock ? "" : "line-through"}`}>{product.title}</p>
+          {size ? (
+            <p className="mt-1">
+              <span className="inline-flex rounded-md border border-primary bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
+                {t("size")}: {size}
+              </span>
+            </p>
+          ) : null}
+          <p className="mt-1 text-sm font-semibold text-price">{formatAmount(product.variant?.price, currencySymbol)}</p>
+        </div>
+      </Link>
 
-        <div className="mt-auto pt-2.5">
+      <div className="mt-auto flex flex-1 flex-col p-2.5">
+        <div className="mt-auto">
           {inStock ? (
             <div className="flex h-9 items-center justify-between rounded-full border border-border">
               <button
