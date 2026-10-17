@@ -177,7 +177,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             ) : null}
             <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
               <dt className="text-sm font-semibold text-heading">{t("total")}</dt>
-              <dd className="text-base font-bold tabular-nums text-price">{formatAmount(totalAmount, currencySymbol)}</dd>
+              <dd className="text-base font-bold tabular-nums text-price">{totalAmount === 0 ? t("free") : formatAmount(totalAmount, currencySymbol)}</dd>
             </div>
           </dl>
         )}
