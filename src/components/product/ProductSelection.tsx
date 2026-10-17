@@ -47,8 +47,14 @@ export default function ProductSelection({
   const [sizeName, setSizeName] = useState<string | null>(
     () => variants.find((item) => item.is_default)?.size ?? null,
   );
+  const [picked, setPicked] = useState<Record<string, number>>({});
   const selectedVariant = variants.find((item) => item?.size === sizeName);
-  const shownWeight = selectedVariant?.weight || (isVariant ? 0 : weight);
+  const bundleWeight = bundleItems.reduce((sum, item) => {
+    const count = picked[item.product_id._id] ?? 0;
+    const itemWeight = item.product_id.variant?.weight || item.product_id.weight || 0;
+    return sum + itemWeight * count;
+  }, 0);
+  const shownWeight = isBundle ? bundleWeight : selectedVariant?.weight || (isVariant ? 0 : weight);
   const sizeList = sizes.map((size) => size?.name).filter(Boolean).join(", ");
 
   return (
@@ -75,6 +81,8 @@ export default function ProductSelection({
             sizeName={sizeName}
             onSizeChange={setSizeName}
             productId={productId}
+            picked={picked}
+            onPickedChange={setPicked}
           />
         </div>
       </div>

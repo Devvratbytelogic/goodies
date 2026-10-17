@@ -92,7 +92,7 @@ export default function ProductTabs({ name, weight, size }: ProductTabsProps) {
                 {t("weight")}
               </th>
               <td className="border border-border px-4 py-3 text-foreground">
-                {weight && weight > 0 ? `${weight} kg` : '-'}
+                {weight && weight > 0 ? `${Math.round(weight * 1000) / 1000} kg` : '-'}
               </td>
             </tr>
             {size ? (

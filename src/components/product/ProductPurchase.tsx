@@ -27,6 +27,8 @@ type ProductPurchaseProps = {
   bundleStock: number;
   stockManage: boolean;
   stockStatus: "out_of_stock" | "in_stock";
+  picked: Record<string, number>;
+  onPickedChange: (picked: Record<string, number>) => void;
 };
 
 function managedOutOfStock(stockManage?: boolean, stockStatus?: string) {
@@ -37,11 +39,10 @@ function availableQuantity(stockManage: boolean, stock: number) {
   return stockManage ? stock : Infinity;
 }
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, maxProductQuantity, bundleStock, stockManage, stockStatus }: ProductPurchaseProps) {
+export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, maxProductQuantity, bundleStock, stockManage, stockStatus, picked, onPickedChange }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
-  const [picked, setPicked] = useState<Record<string, number>>({});
 
   const totalPicked = Object.values(picked).reduce((sum, qty) => sum + qty, 0);
   const canAddMore = totalPicked < maxSelection;
@@ -157,7 +158,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
                 canAddMore={canAddMore}
                 maxProductQuantity={maxProductQuantity}
                 currencySymbol={currencySymbol}
-                onChange={(qty) => setPicked({ ...picked, [item.product_id._id]: qty })}
+                onChange={(qty) => onPickedChange({ ...picked, [item.product_id._id]: qty })}
               />
             )) :
               <p className="text-sm font-semibold text-foreground col-span-2">
