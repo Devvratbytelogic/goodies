@@ -155,6 +155,7 @@ export interface OrderDetailsSummary {
     coupon_code?: string | null;
     coupon_discount?: number | null;
     shipping_amount: number;
+    cod_amount?: number | null;
     fee_amount: number;
     grand_total: number;
     tax_amount: number;

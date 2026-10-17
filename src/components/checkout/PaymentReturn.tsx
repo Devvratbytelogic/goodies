@@ -306,6 +306,14 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
                 <dt className="text-muted">{cart("shipping")}</dt>
                 <dd className="font-semibold tabular-nums text-heading">{formatAmount(summary.shipping_amount, currency)}</dd>
               </div>
+              {isCod ? (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-muted">{cart("cod")}</dt>
+                  <dd className="font-semibold tabular-nums text-heading">
+                    {(summary.cod_amount ?? 0) > 0 ? formatAmount(summary.cod_amount ?? 0, currency) : cart("free")}
+                  </dd>
+                </div>
+              ) : null}
               {summary.fee_amount > 0 ? (
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-muted">{t("fee")}</dt>
