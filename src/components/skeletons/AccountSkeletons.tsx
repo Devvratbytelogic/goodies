@@ -76,8 +76,9 @@ function NavSkeleton() {
             <Bone className="h-3.5 w-24" />
             <Bone className="mt-2 h-3 w-32" />
           </div>
+          <Bone className="ms-auto size-8 shrink-0 rounded-full lg:hidden" />
         </div>
-        <ul className="mt-2 grid grid-cols-2 gap-1 border-t border-border pt-2 lg:grid-cols-1">
+        <ul className="mt-2 hidden gap-1 border-t border-border pt-2 lg:grid">
           {Array.from({ length: 5 }, (_, index) => (
             <li key={index} className="flex h-11 items-center gap-3 px-2.5">
               <Bone className="size-8 rounded-lg" />
@@ -85,7 +86,7 @@ function NavSkeleton() {
             </li>
           ))}
         </ul>
-        <div className="mt-2 border-t border-border pt-2">
+        <div className="mt-2 hidden border-t border-border pt-2 lg:block">
           <div className="flex h-11 items-center gap-3 px-2.5">
             <Bone className="size-8 rounded-lg" />
             <Bone className="h-3.5 w-16" />
