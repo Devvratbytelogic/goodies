@@ -140,14 +140,14 @@ function OrderCard({
   return (
     <li className="overflow-hidden rounded-2xl border border-border bg-background">
       <div className="border-b border-border px-4 py-3 sm:px-5">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <Link
             href={getAccountOrderRoutePath(order.order_id || order._id)}
-            className="shrink-0 font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {t("order", { id: order.order_code || order.order_number })}
           </Link>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs ${statusClassName[status]}`}>
               <span className="font-medium opacity-70">{t("orderStatus")}</span>
               <span className="font-semibold">{t(statusLabel[status])}</span>
@@ -207,13 +207,13 @@ function OrderCard({
         </ul>
       ) : null}
       <div className="border-t border-border bg-surface/60 px-4 py-3.5 sm:px-5">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-muted">{t("orderTotal")}</p>
             <p className="mt-0.5 text-lg font-bold tabular-nums text-price">{formatAmount(order.total_amount, order.summary?.currency_symbol || order.currency)}</p>
             <p className="mt-0.5 text-xs text-muted">{t("items", { count: order.item_count })}</p>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={onDownload}

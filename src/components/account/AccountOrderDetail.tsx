@@ -51,27 +51,35 @@ function statusTone(value: string | null | undefined) {
 
 function AddressCard({ title, address }: { title: string; address: OrderDetailsAddress }) {
   const name = address.full_name?.trim() || [address.first_name, address.last_name].filter(Boolean).join(" ");
-  const line = [address.city, address.state, address.postal_code, address.country].filter(Boolean).join(", ");
+  const cityLine = [address.city, address.state, address.postal_code].filter(Boolean).join(", ");
   const phone = address.phone_number?.trim();
   const phoneLabel = phone ? (phone.startsWith("+") ? phone : `+${phone}`) : "";
 
   return (
-    <section className="rounded-2xl border border-border bg-background px-5 py-4">
-      <h2 className="text-sm font-semibold text-heading">{title}</h2>
-      {name ? <p className="mt-2 text-sm font-medium text-heading">{name}</p> : null}
-      {address.street_address ? <p className="mt-1 text-sm leading-relaxed text-muted">{address.street_address}</p> : null}
-      {line ? <p className="text-sm leading-relaxed text-muted">{line}</p> : null}
-      {phoneLabel ? (
-        <p className="mt-2 text-sm text-heading" dir="ltr">
-          {phoneLabel}
-        </p>
-      ) : null}
-      {address.email ? (
-        <p className="mt-1 text-sm text-muted" dir="ltr">
-          {address.email}
-        </p>
-      ) : null}
-    </section>
+    <div className="px-4 py-4 sm:px-5">
+      <h3 className="text-sm font-semibold text-heading">{title}</h3>
+      <address className="mt-3 text-sm leading-6 not-italic">
+        {name ? <span className="block font-medium text-heading">{name}</span> : null}
+        {address.street_address ? <span className="mt-1 block wrap-break-word text-muted">{address.street_address}</span> : null}
+        {cityLine ? <span className="block wrap-break-word text-muted">{cityLine}</span> : null}
+        {address.country ? <span className="block text-muted">{address.country}</span> : null}
+        {phoneLabel || address.email ? (
+          <span className="mt-3 flex flex-col gap-1 border-t border-border pt-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3">
+            {phoneLabel ? (
+              <span className="font-medium text-heading" dir="ltr">
+                <bdi>{phoneLabel}</bdi>
+              </span>
+            ) : null}
+            {phoneLabel && address.email ? <span className="hidden text-border sm:inline" aria-hidden="true">·</span> : null}
+            {address.email ? (
+              <span className="min-w-0 break-all text-muted" dir="ltr">
+                {address.email}
+              </span>
+            ) : null}
+          </span>
+        ) : null}
+      </address>
+    </div>
   );
 }
 
@@ -119,6 +127,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
   const status = order.status;
   const paymentStatus = order.payment_status;
   const paymentMethod = order.payment_method?.replaceAll("_", " ").replace(/^\w/, (letter) => letter.toUpperCase());
+  const isCod = order.payment_method === "cod";
   const summary = order.summary;
   const currency = summary?.currency_symbol || "";
   const items = order.items ?? [];
@@ -145,9 +154,9 @@ export default function AccountOrderDetail({ id }: { id: string }) {
 
   return (
     <div className="grid gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="shrink-0 text-2xl font-bold tracking-tight text-heading">{t("order", { id: order.order_code || order.order_number })}</h1>
-        <div className="flex shrink-0 items-center gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <h1 className="text-2xl font-bold tracking-tight text-heading">{t("order", { id: order.order_code || order.order_number })}</h1>
+        <div className="flex flex-wrap items-center gap-2">
           {status ? (
             <span className={`inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs ${statusTone(status)}`}>
               <span className="font-medium opacity-70">{t("orderStatus")}</span>
@@ -169,6 +178,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
       {order.can_return_replacement ? <p className="text-sm text-heading">{t("returnAvailable")}</p> : null}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+        <div className="grid content-start gap-4">
         <section className="overflow-hidden rounded-2xl border border-border bg-background">
           <h2 className="border-b border-border px-4 py-3 text-sm font-semibold text-heading sm:px-5">{t("orderItems")}</h2>
           <ul className="divide-y divide-border">
@@ -219,6 +229,14 @@ export default function AccountOrderDetail({ id }: { id: string }) {
           </ul>
         </section>
 
+        {order.shipping_address || order.billing_address ? (
+          <section className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
+            {order.shipping_address ? <AddressCard title={t("shipTo")} address={order.shipping_address} /> : null}
+            {order.billing_address ? <AddressCard title={t("billingAddress")} address={order.billing_address} /> : null}
+          </section>
+        ) : null}
+        </div>
+
         <div className="grid content-start gap-4">
           <section className="rounded-2xl border border-border bg-background px-5 py-4">
             <h2 className="text-sm font-semibold text-heading">{t("paymentStatus")}</h2>
@@ -261,6 +279,14 @@ export default function AccountOrderDetail({ id }: { id: string }) {
                   <dt className="text-muted">{t("shipping")}</dt>
                   <dd className="font-semibold tabular-nums text-heading">{formatAmount(summary.shipping_amount, currency)}</dd>
                 </div>
+                {isCod ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-muted">{t("cod")}</dt>
+                    <dd className="font-semibold tabular-nums text-heading">
+                      {(summary.cod_amount ?? 0) > 0 ? formatAmount(summary.cod_amount ?? 0, currency) : t("free")}
+                    </dd>
+                  </div>
+                ) : null}
                 {summary.fee_amount > 0 ? (
                   <div className="flex items-center justify-between gap-3">
                     <dt className="text-muted">{t("fee")}</dt>
@@ -295,13 +321,6 @@ export default function AccountOrderDetail({ id }: { id: string }) {
           ) : null}
         </div>
       </div>
-
-      {order.shipping_address || order.billing_address ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {order.shipping_address ? <AddressCard title={t("shipTo")} address={order.shipping_address} /> : null}
-          {order.billing_address ? <AddressCard title={t("billingAddress")} address={order.billing_address} /> : null}
-        </div>
-      ) : null}
 
       <RequestList title={t("cancellationRequests")} requests={order.cancellation_requests ?? []} locale={locale} label={label} />
       <RequestList title={t("returnRequests")} requests={order.return_replacement_requests ?? []} locale={locale} label={label} />
