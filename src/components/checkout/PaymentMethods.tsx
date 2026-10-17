@@ -13,7 +13,7 @@ type PaymentMethodsProps = {
 
 export default function PaymentMethods({ value, onChange }: PaymentMethodsProps) {
   const t = useTranslations("CheckoutClassicPage");
-  const { data: cart } = useGetCartQuery();
+  const { data: cart } = useGetCartQuery(value);
   const cod = cart?.summary?.cod_status ? cart.cod_method : null;
   const methods = (["cod", "ziina", "tabby"] as const).filter((method) => method !== "cod" || cod);
   

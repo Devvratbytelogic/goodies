@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Country from "country-state-city/lib/country";
 import State from "country-state-city/lib/state";
 import { useFormik } from "formik";
@@ -18,17 +18,10 @@ import CheckoutFormSkeleton from "@/components/skeletons/CheckoutFormSkeleton";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
-import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { AddressEntity } from "@/server/types/address";
 import { PlacedOrder } from "@/server/types/order";
 import { checkoutValidationSchema } from "@/validations";
 type SelectOption = { value: string; label: string };
-
-const addressPaymentMethod = {
-  cod: "COD",
-  tabby: "TABBY",
-  ziina: "ZIINA",
-} as const;
 
 function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
   return {
@@ -165,22 +158,18 @@ function AddressLines({ address, defaultLabel }: { address: AddressEntity; defau
 }
 
 export default function CheckoutForm({
-  onPlaced,
+  paymentMethod,
+  shippingAvailable,
   onPaymentMethodChange,
+  onPlaced,
 }: {
+  paymentMethod: PaymentMethod;
+  shippingAvailable: boolean;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
   onPlaced: (order: PlacedOrder) => void;
-  onPaymentMethodChange?: (method: PaymentMethod) => void;
 }) {
   const t = useTranslations("CheckoutClassicPage");
   const locale = useLocale();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
-  const { data: cart } = useGetCartQuery();
-  const selectedMethod = paymentMethod === "cod" && cart && !cart.summary?.cod_status ? "ziina" : paymentMethod;
-
-  useEffect(() => {
-    onPaymentMethodChange?.(selectedMethod);
-  }, [selectedMethod, onPaymentMethodChange]);
-  
   const { data: addresses = [], isLoading: isLoadingAddresses } = useGetAddressesQuery();
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -188,21 +177,17 @@ export default function CheckoutForm({
   const [addAddress] = useAddAddressMutation();
   const [updateAddress] = useUpdateAddressMutation({ fixedCacheKey: "selected-address" });
   const { openModal } = useModal();
-  // until the user picks one, use the address already marked selected, then the default, then the first
+
   const pickedAddressId = addresses.find((address) => address._id === pickedId)?._id;
   const selectedId =
     pickedAddressId ??
     addresses.find((address) => address.is_selected)?._id ??
-    // addresses.find((address) => address.is_default)?._id ??
-    // addresses[0]?._id ??
     null;
   const [shipToDifferent, setShipToDifferent] = useState(false);
   const [shippingPickedId, setShippingPickedId] = useState<string | null>(null);
   const [addingFor, setAddingFor] = useState<"billing" | "shipping">("billing");
-  // shipping is the billing address unless the user ticks "Ship to a different address?" and picks another one
-  const shippingId = shipToDifferent
-    ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId)
-    : selectedId;
+  // With "ship to a different address" on, shipping stays on its own pick.
+  const shippingId = shipToDifferent ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId) : selectedId;
   const shippingCountry = addresses.find((address) => address._id === shippingId)?.country_code ?? "AE";
   const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const [isDefault, setIsDefault] = useState(false);
@@ -327,18 +312,6 @@ export default function CheckoutForm({
     saveSelectedAddress(addressId);
   }
 
-  function selectPaymentMethod(method: PaymentMethod) {
-    setPaymentMethod(method);
-    const selectedAddress = addresses.find((address) => address.is_selected);
-    if (!selectedAddress) return;
-
-    updateAddress({ addressId: selectedAddress._id, payment_method: addressPaymentMethod[method] })
-      .unwrap()
-      .catch((error) => {
-        console.error("Error updating payment method", error);
-      });
-  }
-
   if (!formOpen && isLoadingAddresses) {
     return <CheckoutFormSkeleton label={t("loadingAddresses")} />;
   }
@@ -403,7 +376,10 @@ export default function CheckoutForm({
               type="checkbox"
               checked={shipToDifferent}
               onChange={(event) => {
-                if (event.target.checked) keepBillingSelection();
+                if (event.target.checked) {
+                  keepBillingSelection();
+                  if (selectedId) setShippingPickedId(selectedId);
+                }
                 setShipToDifferent(event.target.checked);
               }}
               className="size-4 accent-primary"
@@ -446,14 +422,20 @@ export default function CheckoutForm({
           </div>
         ) : null}
 
-        {addresses.length > 0 ? <PaymentMethods value={selectedMethod} onChange={selectPaymentMethod} /> : null}
+        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} onChange={onPaymentMethodChange} /> : null}
 
-        {selectedMethod === "tabby" ? (
-          <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} />
-        ) : selectedMethod === "ziina" ? (
-          <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} />
+        {selectedId && !shippingAvailable ? (
+          <p role="alert" className="mt-4 text-sm font-medium text-primary">
+            {t("shippingUnavailable")}
+          </p>
+        ) : null}
+
+        {paymentMethod === "tabby" ? (
+          <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} />
+        ) : paymentMethod === "ziina" ? (
+          <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
         ) : (
-          <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} onPlaced={onPlaced} />
+          <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} onPlaced={onPlaced} />
         )}
       </section>
     );

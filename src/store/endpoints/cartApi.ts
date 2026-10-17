@@ -5,8 +5,12 @@ import { CouponApiResponse, CouponApiResponseDataEntity } from "@/server/types/c
 
 export const cartApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getCart: build.query<CartApiResponseData, void>({
-      query: () => "/user/cart",
+    // Checkout passes cod, tabby, or ziina. Other pages omit it.
+    getCart: build.query<CartApiResponseData, "cod" | "tabby" | "ziina" | void>({
+      query: (paymentMethod) => ({
+        url: "/user/cart",
+        params: paymentMethod ? { payment_method: paymentMethod } : undefined,
+      }),
       transformResponse: (res: CartApiResponse) => res.data,
       providesTags: ["Cart"],
     }),

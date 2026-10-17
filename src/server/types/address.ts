@@ -27,5 +27,4 @@ export interface AddressEntity {
     updatedAt: string;
     id: number;
     __v: number;
-    payment_method: "COD" | "TABBY" | "ZIINA" | "TAMARA";
 }

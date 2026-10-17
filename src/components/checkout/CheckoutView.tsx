@@ -6,11 +6,19 @@ import CheckoutForm from "@/components/checkout/CheckoutForm";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
 import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { PlacedOrder } from "@/server/types/order";
+import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
 export default function CheckoutView({ shopHref }: { shopHref: string }) {
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const { data: cart } = useGetCartQuery(paymentMethod);
+  const shippingAvailable = cart?.summary?.shipping_rate_available !== false;
+
+  // Cash on delivery is not offered for every cart.
+  if (paymentMethod === "cod" && cart && !cart.summary?.cod_status) {
+    setPaymentMethod("ziina");
+  }
 
   if (placedOrder) {
     return (
@@ -29,7 +37,7 @@ export default function CheckoutView({ shopHref }: { shopHref: string }) {
 
   return (
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <CheckoutForm onPlaced={setPlacedOrder} onPaymentMethodChange={setPaymentMethod} />
+      <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={setPaymentMethod} onPlaced={setPlacedOrder} />
       <CartSummary showItems paymentMethod={paymentMethod} />
     </div>
   );

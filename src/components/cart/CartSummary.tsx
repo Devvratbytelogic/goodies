@@ -23,8 +23,8 @@ type CartSummaryProps = {
 
 export default function CartSummary({ checkoutHref, showItems = false, paymentMethod }: CartSummaryProps) {
   const t = useTranslations("CartPage");
-  const { data: cart, isLoading } = useGetCartQuery();
-  const totalsUpdating = useCheckoutTotalsUpdating();
+  const { data: cart, isLoading } = useGetCartQuery(paymentMethod);
+  const totalsUpdating = useCheckoutTotalsUpdating(paymentMethod);
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
   const [removeCoupon, { isLoading: isRemovingCoupon }] = useRemoveCouponMutation();
   const cartItems = cart?.items ?? [];
@@ -120,60 +120,60 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             <div className="h-12 animate-pulse rounded-xl bg-surface-muted" />
           </div>
         ) : (
-        <dl className="mt-4 space-y-3.5 text-sm">
-          <div className="flex items-center justify-between gap-3">
-            <dt className="text-muted">
-              {t("subtotal")}
-              {itemCount > 0 ? <span className="ms-1 text-xs">({t("itemCount", { count: itemCount })})</span> : null}
-            </dt>
-            <dd className="font-semibold tabular-nums text-heading">{formatAmount(subtotal, currencySymbol)}</dd>
-          </div>
-          {couponCode ? (
+          <dl className="mt-4 space-y-3.5 text-sm">
             <div className="flex items-center justify-between gap-3">
               <dt className="text-muted">
-                {t("couponLabel")}
-                <span className="mt-0.5 block text-xs font-semibold tracking-wide text-primary">{couponCode} {couponValue > 0 ? `${couponType?.toLowerCase() === "percentage" ? `(${couponValue}%)` : ``}` : ""}</span>
+                {t("subtotal")}
+                {itemCount > 0 ? <span className="ms-1 text-xs">({t("itemCount", { count: itemCount })})</span> : null}
               </dt>
-              <dd className="flex items-center gap-1 font-semibold tabular-nums text-price">
-                {discountAmount > 0 ? `−${formatAmount(discountAmount, currencySymbol)}` : t("couponShipping")}
-                <button
-                  type="button"
-                  aria-label={t("removeCoupon")}
-                  disabled={isRemovingCoupon}
-                  onClick={removeCartCoupon}
-                  className="inline-flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <LuX aria-hidden className="size-3.5" />
-                </button>
-              </dd>
+              <dd className="font-semibold tabular-nums text-heading">{formatAmount(subtotal, currencySymbol)}</dd>
             </div>
-          ) : null}
-          {paymentMethod !== "cod" && cartSummary?.shipping_rate_available ? (
-            <div className="flex items-start justify-between gap-3">
-              <dt className="text-muted">
-                {t("shipping")}
-                <span className="mt-0.5 block text-xs text-muted/80">{shippingRateTitle}</span>
-              </dt>
-              <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
+            {couponCode ? (
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted">
+                  {t("couponLabel")}
+                  <span className="mt-0.5 block text-xs font-semibold tracking-wide text-primary">{couponCode} {couponValue > 0 ? `${couponType?.toLowerCase() === "percentage" ? `(${couponValue}%)` : ``}` : ""}</span>
+                </dt>
+                <dd className="flex items-center gap-1 font-semibold tabular-nums text-price">
+                  {discountAmount > 0 ? `−${formatAmount(discountAmount, currencySymbol)}` : t("couponShipping")}
+                  <button
+                    type="button"
+                    aria-label={t("removeCoupon")}
+                    disabled={isRemovingCoupon}
+                    onClick={removeCartCoupon}
+                    className="inline-flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <LuX aria-hidden className="size-3.5" />
+                  </button>
+                </dd>
+              </div>
+            ) : null}
+            {paymentMethod ? (
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-muted">
+                  {t("shipping")}
+                  <span className="mt-0.5 block text-xs text-muted/80">{shippingRateTitle}</span>
+                </dt>
+                <dd className="pt-0.5 font-semibold tabular-nums text-heading">{formatAmount(shippingCharge, currencySymbol)}</dd>
+              </div>
+            ) : null}
+            {paymentMethod === "cod" && cartSummary?.cod_status ? (
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted">{t("cod")}</dt>
+                <dd className="font-semibold tabular-nums text-heading">{codIsFree ? t("free") : formatAmount(codCharge, currencySymbol)}</dd>
+              </div>
+            ) : null}
+            {taxAmount > 0 ? (
+              <div className="flex items-center justify-between gap-3">
+                <dt className="text-muted">{t("tax")}</dt>
+                <dd className="font-semibold tabular-nums text-heading">{formatAmount(taxAmount, currencySymbol)}</dd>
+              </div>
+            ) : null}
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
+              <dt className="text-sm font-semibold text-heading">{t("total")}</dt>
+              <dd className="text-base font-bold tabular-nums text-price">{formatAmount(totalAmount, currencySymbol)}</dd>
             </div>
-          ) : null}
-          {cartSummary?.cod_status && (paymentMethod ?? "cod") === "cod" ? (
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-muted">{t("cod")}</dt>
-              <dd className="font-semibold tabular-nums text-heading">{codIsFree ? t("free") : formatAmount(codCharge, currencySymbol)}</dd>
-            </div>
-          ) : null}
-          {taxAmount > 0 ? (
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-muted">{t("tax")}</dt>
-              <dd className="font-semibold tabular-nums text-heading">{formatAmount(taxAmount, currencySymbol)}</dd>
-            </div>
-          ) : null}
-          <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
-            <dt className="text-sm font-semibold text-heading">{t("total")}</dt>
-            <dd className="text-base font-bold tabular-nums text-price">{formatAmount(totalAmount, currencySymbol)}</dd>
-          </div>
-        </dl>
+          </dl>
         )}
         {checkoutHref && cartItems.length > 0 ? (
           <Link

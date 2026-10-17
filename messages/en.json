@@ -605,6 +605,7 @@
     "postalCode": "Postal code",
     "paymentMethod": "Payment method",
     "placingOrder": "Placing order…",
+    "shippingUnavailable": "Shipping is not available for this address. Please choose another address.",
     "payCod": "Cash on delivery",
     "free": "Free",
     "payTabby": "Pay in 4 with Tabby",
