@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { LuHouse, LuLogOut, LuMapPin, LuMenu, LuPackage, LuTicket, LuUser, LuX } from "react-icons/lu";
+import { LuHouse, LuLogOut, LuMapPin, LuMenu, LuPackage, LuStar, LuTicket, LuUser, LuX } from "react-icons/lu";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
 import { AccountNavIdentitySkeleton } from "@/components/skeletons/AccountSkeletons";
@@ -11,6 +11,7 @@ import {
   getAccountAddressRoutePath,
   getAccountCouponsRoutePath,
   getAccountOrdersRoutePath,
+  getAccountReviewsRoutePath,
   getAccountProfileRoutePath,
   getAccountRoutePath,
   getHomeRoutePath,
@@ -20,6 +21,7 @@ const items = [
   { href: getAccountRoutePath(), key: "dashboard", icon: LuHouse, exact: true },
   { href: getAccountProfileRoutePath(), key: "profile", icon: LuUser, exact: false },
   { href: getAccountOrdersRoutePath(), key: "orders", icon: LuPackage, exact: false },
+  { href: getAccountReviewsRoutePath(), key: "reviews", icon: LuStar, exact: false },
   { href: getAccountAddressRoutePath(), key: "addresses", icon: LuMapPin, exact: false },
   { href: getAccountCouponsRoutePath(), key: "coupons", icon: LuTicket, exact: false },
 ] as const;

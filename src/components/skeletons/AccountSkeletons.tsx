@@ -467,6 +467,25 @@ export function AccountCouponsSkeleton() {
   );
 }
 
+export function AccountReviewsSkeleton() {
+  const label = useLoadingLabel();
+
+  return (
+    <Status label={label}>
+      <PageHeading />
+      <ul className="mt-6 grid gap-3">
+        {Array.from({ length: 2 }, (_, index) => (
+          <li key={index} className="rounded-2xl border border-border bg-background px-5 py-4">
+            <Bone className="h-4 w-40" />
+            <Bone className="mt-3 h-4 w-24" />
+            <Bone className="mt-3 h-4 w-full" />
+          </li>
+        ))}
+      </ul>
+    </Status>
+  );
+}
+
 export function AccountRouteSkeleton() {
   const pathname = usePathname();
 
@@ -475,6 +494,7 @@ export function AccountRouteSkeleton() {
   if (pathname.includes("/orders")) return <AccountOrdersSkeleton />;
   if (pathname.includes("/address")) return <AccountAddressesSkeleton />;
   if (pathname.includes("/coupons")) return <AccountCouponsSkeleton />;
+  if (pathname.includes("/reviews")) return <AccountReviewsSkeleton />;
   return <AccountDashboardSkeleton />;
 }
 

@@ -1,3 +1,4 @@
+import type { MyReviewsArgs, MyReviewsData, MyReviewsResponse } from "@/server/types/review";
 import { UserProfile, UserProfileApiResponse } from "@/server/types/user";
 import { api } from "../api";
 
@@ -30,6 +31,13 @@ export const userApi = api.injectEndpoints({
         body,
       }),
     }),
+    getMyReviews: build.query<MyReviewsData, MyReviewsArgs | void>({
+      query: (args) => {
+        const { page = 1, limit = 10 } = args ?? {};
+        return { url: "/user/my-reviews", params: { page, limit } };
+      },
+      transformResponse: (res: MyReviewsResponse) => res.data ?? {},
+    }),
   }),
 });
 
@@ -38,4 +46,5 @@ export const {
   useUpdateUserProfileMutation,
   useDeleteUserAccountMutation,
   useChangePasswordMutation,
+  useGetMyReviewsQuery,
 } = userApi;

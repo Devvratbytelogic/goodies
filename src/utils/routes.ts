@@ -51,6 +51,10 @@ export function getAccountCouponsRoutePath(): string {
   return "/my-account/coupons/";
 }
 
+export function getAccountReviewsRoutePath(): string {
+  return "/my-account/reviews/";
+}
+
 export function getCheckoutClassicRoutePath(): string {
   return "/cart/checkout";
 }
