@@ -149,7 +149,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
                 </dd>
               </div>
             ) : null}
-            {paymentMethod ? (
+            {cartSummary?.shipping_rate_available ? (
               <div className="flex items-start justify-between gap-3">
                 <dt className="text-muted">
                   {t("shipping")}
