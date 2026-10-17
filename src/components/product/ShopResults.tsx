@@ -32,8 +32,11 @@ type ShopResultColumnProps = {
   removePriceLabel?: string;
   sortLabel?: string;
   removeSortLabel?: string;
+  searchLabel?: string;
+  removeSearchLabel?: string;
   onClearPrice?: () => void;
   onClearSort?: () => void;
+  onClearSearch?: () => void;
   list: ReactNode;
 };
 
@@ -50,8 +53,11 @@ export function ShopResultColumn({
   removePriceLabel,
   sortLabel,
   removeSortLabel,
+  searchLabel,
+  removeSearchLabel,
   onClearPrice,
   onClearSort,
+  onClearSearch,
   list,
 }: ShopResultColumnProps) {
   return (
@@ -65,7 +71,7 @@ export function ShopResultColumn({
           </div>
         </div>
       </div>
-      {priceLabel || sortLabel ? (
+      {priceLabel || sortLabel || searchLabel ? (
         <ul className="mt-4 flex flex-wrap gap-2">
           {priceLabel && onClearPrice ? (
             <li>
@@ -86,6 +92,19 @@ export function ShopResultColumn({
                     <span>{priceMax}</span>
                   </span>
                 </span>
+                <LuX aria-hidden className="size-3.5" />
+              </button>
+            </li>
+          ) : null}
+          {searchLabel && onClearSearch ? (
+            <li>
+              <button
+                type="button"
+                onClick={onClearSearch}
+                aria-label={`${removeSearchLabel}, ${searchLabel}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft py-1 ps-3 pe-1.5 text-sm font-semibold text-primary transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {searchLabel}
                 <LuX aria-hidden className="size-3.5" />
               </button>
             </li>
@@ -119,6 +138,7 @@ type ShopResultsProps = {
   sortOptions: SortOption[];
   removePriceLabel: string;
   removeSortLabel: string;
+  removeSearchLabel: string;
   filtersButton: ReactNode;
   fallback: ReactNode;
 };
@@ -133,6 +153,7 @@ export default function ShopResults({
   sortOptions,
   removePriceLabel,
   removeSortLabel,
+  removeSearchLabel,
   filtersButton,
   fallback,
 }: ShopResultsProps) {
@@ -144,8 +165,9 @@ export default function ShopResults({
   const sort = sortParam(searchParams.get("sort"));
   const minPrice = priceParam(searchParams.get("min_price"));
   const maxPrice = priceParam(searchParams.get("max_price"));
+  const search = searchParams.get("search")?.trim() || undefined;
   const hasPrice = minPrice != null && maxPrice != null;
-  const refresh = page > 1 || Boolean(sort) || hasPrice;
+  const refresh = page > 1 || Boolean(sort) || hasPrice || Boolean(search);
   const { data, isFetching, isError } = useGetShopProductsQuery(
     {
       currency,
@@ -154,6 +176,7 @@ export default function ShopResults({
       minPrice: hasPrice ? minPrice : undefined,
       maxPrice: hasPrice ? maxPrice : undefined,
       sort,
+      search,
     },
     { skip: !refresh },
   );
@@ -188,7 +211,7 @@ export default function ShopResults({
           label={shop("pagination")}
           previousLabel={shop("previous")}
           nextLabel={shop("next")}
-          href={(number) => shopPageHref(path, number, hasPrice ? minPrice : undefined, hasPrice ? maxPrice : undefined, sort)}
+          href={(number) => shopPageHref(path, number, hasPrice ? minPrice : undefined, hasPrice ? maxPrice : undefined, sort, search)}
         />
       </>
     );
@@ -208,8 +231,11 @@ export default function ShopResults({
       removePriceLabel={removePriceLabel}
       sortLabel={sortLabel}
       removeSortLabel={removeSortLabel}
+      searchLabel={search}
+      removeSearchLabel={removeSearchLabel}
       onClearPrice={() => clearSearch({ min_price: null, max_price: null })}
       onClearSort={() => clearSearch({ sort: null })}
+      onClearSearch={() => clearSearch({ search: null })}
       list={list}
     />
   );

@@ -62,7 +62,7 @@ export function getHomePage(country: string) {
   )();
 }
 
-export function getAllProducts(country: string, page = 1, minPrice?: number, maxPrice?: number, sort?: string, category?: string) {
+export function getAllProducts(country: string, page = 1, minPrice?: number, maxPrice?: number, sort?: string, category?: string, search?: string) {
   const query = new URLSearchParams({ page: String(page), limit: "20" });
   if (minPrice != null && maxPrice != null) {
     query.set("min_price", String(minPrice));
@@ -70,6 +70,7 @@ export function getAllProducts(country: string, page = 1, minPrice?: number, max
   }
   if (sort) query.set("sort", sort);
   if (category) query.set("category", category);
+  if (search) query.set("search", search);
 
   return unstable_cache(
     () => getData<AllProductsData>(`/user/all-product?${query}`, country),

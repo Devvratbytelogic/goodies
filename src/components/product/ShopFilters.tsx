@@ -26,6 +26,7 @@ type ShopFiltersProps = {
   maxPrice?: number;
   currencySymbol?: string;
   removeSortLabel: string;
+  removeSearchLabel: string;
   title: string;
   allLabel: string;
   total: number;
@@ -99,7 +100,7 @@ function FilterBody({
   total,
   categories,
   activeCategoryId,
-}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sortFieldLabel" | "sortOptions" | "currency" | "children" | "removePriceLabel" | "removeSortLabel">) {
+}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sortFieldLabel" | "sortOptions" | "currency" | "children" | "removePriceLabel" | "removeSortLabel" | "removeSearchLabel">) {
   return (
     <div className="min-w-0 space-y-5 lg:space-y-8">
       {minPrice != null && maxPrice != null ? (
@@ -128,6 +129,7 @@ export default function ShopFilters({
   showResultsLabel,
   removePriceLabel,
   removeSortLabel,
+  removeSearchLabel,
   showing,
   sortFieldLabel,
   sortOptions,
@@ -195,6 +197,7 @@ export default function ShopFilters({
               currencySymbol={filters.currencySymbol}
               removePriceLabel={removePriceLabel}
               removeSortLabel={removeSortLabel}
+              removeSearchLabel={removeSearchLabel}
               fallback={children}
             />
           </Suspense>

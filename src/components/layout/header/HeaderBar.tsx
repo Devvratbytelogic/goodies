@@ -213,7 +213,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
             className={`hidden transition-[grid-template-rows,opacity] duration-300 ease-out lg:grid ${searchOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
               }`}
           >
-            <div className="overflow-hidden">
+            <div className={searchOpen ? "overflow-visible" : "overflow-hidden"}>
               <div className="pb-2 pt-1">
                 <SearchField
                   focused={searchOpen}

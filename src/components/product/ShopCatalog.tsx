@@ -55,6 +55,7 @@ export default async function ShopCatalog({
         showResultsLabel={t("showResults")}
         priceTitle={t("price")}
         removePriceLabel={t("removePrice")}
+        removeSearchLabel={t("removeSearch")}
         minPriceLabel={t("minPrice")}
         maxPriceLabel={t("maxPrice")}
         minPrice={minPrice}

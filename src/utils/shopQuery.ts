@@ -24,7 +24,7 @@ export function shopResultWindow(page: number, limit: number, count: number, tot
   return { from, to, totalPages };
 }
 
-export function shopPageHref(path: string, number: number, minPrice?: number, maxPrice?: number, sort?: string) {
+export function shopPageHref(path: string, number: number, minPrice?: number, maxPrice?: number, sort?: string, search?: string) {
   const params = new URLSearchParams();
   if (number > 1) params.set("page", String(number));
   if (minPrice != null && maxPrice != null) {
@@ -32,6 +32,7 @@ export function shopPageHref(path: string, number: number, minPrice?: number, ma
     params.set("max_price", String(maxPrice));
   }
   if (sort) params.set("sort", sort);
+  if (search) params.set("search", search);
   const query = params.toString();
   return query ? `${path}?${query}` : path;
 }
