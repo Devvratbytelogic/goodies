@@ -36,10 +36,10 @@ export default function CategorySection({ categories }: { categories: HomeCatego
               <ImageComponent
                 src={category.image ?? "/images/image-fallback.svg"}
                 alt={category.name}
-                width={887}
-                height={444}
+                width={wide ? 960 : 480}
+                height={wide ? 420 : 210}
                 objectFit="cover"
-                sizes={wide ? "(max-width: 1024px) 96vw, 80vw" : "(max-width: 1024px) 48vw, 40vw"}
+                sizes={wide ? "(max-width: 768px) 92vw, 960px" : "(max-width: 768px) 46vw, 480px"}
               />
             </Link>
           );

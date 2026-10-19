@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["react-icons", "swiper", "@reduxjs/toolkit"],
+    inlineCss: true,
   },
   async headers() {
     return [
