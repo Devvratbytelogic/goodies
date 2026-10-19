@@ -50,6 +50,18 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-price: var(--price);
   --font-sans: var(--font-geist-sans), var(--font-noto-arabic), Arial, Helvetica, sans-serif;
+  --animate-search-in: search-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 body {

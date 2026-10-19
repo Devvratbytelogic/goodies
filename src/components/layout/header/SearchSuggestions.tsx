@@ -61,7 +61,7 @@ export function SearchSuggestions({
   }, [activeIndex, listId]);
 
   return (
-    <div className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-2xl border border-border bg-background shadow-lg">
+    <div className="absolute inset-x-0 top-full z-40 mt-2 origin-top animate-search-in overflow-hidden rounded-2xl border border-border bg-background shadow-lg motion-reduce:animate-none">
       <div ref={listRef} id={listId} role="listbox" aria-label={t("searchSuggestions")} className="max-h-[min(24rem,70vh)] overflow-y-auto p-2">
         {isFetching && !hasResults ? <p className="px-3 py-2 text-sm text-muted">{t("searching")}</p> : null}
         {isError ? <p className="px-3 py-2 text-sm text-muted">{t("searchError")}</p> : null}

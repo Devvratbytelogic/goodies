@@ -98,6 +98,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const [renderedPathname, setRenderedPathname] = useState(pathname);
 
   // Collapse any open overlay as soon as the route changes.
@@ -105,6 +106,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
     setRenderedPathname(pathname);
     setMenuOpen(false);
     setSearchOpen(false);
+    setSearchExpanded(false);
   }
 
   // The drawer is hidden above `lg`, so drop it before it can lock body scroll.
@@ -121,6 +123,16 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
 
     return () => desktop.removeEventListener("change", handleChange);
   }, []);
+
+  useEffect(() => {
+    if (!searchOpen || !window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    setSearchExpanded(true);
+  }, [searchOpen]);
+
+  function toggleSearch() {
+    setSearchExpanded(false);
+    setSearchOpen((open) => !open);
+  }
 
   return (
     <>
@@ -169,7 +181,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
             <div className="flex items-center gap-1 justify-self-end">
               <button
                 type="button"
-                onClick={() => setSearchOpen((value) => !value)}
+                onClick={toggleSearch}
                 aria-label={searchOpen ? t("closeSearch") : t("openSearch")}
                 aria-expanded={searchOpen}
                 aria-controls="header-search"
@@ -210,11 +222,14 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
           <div
             id="header-search"
             inert={!searchOpen}
-            className={`hidden transition-[grid-template-rows,opacity] duration-300 ease-out lg:grid ${searchOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-              }`}
+            onTransitionEnd={(event) => {
+              if (event.target !== event.currentTarget || event.propertyName !== "grid-template-rows" || !searchOpen) return;
+              setSearchExpanded(true);
+            }}
+            className={`hidden transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:grid ${searchOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
           >
-            <div className={searchOpen ? "overflow-visible" : "overflow-hidden"}>
-              <div className="pb-2 pt-1">
+            <div className={searchExpanded ? "overflow-visible" : "overflow-hidden"}>
+              <div className={`pb-2 pt-1 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${searchOpen ? "translate-y-0" : "-translate-y-2"}`}>
                 <SearchField
                   focused={searchOpen}
                   onSubmitted={() => setSearchOpen(false)}
