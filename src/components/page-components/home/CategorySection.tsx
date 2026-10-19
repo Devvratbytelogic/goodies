@@ -8,7 +8,7 @@ import { HomeCategory } from "@/server/types/Home";
 const cardClassName =
   "aspect-16/7 lg:aspect-16/5 block overflow-hidden rounded-lg border sm:rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-const borderClasses = ["border-[#e84a8a]", "border-[#9b7ed9]", "border-[#2cb4c1]", "border-[#f08a4b]"];
+const borderClasses = ["border-[#e84a8a]", "border-[#9b7ed9]", "border-[#2cb4c1]", "border-[#f08a4b]", "border-[#2cb4c1]"];
 
 export default function CategorySection({ categories }: { categories: HomeCategory[] }) {
   const t = useTranslations("CategorySection");
@@ -39,7 +39,7 @@ export default function CategorySection({ categories }: { categories: HomeCatego
                 width={wide ? 960 : 480}
                 height={wide ? 420 : 210}
                 objectFit="cover"
-                sizes={wide ? "(max-width: 768px) 92vw, 960px" : "(max-width: 768px) 46vw, 480px"}
+                sizes={wide ? "(max-width: 640px) 96vw, (max-width: 1024px) 90vw, 84vw" : "(max-width: 640px) 46vw, (max-width: 1024px) 45vw, 42vw"}
               />
             </Link>
           );
