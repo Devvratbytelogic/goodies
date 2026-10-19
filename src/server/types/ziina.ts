@@ -2,6 +2,7 @@ export interface ZiinaCheckoutPayload {
   shipping_address_id: string;
   billing_address_id: string;
   customer_note: string;
+  origin: string;
 }
 
 export interface ZiinaCheckoutResponse {

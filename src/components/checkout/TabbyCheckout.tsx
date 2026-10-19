@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { useCreateTabbySessionMutation } from "@/store/endpoints/paymentApi";
+import { readOrigin } from "@/utils/origin";
 
 type TabbyCheckoutProps = {
   billingAddressId: string | null;
@@ -29,7 +30,7 @@ export default function TabbyCheckout({ billingAddressId, shippingAddressId, cou
         billing_address_id: billingAddressId,
         customer_note: "",
         country,
-        origin: "web",
+        origin: readOrigin(),
       }).unwrap();
 
       if (session?.payment_url) {

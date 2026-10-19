@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ModalProvider } from "@/components/layout/common/ModalProvider";
+import { OriginCookie } from "@/components/layout/OriginCookie";
 import { TrackingScripts } from "@/components/layout/TrackingScripts";
 import { StoreProvider } from "@/store/StoreProvider";
 import { routing } from "@/i18n/routing";
@@ -141,6 +142,7 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
         {jsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} /> : null}
+        <OriginCookie />
         <TrackingScripts
           googleAnalyticsId={settings?.google_analytics_id}
           googleTagManagerId={settings?.google_tag_manager}

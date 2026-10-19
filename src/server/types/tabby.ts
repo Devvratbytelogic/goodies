@@ -3,7 +3,7 @@ export interface TabbySessionPayload {
     billing_address_id: string;
     customer_note: string;
     country: string;
-    origin: "web";
+    origin: string;
 }
 export interface TabbySessionResponse {
     http_status_code: number;
