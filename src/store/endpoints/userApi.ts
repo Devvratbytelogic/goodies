@@ -37,6 +37,7 @@ export const userApi = api.injectEndpoints({
         return { url: "/user/my-reviews", params: { page, limit } };
       },
       transformResponse: (res: MyReviewsResponse) => res.data ?? {},
+      providesTags: ["Review"],
     }),
   }),
 });

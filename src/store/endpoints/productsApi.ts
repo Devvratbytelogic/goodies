@@ -47,6 +47,7 @@ export const productsApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Review"],
     }),
   }),
 });
