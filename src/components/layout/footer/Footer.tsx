@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
-import { FaInstagram, FaWhatsapp, FaYoutube } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { LuHeart, LuMail, LuMapPin, LuPhone } from "react-icons/lu";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
@@ -24,6 +24,10 @@ export type FooterContact = {
   address: string;
   instagram: string;
   whatsapp: string;
+  youtube: string;
+  x: string;
+  linkdin: string;
+  facebook: string;
 };
 
 const quickLinks = [
@@ -35,26 +39,18 @@ const quickLinks = [
   { key: "contactUs" as const, href: getContactUsRoutePath() },
 ];
 
-type SocialKey = "instagram" | "youtube" | "whatsapp";
+type SocialKey = "instagram" | "youtube" | "whatsapp" | "facebook" | "x" | "linkedin";
 
 function socialLinks(contact: FooterContact): { key: SocialKey; href: string; icon: IconType }[] {
-  return [
-    {
-      key: "instagram",
-      href: contact.instagram,
-      icon: FaInstagram,
-    },
-    {
-      key: "youtube",
-      href: "https://www.youtube.com/@zeinashrem7499",
-      icon: FaYoutube,
-    },
-    {
-      key: "whatsapp",
-      href: contact.whatsapp,
-      icon: FaWhatsapp,
-    },
+  const links: { key: SocialKey; href: string; icon: IconType }[] = [
+    { key: "instagram", href: contact.instagram, icon: FaInstagram },
+    { key: "youtube", href: contact.youtube, icon: FaYoutube },
+    { key: "whatsapp", href: contact.whatsapp, icon: FaWhatsapp },
+    { key: "facebook", href: contact.facebook, icon: FaFacebook },
+    { key: "x", href: contact.x, icon: FaXTwitter },
+    { key: "linkedin", href: contact.linkdin, icon: FaLinkedin },
   ];
+  return links.filter((item) => item.href.trim());
 }
 
 const columnTitleClass =
@@ -69,6 +65,9 @@ const mobileSocialClass: Record<SocialKey, string> = {
     "bg-linear-to-br from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white shadow-[0_8px_18px_rgba(238,42,123,0.28)]",
   youtube: "bg-[#ff0033] text-white shadow-[0_8px_18px_rgba(255,0,51,0.28)]",
   whatsapp: "bg-[#128C7E] text-white shadow-[0_8px_18px_rgba(18,140,126,0.28)]",
+  facebook: "bg-[#1877F2] text-white shadow-[0_8px_18px_rgba(24,119,242,0.28)]",
+  x: "bg-heading text-background shadow-[0_8px_18px_rgba(15,23,42,0.18)]",
+  linkedin: "bg-[#0A66C2] text-white shadow-[0_8px_18px_rgba(10,102,194,0.28)]",
 };
 
 function BrandMark({ logo, logoClassName }: { logo: string; logoClassName: string }) {
@@ -94,51 +93,50 @@ function BrandMark({ logo, logoClassName }: { logo: string; logoClassName: strin
 
 function SocialLinks({ contact }: { contact: FooterContact }) {
   const t = useTranslations("Footer");
+  const links = socialLinks(contact);
+  if (links.length === 0) return null;
 
   return (
-    <ul className="flex items-center gap-2.5">
-      {socialLinks(contact).map(({ key, href, icon: Icon }) => (
-        <li key={key}>
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t(key)}
-            className={socialButtonClass}
-          >
-            <Icon aria-hidden className="size-4" />
-          </a>
-        </li>
-      ))}
-    </ul>
+    <>
+      <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
+      <ul className="mt-3 flex items-center gap-2.5">
+        {links.map(({ key, href, icon: Icon }) => (
+          <li key={key}>
+            <a href={href} target="_blank" rel="noopener noreferrer" aria-label={t(key)} className={socialButtonClass}>
+              <Icon aria-hidden className="size-4" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
 function ContactList({ contact }: { contact: FooterContact }) {
   return (
     <ul className="flex flex-col gap-3">
-      <li>
-        <a
-          href={`mailto:${contact.email}`}
-          className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
-        >
-          <LuMail aria-hidden className="size-4 shrink-0 text-primary" />
-          {contact.email}
-        </a>
-      </li>
-      <li>
-        <a
-          href={`tel:${contact.phone}`}
-          className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}
-        >
-          <LuPhone aria-hidden className="size-4 shrink-0 text-primary" />
-          {contact.phone}
-        </a>
-      </li>
-      <li className="inline-flex items-center gap-2.5 text-sm text-muted">
-        <LuMapPin aria-hidden className="size-4 shrink-0 text-primary" />
-        {contact.address}
-      </li>
+      {contact.email.trim() ? (
+        <li>
+          <a href={`mailto:${contact.email}`} className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}>
+            <LuMail aria-hidden className="size-4 shrink-0 text-primary" />
+            {contact.email}
+          </a>
+        </li>
+      ) : null}
+      {contact.phone.trim() ? (
+        <li>
+          <a href={`tel:${contact.phone}`} className={`inline-flex items-center gap-2.5 ${footerLinkClass}`}>
+            <LuPhone aria-hidden className="size-4 shrink-0 text-primary" />
+            {contact.phone}
+          </a>
+        </li>
+      ) : null}
+      {contact.address.trim() ? (
+        <li className="inline-flex items-center gap-2.5 text-sm text-muted">
+          <LuMapPin aria-hidden className="size-4 shrink-0 text-primary" />
+          {contact.address}
+        </li>
+      ) : null}
     </ul>
   );
 }
@@ -147,6 +145,7 @@ function MobileFooter({ contact }: { contact: FooterContact }) {
   const t = useTranslations("Footer");
   const tHeader = useTranslations("Header");
 
+  const links = socialLinks(contact);
   const contactItems = [
     {
       key: "email",
@@ -201,27 +200,31 @@ function MobileFooter({ contact }: { contact: FooterContact }) {
           <p className="mt-4 text-base font-semibold tracking-tight text-heading">{t("tagline")}</p>
           <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted">{t("description")}</p>
 
-          <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
-          <ul className="mt-3 flex items-center gap-3">
-            {socialLinks(contact).map(({ key, href, icon: Icon }) => (
-              <li key={key}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={t(key)}
-                  className={`flex size-11 items-center justify-center rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 ${mobileSocialClass[key]}`}
-                >
-                  <Icon aria-hidden className="size-4.5" />
-                </a>
-              </li>
-            ))}
-          </ul>
+          {links.length > 0 ? (
+            <>
+              <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
+              <ul className="mt-3 flex items-center gap-3">
+                {links.map(({ key, href, icon: Icon }) => (
+                  <li key={key}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t(key)}
+                      className={`flex size-11 items-center justify-center rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 ${mobileSocialClass[key]}`}
+                    >
+                      <Icon aria-hidden className="size-4.5" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
         </div>
       </div>
 
       <ul className="mt-3 flex flex-col gap-2.5">
-        {contactItems.map(({ key, href, icon: Icon, label, bubbleClass }) => {
+        {contactItems.filter((item) => item.label.trim()).map(({ key, href, icon: Icon, label, bubbleClass }) => {
           const content = (
             <>
               <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${bubbleClass}`}>
@@ -269,11 +272,7 @@ export default function Footer({ logo, description, categories, contact }: { log
         <div>
           <BrandMark logo={logo} logoClassName="h-30! w-auto" />
           <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
-
-          <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
-          <div className="mt-3">
-            <SocialLinks contact={contact} />
-          </div>
+          <SocialLinks contact={contact} />
         </div>
 
         <nav aria-labelledby="footer-shop-heading">

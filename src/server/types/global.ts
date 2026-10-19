@@ -30,8 +30,10 @@ export interface GlobalData {
   schema_markup: string;
   search_console: string;
   instagram_link: string;
+  youtube_link: string;
   x_link: string;
   linkdin_link: string;
+  facebook_link: string;
   created_by: number;
   address: string;
   createdAt: string;

@@ -30,12 +30,17 @@ export default async function CurrencyLayout({
     href: getProductCategoryRoutePath(category.slug),
     label: category.name,
   }));
+  const phone = settings?.phone?.trim() || '';
   const contact = {
     email: settings?.email?.trim() || '',
-    phone: settings?.phone?.trim() || '',
+    phone,
     address: settings?.address?.trim() || '',
-    instagram: settings?.instagram_link?.trim() || "https://www.instagram.com/qarqusha.goodies",
-    whatsapp: `https://wa.me/${(settings?.phone?.trim() || '')}`,
+    instagram: settings?.instagram_link?.trim() || '',
+    whatsapp: phone ? `https://wa.me/${phone}` : '',
+    youtube: settings?.youtube_link?.trim() || '',
+    x: settings?.x_link?.trim() || '',
+    linkdin: settings?.linkdin_link?.trim() || '',
+    facebook: settings?.facebook_link?.trim() || '',
   };
 
   return (
