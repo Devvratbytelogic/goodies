@@ -7,6 +7,7 @@ import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
 import { SingleCategoryApiResponseData } from "./types/singleCategory";
+import { Article, ArticleCategory, ArticlesResponseData, BlogCategoryResponseData } from "./types/article";
 
 function productSlug(slug: string) {
   try {
@@ -98,5 +99,56 @@ export function getProduct(country: string, slug: string) {
     ["product", decoded, country],
     // "products" is already cleared on save, so bundle pages refresh with the edited item.
     { tags: ["products", `product:${decoded}`], revalidate: 600 },
+  )();
+}
+
+export function getArticles(country: string, page = 1, search?: string) {
+  const query = new URLSearchParams({ page: String(page), limit: "9" });
+  if (search) query.set("search", search);
+
+  return unstable_cache(
+    () => getData<ArticlesResponseData>(`/user/get-articles?${query}`, country),
+    ["articles", query.toString(), country],
+    { tags: ["articles"], revalidate: 600 },
+  )();
+}
+
+export function getLatestArticles(country: string, limit = 6) {
+  const query = new URLSearchParams({ limit: String(limit) });
+
+  return unstable_cache(
+    () => getData<Article[]>(`/user/latest-articles?${query}`, country),
+    ["latest-articles", query.toString(), country],
+    { tags: ["articles"], revalidate: 600 },
+  )();
+}
+
+export function getBlogCategories(country: string) {
+  return unstable_cache(
+    () => getData<ArticleCategory[]>("/user/get-blog-categories", country),
+    ["blog-categories", country],
+    { tags: ["articles"], revalidate: 600 },
+  )();
+}
+
+export function getBlogCategory(country: string, slug: string, page = 1, search?: string) {
+  const decoded = productSlug(slug);
+  const query = new URLSearchParams({ page: String(page), limit: "9" });
+  if (search) query.set("search", search);
+
+  return unstable_cache(
+    () => getData<BlogCategoryResponseData>(`/user/get-blog-category/${encodeURIComponent(decoded)}?${query}`, country),
+    ["blog-category", decoded, query.toString(), country],
+    { tags: ["articles", `blog-category:${decoded}`], revalidate: 600 },
+  )();
+}
+
+export function getArticle(country: string, slug: string) {
+  const decoded = productSlug(slug);
+
+  return unstable_cache(
+    () => getData<Article>(`/user/get-article/${encodeURIComponent(decoded)}`, country),
+    ["article", decoded, country],
+    { tags: ["articles", `article:${decoded}`], revalidate: 600 },
   )();
 }

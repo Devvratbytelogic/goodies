@@ -68,3 +68,15 @@ export function getProductCategoryRoutePath(category: string): string {
 export function getProductRoutePath(slug: string): string {
   return `/product/${slug}`;
 }
+
+export function getBlogsRoutePath(): string {
+  return "/blogs";
+}
+
+export function getBlogRoutePath(slug: string): string {
+  return `/blog/${slug}`;
+}
+
+export function getBlogCategoryRoutePath(slug: string): string {
+  return `/blog-category/${slug}`;
+}

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import {
   getAboutUsRoutePath,
+  getBlogsRoutePath,
   getContactUsRoutePath,
   getHomeRoutePath,
   getShopRoutePath,
@@ -29,6 +30,7 @@ const quickLinks = [
   { key: "home" as const, href: getHomeRoutePath() },
   { key: "aboutUs" as const, href: getAboutUsRoutePath() },
   { key: "shop" as const, href: getShopRoutePath() },
+  { key: "blogs" as const, href: getBlogsRoutePath() },
   { key: "wishlist" as const, href: getWishlistRoutePath() },
   { key: "contactUs" as const, href: getContactUsRoutePath() },
 ];

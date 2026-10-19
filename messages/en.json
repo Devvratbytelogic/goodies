@@ -12,6 +12,7 @@
     "wishlist": "Wishlist",
     "product": "Product",
     "productCategory": "Category",
+    "blogs": "Blogs",
     "checkout": "Checkout"
   },
   "Modal": {
@@ -697,6 +698,23 @@
     "downloadPdfError": "We could not create the PDF. Please try again.",
     "shop": "Continue shopping"
   },
+  "BlogsPage": {
+    "title": "Blogs",
+    "description": "Stories, tips, and ideas from Goodies.",
+    "empty": "No posts yet.",
+    "categories": "Categories",
+    "recent": "Recent posts",
+    "search": "Search posts",
+    "searchPlaceholder": "Search posts",
+    "noResults": "No posts match “{query}”.",
+    "clearSearch": "Clear search",
+    "read": "Read",
+    "tags": "Tags",
+    "more": "More posts",
+    "pagination": "Blog pages",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
   "NotFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist."
@@ -719,6 +737,7 @@
     "home": "Home",
     "aboutUs": "About us",
     "wishlist": "Wishlist",
+    "blogs": "Blogs",
     "contactUs": "Contact us",
     "contact": "Contact",
     "location": "Dubai, UAE",

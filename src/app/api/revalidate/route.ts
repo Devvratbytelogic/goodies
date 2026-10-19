@@ -50,6 +50,18 @@ function targetFor(page: RequestPage) {
     return { tag: "category", paths: [] };
   }
 
+  if (name === "articles") {
+    return { tag: "articles", paths: ["/blogs", "/ar/blogs"] };
+  }
+
+  if (name === "article" && slug && !slug.includes("/") && !slug.includes("..")) {
+    return { tag: `article:${slug}`, paths: [`/blog/${slug}`, `/ar/blog/${slug}`] };
+  }
+
+  if (name === "blog-category" && slug && !slug.includes("/") && !slug.includes("..")) {
+    return { tag: `blog-category:${slug}`, paths: [`/blog-category/${slug}`, `/ar/blog-category/${slug}`] };
+  }
+
   if (name === "product" && slug && !slug.includes("/") && !slug.includes("..")) {
     return {
       tag: `product:${slug}`,
