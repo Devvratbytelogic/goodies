@@ -71,7 +71,7 @@ const mobileSocialClass: Record<SocialKey, string> = {
   whatsapp: "bg-[#128C7E] text-white shadow-[0_8px_18px_rgba(18,140,126,0.28)]",
 };
 
-function BrandMark({ logoClassName }: { logoClassName: string }) {
+function BrandMark({ logo, logoClassName }: { logo: string; logoClassName: string }) {
   const tHeader = useTranslations("Header");
 
   return (
@@ -81,7 +81,7 @@ function BrandMark({ logoClassName }: { logoClassName: string }) {
       className="inline-flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
     >
       <ImageComponent
-        src="/logo/logo.webp"
+        src={logo}
         alt="Goodies"
         width={240}
         height={240}
@@ -253,7 +253,7 @@ function MobileFooter({ contact }: { contact: FooterContact }) {
   );
 }
 
-export default function Footer({ categories, contact }: { categories: FooterCategory[]; contact: FooterContact }) {
+export default function Footer({ logo, description, categories, contact }: { logo: string; description: string; categories: FooterCategory[]; contact: FooterContact }) {
   const t = useTranslations("Footer");
   const year = new Date().getFullYear();
   const shopLinks = [
@@ -267,9 +267,8 @@ export default function Footer({ categories, contact }: { categories: FooterCate
 
       <div className="container hidden gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid lg:gap-8 lg:py-14 xl:grid-cols-4">
         <div>
-          <BrandMark logoClassName="h-30! w-auto" />
-          <p className="mt-4 text-sm font-medium text-heading">{t("tagline")}</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted">{t("description")}</p>
+          <BrandMark logo={logo} logoClassName="h-30! w-auto" />
+          <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
 
           <p className={`${columnTitleClass} mt-6`}>{t("followUs")}</p>
           <div className="mt-3">

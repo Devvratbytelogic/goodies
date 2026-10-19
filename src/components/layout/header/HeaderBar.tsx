@@ -24,6 +24,7 @@ const actionClass =
   "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 type HeaderBarProps = {
+  logo: string;
   currency: CurrencyCode;
   shopCategories: ShopCategory[];
 };
@@ -66,7 +67,7 @@ function ActionLink({
   );
 }
 
-function BrandLogo() {
+function BrandLogo({ logo }: { logo: string }) {
   const t = useTranslations("Header");
 
   return (
@@ -76,7 +77,7 @@ function BrandLogo() {
       className="flex w-fit shrink-0 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
     >
       <ImageComponent
-        src="/logo/logo.webp"
+        src={logo}
         alt="Goodies"
         width={160}
         height={160}
@@ -89,7 +90,7 @@ function BrandLogo() {
   );
 }
 
-export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
+export function HeaderBar({ logo, currency, shopCategories }: HeaderBarProps) {
   const t = useTranslations("Header");
   const cartCount = useCartCount();
   const wishlistCount = useWishlistCount();
@@ -156,7 +157,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
             </button>
 
             <div className="justify-self-center">
-              <BrandLogo />
+              <BrandLogo logo={logo} />
             </div>
 
             <div className="flex items-center justify-self-end">
@@ -173,7 +174,7 @@ export function HeaderBar({ currency, shopCategories }: HeaderBarProps) {
           {/* Desktop bar */}
           <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-6 py-2 lg:grid">
             <div className="justify-self-start">
-              <BrandLogo />
+              <BrandLogo logo={logo} />
             </div>
 
             <DesktopNav shopCategories={shopCategories} />
