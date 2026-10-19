@@ -15,6 +15,7 @@ import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { registerAccount } from "@/server/auth";
 import { getDeviceId } from "@/utils/deviceId";
+import { readOrigin } from "@/utils/origin";
 import { registerValidationSchema } from "@/validations";
 
 type RegisterValues = InferType<typeof registerValidationSchema>;
@@ -75,6 +76,7 @@ export default function Register() {
           countryCode,
           state: State.getStatesOfCountry(countryCode).find((item) => item.isoCode === stateCode)?.name ?? "",
           stateCode,
+          origin: readOrigin(),
         }, getDeviceId());
         if (!result.ok) {
           setError(result.message || t("failed"));
