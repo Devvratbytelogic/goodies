@@ -48,15 +48,7 @@ export async function generateMetadata({
 
   const t = await getTranslations({ locale, namespace: "Metadata" });
   const settings = await getGlobalSettings(defaultCurrency);
-  const title = settings?.meta_title?.trim() || settings?.platformName?.trim() || t("title");
-  const description = settings?.meta_description?.trim() || t("description");
-  const keywords = settings?.meta_keywords?.trim();
-  const ogTitle = settings?.og_title?.trim() || settings?.og_tag?.trim() || title;
-  const ogDescription = settings?.og_description?.trim() || description;
-  const ogImage = settings?.og_image?.trim();
-  const twitterTitle = settings?.twitter_title?.trim() || title;
-  const twitterDescription = settings?.twitter_description?.trim() || description;
-  const twitterImage = settings?.twitter_image?.trim() || ogImage;
+  const brand = settings?.platformName?.trim() || t("title");
   const googleVerification = settings?.search_console?.trim();
   const metaVerification = settings?.meta_domain_verification?.trim();
 
@@ -64,13 +56,8 @@ export async function generateMetadata({
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
     ),
-    applicationName: title,
-    title: {
-      default: title,
-      template: `%s · ${title}`,
-    },
-    description,
-    keywords: keywords || undefined,
+    applicationName: brand,
+    title: brand,
     category: "shopping",
     verification: {
       ...(googleVerification ? { google: googleVerification } : {}),
@@ -88,24 +75,10 @@ export async function generateMetadata({
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
-      title,
+      title: brand,
     },
     other: {
       "apple-mobile-web-app-capable": "yes",
-    },
-    openGraph: {
-      type: "website",
-      siteName: settings?.platformName?.trim() || title,
-      title: ogTitle,
-      description: ogDescription,
-      images: ogImage ? [ogImage] : undefined,
-      locale: locale === "ar" ? "ar_AR" : "en_US",
-    },
-    twitter: {
-      card: twitterImage ? "summary_large_image" : "summary",
-      title: twitterTitle,
-      description: twitterDescription,
-      images: twitterImage ? [twitterImage] : undefined,
     },
     alternates: {
       languages: {
