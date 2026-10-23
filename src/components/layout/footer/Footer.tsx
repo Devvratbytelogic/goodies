@@ -141,7 +141,7 @@ function ContactList({ contact }: { contact: FooterContact }) {
   );
 }
 
-function MobileFooter({ contact }: { contact: FooterContact }) {
+function MobileFooter({ contact, description }: { contact: FooterContact; description: string }) {
   const t = useTranslations("Footer");
   const tHeader = useTranslations("Header");
 
@@ -197,8 +197,10 @@ function MobileFooter({ contact }: { contact: FooterContact }) {
               className="size-full scale-[1.12] object-cover"
             />
           </Link>
-          <p className="mt-4 text-base font-semibold tracking-tight text-heading">{t("tagline")}</p>
-          <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted">{t("description")}</p>
+          {/* <p className="mt-4 text-base font-semibold tracking-tight text-heading">{t("tagline")}</p> */}
+          {description ? (
+            <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted">{description}</p>
+          ) : null}
 
           {links.length > 0 ? (
             <>
@@ -266,7 +268,7 @@ export default function Footer({ logo, description, categories, contact }: { log
 
   return (
     <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface">
-      <MobileFooter contact={contact} />
+      <MobileFooter contact={contact} description={description} />
 
       <div className="container hidden gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid lg:gap-8 lg:py-14 xl:grid-cols-4">
         <div>
