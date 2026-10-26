@@ -40,6 +40,7 @@ function adSource(params: URLSearchParams, referrer: string) {
   const browser = navigator.userAgent.toLowerCase();
   if (isHost(referrer, "instagram.com") || browser.includes("instagram")) return "ig";
   if (isHost(referrer, "tiktok.com") || browser.includes("tiktok") || browser.includes("bytedance") || params.has("ttclid")) return "tiktok";
+  if (isHost(referrer, "snapchat.com") || browser.includes("snapchat") || [...params.keys()].some((key) => key.toLowerCase() === "sccid")) return "snap";
   if (isHost(referrer, "facebook.com") || isHost(referrer, "fb.com") || isHost(referrer, "fb.me") || browser.includes("fban") || browser.includes("fb_iab") || params.has("fbclid")) return "fb";
   return "";
 }

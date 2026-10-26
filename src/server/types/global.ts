@@ -15,6 +15,8 @@ export interface GlobalData {
   google_tag_manager: string;
   microsoft_clarity: string;
   meta_pixel: string;
+  tiktok_pixel?: string;
+  snap_pixel?: string;
   meta_domain_verification: string;
   meta_description: string;
   meta_keywords: string;

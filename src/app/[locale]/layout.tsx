@@ -121,6 +121,8 @@ export default async function LocaleLayout({
           googleTagManagerId={settings?.google_tag_manager}
           clarityId={settings?.microsoft_clarity}
           metaPixelId={settings?.meta_pixel}
+          tiktokPixelId={settings?.tiktok_pixel}
+          snapPixelId={settings?.snap_pixel}
         />
         <NextIntlClientProvider>
           <StoreProvider>
