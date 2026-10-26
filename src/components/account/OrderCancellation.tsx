@@ -17,11 +17,12 @@ type CancelValues = {
   description: string;
 };
 
-const reasons = ["changedMind", "orderedByMistake", "deliveryLate", "other"] as const;
+const reasons = ["changedMind", "orderedByMistake", "addedByMistake", "deliveryLate", "other"] as const;
 
 const reasonLabel = {
   changedMind: "cancelReasonChangedMind",
   orderedByMistake: "cancelReasonMistake",
+  addedByMistake: "cancelReasonAddedByMistake",
   deliveryLate: "cancelReasonDelivery",
   other: "cancelReasonOther",
 } as const;

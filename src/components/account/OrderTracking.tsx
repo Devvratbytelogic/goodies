@@ -44,6 +44,11 @@ export default function OrderTracking({
         <ol className="mt-4" aria-label={t("orderUpdates")}>
           {events.map((event, index) => {
             const last = index === events.length - 1;
+            const message = event.message?.trim();
+            const reason = event.reason?.trim();
+            const details = event.description?.trim();
+            const shownReason = reason && reason !== message ? reason : "";
+            const shownDetails = details && details !== message && details !== reason ? details : "";
             return (
               <li key={`${event.status}-${event.at}`} className="flex gap-3">
                 <div className="flex w-5 shrink-0 flex-col items-center">
@@ -53,16 +58,17 @@ export default function OrderTracking({
                 <div className={`min-w-0 ${last ? "" : "pb-5"}`}>
                   <p className="text-sm font-semibold leading-5 text-heading">{label(event.status)}</p>
                   <p className="mt-0.5 text-xs text-muted">{new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(event.at))}</p>
-                  {event.reason ? (
+                  {message ? <p className="mt-1 text-sm leading-5 text-muted">{message}</p> : null}
+                  {shownReason ? (
                     <p className="mt-1 text-sm text-muted">
                       <span className="font-medium text-heading">{t("cancelReason")}: </span>
-                      {event.reason}
+                      {shownReason}
                     </p>
                   ) : null}
-                  {event.description ? (
+                  {shownDetails ? (
                     <p className="mt-0.5 text-sm text-muted">
                       <span className="font-medium text-heading">{t("cancelDetails")}: </span>
-                      {event.description}
+                      {shownDetails}
                     </p>
                   ) : null}
                 </div>

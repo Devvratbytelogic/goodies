@@ -140,14 +140,37 @@ export interface OrderTimelineEvent {
     description?: string | null;
     at: string;
 }
+
+export interface OrderRequestLine {
+    _id?: string;
+    product_name?: string | null;
+    quantity?: number | null;
+    total?: number | null;
+    currency?: string | null;
+}
+
+export interface OrderRequestTimelineEvent {
+    status?: string | null;
+    message?: string | null;
+    at?: string | null;
+}
+
 export interface OrderChangeRequest {
     _id?: string;
     status?: string | null;
     type?: string | null;
     reason?: string | null;
+    description?: string | null;
     message?: string | null;
+    admin_note?: string | null;
+    refund_status?: string | null;
+    refund_amount?: number | null;
+    refund_transaction_id?: string | null;
     created_at?: string | null;
     createdAt?: string | null;
+    processed_at?: string | null;
+    order_item_ids?: Array<string | OrderRequestLine> | null;
+    timeline?: OrderRequestTimelineEvent[] | null;
 }
 
 export interface OrderDetailsSummary {

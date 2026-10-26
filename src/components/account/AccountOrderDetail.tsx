@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import OrderCancellation from "@/components/account/OrderCancellation";
+import OrderRequestList from "@/components/account/OrderRequestList";
 import OrderTracking from "@/components/account/OrderTracking";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AccountOrderDetailSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { useDownloadOrderInvoiceMutation, useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
-import type { OrderChangeRequest, OrderDetailsAddress } from "@/server/types/order";
+import type { OrderDetailsAddress } from "@/server/types/order";
 import { formatAmount } from "@/utils/price";
 import { getProductRoutePath } from "@/utils/routes";
 
@@ -83,36 +84,8 @@ function AddressCard({ title, address }: { title: string; address: OrderDetailsA
   );
 }
 
-function RequestList({ title, requests, locale, label }: { title: string; requests: OrderChangeRequest[]; locale: string; label: (value: string) => string }) {
-  if (requests.length === 0) return null;
-
-  return (
-    <section className="rounded-2xl border border-border bg-background px-5 py-4">
-      <h2 className="text-sm font-semibold text-heading">{title}</h2>
-      <ul className="mt-3 grid gap-3">
-        {requests.map((request, index) => {
-          const when = request.created_at || request.createdAt;
-          const note = request.message || request.reason;
-
-          return (
-            <li key={request._id || `${request.status}-${index}`} className="rounded-xl bg-surface px-3 py-2.5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                {request.status ? <p className="text-sm font-semibold text-heading">{label(request.status)}</p> : null}
-                {when ? <p className="text-xs text-muted">{new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(when))}</p> : null}
-              </div>
-              {request.type ? <p className="mt-1 text-sm text-muted">{label(request.type)}</p> : null}
-              {note ? <p className="mt-1 text-sm text-muted">{note}</p> : null}
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
-}
-
 export default function AccountOrderDetail({ id }: { id: string }) {
   const t = useTranslations("AccountPage");
-  const locale = useLocale();
   const { token } = useAuth();
   const { data: order, isLoading, isUninitialized, isError } = useGetOrderDetailsQuery(id, { skip: !token });
   const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();
@@ -322,8 +295,8 @@ export default function AccountOrderDetail({ id }: { id: string }) {
         </div>
       </div>
 
-      <RequestList title={t("cancellationRequests")} requests={order.cancellation_requests ?? []} locale={locale} label={label} />
-      <RequestList title={t("returnRequests")} requests={order.return_replacement_requests ?? []} locale={locale} label={label} />
+      <OrderRequestList title={t("cancellationRequests")} requests={order.cancellation_requests ?? []} label={label} currency={currency} />
+      <OrderRequestList title={t("returnRequests")} requests={order.return_replacement_requests ?? []} label={label} currency={currency} />
     </div>
   );
 }
