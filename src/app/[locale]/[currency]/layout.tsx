@@ -31,12 +31,13 @@ export default async function CurrencyLayout({
     label: category.name,
   }));
   const phone = settings?.phone?.trim() || '';
+  const whatsapp = settings?.whatsapp_number?.trim() || '';
   const contact = {
     email: settings?.email?.trim() || '',
     phone,
     address: settings?.address?.trim() || '',
     instagram: settings?.instagram_link?.trim() || '',
-    whatsapp: phone ? `https://wa.me/${phone}` : '',
+    whatsapp: whatsapp ? `https://wa.me/${whatsapp}` : '',
     youtube: settings?.youtube_link?.trim() || '',
     x: settings?.x_link?.trim() || '',
     linkdin: settings?.linkdin_link?.trim() || '',

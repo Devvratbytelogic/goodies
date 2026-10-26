@@ -27,6 +27,7 @@ export interface GlobalData {
   twitter_image: string;
   twitter_title: string;
   phone: string;
+  whatsapp_number: string;
   schema_markup: string;
   search_console: string;
   instagram_link: string;
