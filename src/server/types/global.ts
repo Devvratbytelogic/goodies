@@ -77,3 +77,12 @@ export interface ShippingRate {
   rate: number;
   membership_rate: number;
 }
+
+export interface PageNotices {
+  product_notice?: string | null;
+  product_notice_enabled?: boolean;
+  cart_notice?: string | null;
+  cart_notice_enabled?: boolean;
+  checkout_notice?: string | null;
+  checkout_notice_enabled?: boolean;
+}

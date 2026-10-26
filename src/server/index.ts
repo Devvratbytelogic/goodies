@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { defaultCurrency } from "@/utils/currency";
 import { api } from "./api";
 import { HomeCategory, HomePageData } from "./types/Home";
-import { GlobalData } from "./types/global";
+import { GlobalData, PageNotices } from "./types/global";
 import { AllProductsData } from "./types/allProducts";
 import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
@@ -51,6 +51,25 @@ export async function getGlobalSettings(country: string) {
     const digest = typeof error === "object" && error && "digest" in error ? String(error.digest) : "";
     if (digest.startsWith("NEXT_REDIRECT")) throw error;
     console.error(`get-global failed: ${error instanceof Error ? error.message : "request failed"}`);
+    return null;
+  }
+}
+
+export function getPageNotices(country: string) {
+  return unstable_cache(
+    () => getData<PageNotices>("/user/page-notices", country),
+    ["page-notices", country],
+    { tags: ["page-notices"], revalidate: 600 },
+  )();
+}
+
+export async function getPageNoticeSettings(country: string) {
+  try {
+    return await getPageNotices(country);
+  } catch (error) {
+    const digest = typeof error === "object" && error && "digest" in error ? String(error.digest) : "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw error;
+    console.error(`page-notices failed: ${error instanceof Error ? error.message : "request failed"}`);
     return null;
   }
 }

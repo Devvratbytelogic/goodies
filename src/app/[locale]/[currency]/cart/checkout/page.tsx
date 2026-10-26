@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { LuInfo } from "react-icons/lu";
 import CheckoutView from "@/components/checkout/CheckoutView";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
+import { getPageNoticeSettings } from "@/server";
+import { toCurrency } from "@/utils/currency";
 import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
 
 type CheckoutSearchParams = {
@@ -30,12 +33,21 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   };
 }
 
-export default async function CheckoutClassicPage({ searchParams }: { searchParams: Promise<CheckoutSearchParams> }) {
+export default async function CheckoutClassicPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ currency: string }>;
+  searchParams: Promise<CheckoutSearchParams>;
+}) {
+  const { currency } = await params;
   const t = await getTranslations("CheckoutClassicPage");
   const nav = await getTranslations("Nav");
   const cart = await getTranslations("CartPage");
   const query = await searchParams;
   const paymentStatus = query.tabby || query.ziina;
+  const notices = await getPageNoticeSettings(toCurrency(currency));
+  const checkoutNotice = notices?.checkout_notice_enabled ? notices.checkout_notice?.trim() : "";
 
   return (
     <div className="container section_y_space">
@@ -47,6 +59,12 @@ export default async function CheckoutClassicPage({ searchParams }: { searchPara
           { label: paymentStatus === "success" ? t("received") : t("title") },
         ]}
       />
+      {checkoutNotice ? (
+        <p className="mb-4 flex items-center gap-2.5 rounded-lg bg-primary-soft px-4 py-3 text-sm leading-5 text-heading" role="note">
+          <LuInfo className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          <span>{checkoutNotice}</span>
+        </p>
+      ) : null}
       {paymentStatus ? (
         <div className="mx-auto mt-6 max-w-3xl">
           <PaymentReturn

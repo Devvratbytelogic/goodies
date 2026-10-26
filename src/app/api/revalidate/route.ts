@@ -27,6 +27,10 @@ function targetFor(page: RequestPage) {
     return { tag: "get-global", paths: [] };
   }
 
+  if (name === "page-notices") {
+    return { tag: "page-notices", paths: [] };
+  }
+
   if (name === "shop") {
     return { tag: "all-product", paths: ["/shop", "/ar/shop"] };
   }
