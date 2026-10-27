@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { LuInfo } from "react-icons/lu";
 import PurchaseActions from "@/components/product/PurchaseActions";
 import WishlistButton from "@/components/wishlist/WishlistButton";
 import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
@@ -10,6 +11,7 @@ import BundleProductCard from "./BundleProductCard";
 import TabbyPromo from "./TabbyPromo";
 
 type ProductPurchaseProps = {
+  notice?: string;
   slug: string;
   name: string;
   isVariant: boolean;
@@ -39,7 +41,7 @@ function availableQuantity(stockManage: boolean, stock: number) {
   return stockManage ? stock : Infinity;
 }
 
-export default function ProductPurchase({ name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, maxProductQuantity, bundleStock, stockManage, stockStatus, picked, onPickedChange }: ProductPurchaseProps) {
+export default function ProductPurchase({ notice = "", name, isVariant, variant, variants, sizes, currencySymbol, sizeName, onSizeChange, productId, isBundle, bundleItems, maxSelection, maxProductQuantity, bundleStock, stockManage, stockStatus, picked, onPickedChange }: ProductPurchaseProps) {
   const t = useTranslations("ProductPage");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -65,7 +67,7 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           ? 0
           : Infinity
       : availableQuantity(stockManage, variant?.stock ?? 0);
-      
+
   const stockReached = quantity >= maxQuantity;
   const price = selectedVariant?.price ?? variant?.price ?? 0;
   const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
@@ -269,6 +271,13 @@ export default function ProductPurchase({ name, isVariant, variant, variants, si
           </span>
         </div>
       </div>
+
+      {notice ? (
+        <p className="mt-4 flex items-center gap-2.5 rounded-lg bg-primary-soft px-4 py-3 text-sm leading-5 text-heading" role="note">
+          <LuInfo className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          <span>{notice}</span>
+        </p>
+      ) : null}
 
       <WishlistButton name={name} payload={wishlistPayload} variant="text" className="mt-4" />
     </div>

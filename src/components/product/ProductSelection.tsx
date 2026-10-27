@@ -6,6 +6,7 @@ import ProductTabs from "@/components/product/ProductTabs";
 import { BundleItemsEntity, ReviewsEntity, SizesEntity, Variant, VariantsEntity } from "@/server/types/singleProduct";
 
 type ProductSelectionProps = {
+  notice?: string;
   children: ReactNode;
   productId: string;
   name: string;
@@ -29,6 +30,7 @@ type ProductSelectionProps = {
 };
 
 export default function ProductSelection({
+  notice = "",
   children,
   productId,
   name,
@@ -70,6 +72,7 @@ export default function ProductSelection({
         <div>
           <h1 className="text-2xl font-semibold text-primary!">{name}</h1>
           <ProductPurchase
+            notice={notice}
             isBundle={isBundle}
             bundleItems={bundleItems}
             maxSelection={maxSelection}

@@ -5,7 +5,7 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductSelection from "@/components/product/ProductSelection";
 import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
-import { getProduct, getProducts } from "@/server";
+import { getPageNoticeSettings, getProduct, getProducts } from "@/server";
 import { toCurrency } from "@/utils/currency";
 
 type ProductPageProps = {
@@ -61,7 +61,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { currency, slug } = await params;
-  const product = await getProduct(toCurrency(currency), slug);
+  const country = toCurrency(currency);
+  const product = await getProduct(country, slug);
+  const notices = await getPageNoticeSettings(country);
+  const productNotice = notices?.product_notice_enabled ? notices.product_notice?.trim() ?? "" : "";
 
   const t = await getTranslations("ProductPage");
   const nav = await getTranslations("Nav");
@@ -91,6 +94,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
 
       <ProductSelection
+        notice={productNotice}
         name={name}
         slug={product.slug}
         isVariant={isVariant}
