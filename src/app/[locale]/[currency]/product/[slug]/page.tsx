@@ -7,6 +7,7 @@ import ProductSelection from "@/components/product/ProductSelection";
 import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
 import { getPageNoticeSettings, getProduct, getProducts } from "@/server";
 import { toCurrency } from "@/utils/currency";
+import { markdownToHtml } from "@/utils/markdown";
 
 type ProductPageProps = {
   params: Promise<{ locale: string; currency: string; slug: string }>;
@@ -28,6 +29,11 @@ export async function generateStaticParams() {
 function metaText(value?: string | null) {
   const text = value?.trim();
   return text || undefined;
+}
+
+function productCopy(value?: string | null) {
+  const text = value?.trim();
+  return text ? markdownToHtml(text) : "";
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -65,6 +71,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProduct(country, slug);
   const notices = await getPageNoticeSettings(country);
   const productNotice = notices?.product_notice_enabled ? notices.product_notice?.trim() ?? "" : "";
+  const shortDescription = productCopy(product.short_description);
+  const description = productCopy(product.description);
 
   const t = await getTranslations("ProductPage");
   const nav = await getTranslations("Nav");
@@ -96,6 +104,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductSelection
         notice={productNotice}
+        shortDescription={shortDescription}
+        description={description}
         name={name}
         slug={product.slug}
         isVariant={isVariant}

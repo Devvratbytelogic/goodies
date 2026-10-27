@@ -6,6 +6,7 @@ import ProductReview from "@/components/product/ProductReview";
 import type { ReviewsEntity } from "@/server/types/singleProduct";
 
 type ProductTabsProps = {
+  description?: string;
   productId: string;
   name: string;
   weight?: number | null;
@@ -15,7 +16,7 @@ type ProductTabsProps = {
   totalReviews: number;
 };
 
-export default function ProductTabs({ productId, name, weight, size, reviews, averageRating, totalReviews }: ProductTabsProps) {
+export default function ProductTabs({ description = "", productId, name, weight, size, reviews, averageRating, totalReviews }: ProductTabsProps) {
   const t = useTranslations("ProductPage");
   const [tab, setTab] = useState<"details" | "reviews">("details");
 
@@ -63,6 +64,7 @@ export default function ProductTabs({ productId, name, weight, size, reviews, av
         hidden={tab !== "details"}
         className="pt-4"
       >
+        {description ? <div className="category-description mb-4" dangerouslySetInnerHTML={{ __html: description }} /> : null}
         <table className="w-full border-collapse text-sm" aria-label={t("productDetails")}>
           <tbody>
             <tr>

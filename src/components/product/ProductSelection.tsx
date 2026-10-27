@@ -7,6 +7,8 @@ import { BundleItemsEntity, ReviewsEntity, SizesEntity, Variant, VariantsEntity 
 
 type ProductSelectionProps = {
   notice?: string;
+  shortDescription?: string;
+  description?: string;
   children: ReactNode;
   productId: string;
   name: string;
@@ -31,6 +33,8 @@ type ProductSelectionProps = {
 
 export default function ProductSelection({
   notice = "",
+  shortDescription = "",
+  description = "",
   children,
   productId,
   name,
@@ -71,6 +75,7 @@ export default function ProductSelection({
         <div className="lg:sticky lg:top-30">{children}</div>
         <div>
           <h1 className="text-2xl font-semibold text-primary!">{name}</h1>
+          {shortDescription ? <div className="category-description mt-2" dangerouslySetInnerHTML={{ __html: shortDescription }} /> : null}
           <ProductPurchase
             notice={notice}
             isBundle={isBundle}
@@ -96,6 +101,7 @@ export default function ProductSelection({
         </div>
       </div>
       <ProductTabs
+        description={description}
         productId={productId}
         name={name}
         weight={shownWeight}
