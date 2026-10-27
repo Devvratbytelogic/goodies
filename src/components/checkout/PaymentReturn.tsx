@@ -25,7 +25,7 @@ type PaymentReturnProps = {
   message: string;
   shopHref: string;
   checkoutHref: string;
-  method?: "ziina" | "tabby";
+  method?: "ziina" | "tabby" | "tamara";
 };
 
 function OrderDetailsSkeleton() {
@@ -68,11 +68,11 @@ function OrderDetailsSkeleton() {
 
 export default function PaymentReturn({ status, orderId, orderNumber, message, shopHref, checkoutHref, method = "ziina" }: PaymentReturnProps) {
   const t = useTranslations("CheckoutClassicPage");
-  const cancelledTitle = method === "tabby" ? t("tabbyCancelledTitle") : t("ziinaCancelledTitle");
-  const cancelledNote = method === "tabby" ? t("tabbyCancelledNote") : t("ziinaCancelledNote");
-  const failedTitle = method === "tabby" ? t("tabbyFailedTitle") : t("ziinaFailedTitle");
-  const failedNote = method === "tabby" ? t("tabbyFailedNote") : t("ziinaFailedNote");
-  const paymentFallback = method === "tabby" ? t("payTabby") : t("payZiina");
+  const cancelledTitle = method === "tabby" ? t("tabbyCancelledTitle") : method === "tamara" ? t("tamaraCancelledTitle") : t("ziinaCancelledTitle");
+  const cancelledNote = method === "tabby" ? t("tabbyCancelledNote") : method === "tamara" ? t("tamaraCancelledNote") : t("ziinaCancelledNote");
+  const failedTitle = method === "tabby" ? t("tabbyFailedTitle") : method === "tamara" ? t("tamaraFailedTitle") : t("ziinaFailedTitle");
+  const failedNote = method === "tabby" ? t("tabbyFailedNote") : method === "tamara" ? t("tamaraFailedNote") : t("ziinaFailedNote");
+  const paymentFallback = method === "tabby" ? t("payTabby") : method === "tamara" ? t("payTamara") : t("payZiina");
   const cart = useTranslations("CartPage");
   const dispatch = useAppDispatch();
   const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();

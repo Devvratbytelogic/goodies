@@ -5,8 +5,8 @@ import { CouponApiResponse, CouponApiResponseDataEntity, UsedCouponsArgs, UsedCo
 
 export const cartApi = api.injectEndpoints({
   endpoints: (build) => ({
-    // Checkout passes cod, tabby, or ziina. Other pages omit it.
-    getCart: build.query<CartApiResponseData, "cod" | "tabby" | "ziina" | void>({
+    // Checkout passes cod, tabby, ziina, or tamara. Other pages omit it.
+    getCart: build.query<CartApiResponseData, "cod" | "tabby" | "ziina" | "tamara" | void>({
       query: (paymentMethod) => ({
         url: "/user/cart",
         params: paymentMethod ? { payment_method: paymentMethod } : undefined,

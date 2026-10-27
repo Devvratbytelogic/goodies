@@ -13,6 +13,7 @@ import CodCheckout from "@/components/checkout/CodCheckout";
 import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
 import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import TabbyCheckout from "@/components/checkout/TabbyCheckout";
+import TamaraCheckout from "@/components/checkout/TamaraCheckout";
 import ZiinaCheckout from "@/components/checkout/ZiinaCheckout";
 import CheckoutFormSkeleton from "@/components/skeletons/CheckoutFormSkeleton";
 import { RequiredMark } from "@/components/form/RequiredMark";
@@ -434,6 +435,8 @@ export default function CheckoutForm({
           <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} />
         ) : paymentMethod === "ziina" ? (
           <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
+        ) : paymentMethod === "tamara" ? (
+          <TamaraCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
         ) : (
           <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} onPlaced={onPlaced} />
         )}

@@ -1,4 +1,5 @@
 import { TabbySession, TabbySessionPayload, TabbySessionResponse } from "@/server/types/tabby";
+import { TamaraCheckout, TamaraCheckoutPayload, TamaraCheckoutResponse } from "@/server/types/tamara";
 import { ZiinaCheckout, ZiinaCheckoutPayload, ZiinaCheckoutResponse } from "@/server/types/ziina";
 import { api } from "../api";
 
@@ -22,7 +23,15 @@ export const paymentApi = api.injectEndpoints({
       }),
       transformResponse: (res: ZiinaCheckoutResponse) => res.data,
     }),
+    createTamaraCheckout: build.mutation<TamaraCheckout, TamaraCheckoutPayload>({
+      query: (body) => ({
+        url: "/user/tamara/checkout",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (res: TamaraCheckoutResponse) => res.data,
+    }),
   }),
 });
 
-export const { useCreateTabbySessionMutation, useCreateZiinaCheckoutMutation } = paymentApi;
+export const { useCreateTabbySessionMutation, useCreateZiinaCheckoutMutation, useCreateTamaraCheckoutMutation } = paymentApi;

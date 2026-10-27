@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
 
-export type PaymentMethod = "cod" | "tabby" | "ziina";
+export type PaymentMethod = "cod" | "tabby" | "ziina" | "tamara";
 
 type PaymentMethodsProps = {
   value: PaymentMethod;
@@ -15,7 +15,7 @@ export default function PaymentMethods({ value, onChange }: PaymentMethodsProps)
   const t = useTranslations("CheckoutClassicPage");
   const { data: cart } = useGetCartQuery(value);
   const cod = cart?.summary?.cod_status ? cart.cod_method : null;
-  const methods = (["cod", "ziina", "tabby"] as const).filter((method) => method !== "cod" || cod);
+  const methods = (["cod", "ziina", "tabby", "tamara"] as const).filter((method) => method !== "cod" || cod);
   
   return (
     <div className="mt-6 border-t border-border pt-5">
@@ -23,8 +23,8 @@ export default function PaymentMethods({ value, onChange }: PaymentMethodsProps)
       <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("paymentMethod")}>
         {methods.map((method) => {
           const selected = value === method;
-          const title = method === "ziina" ? t("payZiina") : method === "tabby" ? t("payTabby") : t("payCod");
-          const note = method === "ziina" ? t("payZiinaNote") : method === "tabby" ? t("payTabbyNote") : null;
+          const title = method === "ziina" ? t("payZiina") : method === "tabby" ? t("payTabby") : method === "tamara" ? t("payTamara") : t("payCod");
+          const note = method === "ziina" ? t("payZiinaNote") : method === "tabby" ? t("payTabbyNote") : method === "tamara" ? t("payTamaraNote") : null;
 
           return (
             <label
@@ -53,6 +53,9 @@ export default function PaymentMethods({ value, onChange }: PaymentMethodsProps)
               ) : null}
               {method === "ziina" ? (
                 <span className="shrink-0 rounded-md bg-black px-2 py-1 text-sm font-black tracking-tight text-white lowercase">ziina</span>
+              ) : null}
+              {method === "tamara" ? (
+                <span className="shrink-0 rounded-md bg-linear-to-r from-[#ff8a00] via-[#ff4d8d] to-[#7c3aed] px-2 py-1 text-sm font-bold text-white">tamara</span>
               ) : null}
             </label>
           );

@@ -11,6 +11,7 @@ import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getSho
 type CheckoutSearchParams = {
   ziina?: string;
   tabby?: string;
+  tamara?: string;
   order_id?: string;
   order_number?: string;
   message?: string;
@@ -19,9 +20,9 @@ type CheckoutSearchParams = {
 export async function generateMetadata({ searchParams }: { searchParams: Promise<CheckoutSearchParams> }): Promise<Metadata> {
   const t = await getTranslations("CheckoutClassicPage");
   const query = await searchParams;
-  const paymentStatus = query.tabby || query.ziina;
+  const paymentStatus = query.tabby || query.ziina || query.tamara;
   if (paymentStatus) {
-    const resultTitle = query.tabby ? t("tabbyResultTitle") : t("ziinaResultTitle");
+    const resultTitle = query.tabby ? t("tabbyResultTitle") : query.tamara ? t("tamaraResultTitle") : t("ziinaResultTitle");
     return {
       title: paymentStatus === "success" ? t("received") : resultTitle,
       robots: { index: false, follow: false },
@@ -45,7 +46,7 @@ export default async function CheckoutClassicPage({
   const nav = await getTranslations("Nav");
   const cart = await getTranslations("CartPage");
   const query = await searchParams;
-  const paymentStatus = query.tabby || query.ziina;
+  const paymentStatus = query.tabby || query.ziina || query.tamara;
   const notices = await getPageNoticeSettings(toCurrency(currency));
   const checkoutNotice = notices?.checkout_notice_enabled ? notices.checkout_notice?.trim() : "";
 
@@ -69,7 +70,7 @@ export default async function CheckoutClassicPage({
         <div className="mx-auto mt-6 max-w-3xl">
           <PaymentReturn
             status={paymentStatus}
-            method={query.tabby ? "tabby" : "ziina"}
+            method={query.tabby ? "tabby" : query.tamara ? "tamara" : "ziina"}
             orderId={query.order_id ?? ""}
             orderNumber={query.order_number ?? ""}
             message={query.message ?? ""}
