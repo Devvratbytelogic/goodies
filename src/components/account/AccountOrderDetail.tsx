@@ -32,6 +32,10 @@ const statusLabel = {
   cancelled: "statusCancelled",
   item_cancelled: "statusCancelled",
   failed: "statusFailed",
+  initiating_refund: "statusInitiatingRefund",
+  refund_initiated: "statusRefundInitiated",
+  refunded: "statusRefunded",
+  not_required: "statusRefundNotRequired",
   on_hold: "statusOnHold",
   processing: "statusProcessing",
   paid: "statusPaid",
@@ -65,13 +69,12 @@ function AddressCard({ title, address }: { title: string; address: OrderDetailsA
         {cityLine ? <span className="block wrap-break-word text-muted">{cityLine}</span> : null}
         {address.country ? <span className="block text-muted">{address.country}</span> : null}
         {phoneLabel || address.email ? (
-          <span className="mt-3 flex flex-col gap-1 border-t border-border pt-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3">
+          <span className="mt-3 flex flex-col gap-1 border-t border-border pt-3">
             {phoneLabel ? (
               <span className="font-medium text-heading" dir="ltr">
                 <bdi>{phoneLabel}</bdi>
               </span>
             ) : null}
-            {phoneLabel && address.email ? <span className="hidden text-border sm:inline" aria-hidden="true">·</span> : null}
             {address.email ? (
               <span className="min-w-0 break-all text-muted" dir="ltr">
                 {address.email}
@@ -157,14 +160,15 @@ export default function AccountOrderDetail({ id }: { id: string }) {
           <ul className="divide-y divide-border">
             {items.map((item) => {
               const image = item.image || item.thumbnail || "";
+              const requested = !item.cancelled && Boolean(item.is_cancel_requested);
               const note = [item.reason, item.description].filter(Boolean).join(". ");
               const title = (
-                <span className={`line-clamp-2 font-medium group-hover:text-primary ${item.cancelled ? "text-muted" : "text-heading"}`}>{item.title}</span>
+                <span className={`line-clamp-2 font-medium ${item.cancelled ? "text-muted line-through" : "text-heading group-hover:text-primary"}`}>{item.title}</span>
               );
 
               return (
-                <li key={item.item_id} className={`flex items-center gap-3 px-4 py-3 sm:px-5 ${item.cancelled ? "bg-surface/60" : ""}`}>
-                  <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70">
+                <li key={item.item_id} className={`flex items-center gap-3 px-4 py-3 sm:px-5 ${item.cancelled ? "bg-surface-muted" : ""}`}>
+                  <div className={`relative size-16 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70 ${item.cancelled ? "opacity-70 grayscale" : ""}`}>
                     {item.slug ? (
                       <Link
                         href={getProductRoutePath(item.slug)}
@@ -190,10 +194,20 @@ export default function AccountOrderDetail({ id }: { id: string }) {
                       {t("lineQuantity", { count: item.quantity })}
                       {item.quantity > 1 ? ` · ${formatAmount(item.unit_price, item.currency_symbol || currency)}` : ""}
                     </p>
-                    {item.cancelled ? <p className="mt-1 text-xs font-semibold text-muted">{t("statusCancelled")}</p> : null}
-                    {note ? <p className="mt-0.5 text-sm text-muted">{note}</p> : null}
+                    {item.cancelled ? (
+                      <p className="mt-1">
+                        <span className="inline-flex h-6 items-center rounded-full bg-red-50 px-2.5 text-xs font-semibold text-red-700">{t("statusCancelled")}</span>
+                      </p>
+                    ) : null}
+                    {requested ? (
+                      <p className="mt-1 flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-semibold text-heading">{t("statusCancellationRequested")}</span>
+                        <span className="inline-flex h-6 items-center rounded-full bg-orange-50 px-2.5 text-xs font-semibold text-orange-700">{t("statusPending")}</span>
+                      </p>
+                    ) : null}
+                    {note && !item.cancelled ? <p className="mt-0.5 text-sm text-muted">{note}</p> : null}
                   </div>
-                  <p className={`shrink-0 text-sm font-semibold tabular-nums ${item.cancelled ? "text-muted line-through" : "text-price"}`}>
+                  <p className={`shrink-0 text-sm font-semibold tabular-nums ${item.cancelled ? "text-red-700 line-through" : "text-price"}`}>
                     {formatAmount(item.line_total, item.currency_symbol || currency)}
                   </p>
                 </li>
@@ -201,13 +215,6 @@ export default function AccountOrderDetail({ id }: { id: string }) {
             })}
           </ul>
         </section>
-
-        {order.shipping_address || order.billing_address ? (
-          <section className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
-            {order.shipping_address ? <AddressCard title={t("shipTo")} address={order.shipping_address} /> : null}
-            {order.billing_address ? <AddressCard title={t("billingAddress")} address={order.billing_address} /> : null}
-          </section>
-        ) : null}
         </div>
 
         <div className="grid content-start gap-4">
@@ -294,6 +301,17 @@ export default function AccountOrderDetail({ id }: { id: string }) {
           ) : null}
         </div>
       </div>
+
+      {order.shipping_address || order.billing_address ? (
+        <section
+          className={`overflow-hidden rounded-2xl border border-border bg-background ${
+            order.shipping_address && order.billing_address ? "grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0" : ""
+          }`}
+        >
+          {order.shipping_address ? <AddressCard title={t("shipTo")} address={order.shipping_address} /> : null}
+          {order.billing_address ? <AddressCard title={t("billingAddress")} address={order.billing_address} /> : null}
+        </section>
+      ) : null}
 
       <OrderRequestList title={t("cancellationRequests")} requests={order.cancellation_requests ?? []} label={label} currency={currency} />
       <OrderRequestList title={t("returnRequests")} requests={order.return_replacement_requests ?? []} label={label} currency={currency} />

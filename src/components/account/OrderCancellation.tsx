@@ -59,7 +59,7 @@ function CancelOrderForm({ order }: { order: OrderDetails }) {
   const t = useTranslations("AccountPage");
   const { closeModal } = useModal();
   const [cancelOrder, { isLoading }] = useCancelOrderMutation();
-  const items = (order.items ?? []).filter((item) => !item.cancelled);
+  const items = (order.items ?? []).filter((item) => !item.cancelled && !item.is_cancel_requested);
   const multiple = items.length > 1;
   const currency = order.summary?.currency_symbol || "";
   const [step, setStep] = useState<"select" | "details">(multiple ? "select" : "details");
@@ -198,7 +198,8 @@ export default function OrderCancellation({ order }: { order: OrderDetails }) {
   const t = useTranslations("AccountPage");
   const { openModal } = useModal();
 
-  if (!order.can_cancel) return null;
+  const hasCancellableItem = (order.items ?? []).some((item) => !item.cancelled && !item.is_cancel_requested);
+  if (!order.can_cancel || !hasCancellableItem) return null;
 
   return (
     <div>

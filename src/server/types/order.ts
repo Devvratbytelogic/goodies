@@ -122,6 +122,7 @@ export interface OrderDetailsItem {
     variant?: UserOrderItemVariant | null;
     sizes?: unknown[] | null;
     cancelled?: boolean;
+    is_cancel_requested?: boolean;
     reason?: string | null;
     description?: string | null;
 }
