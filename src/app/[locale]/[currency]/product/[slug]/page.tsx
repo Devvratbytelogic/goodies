@@ -79,6 +79,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const isBundle = product?.product_type === "bundle";
   const bundleItems = product?.bundle_items ?? [];
 
+  
   return (
     <div className="container section_y_space">
       {product.json_ld ? (
