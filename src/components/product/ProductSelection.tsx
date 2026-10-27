@@ -9,6 +9,7 @@ type ProductSelectionProps = {
   notice?: string;
   shortDescription?: string;
   description?: string;
+  customNotes?: string;
   children: ReactNode;
   productId: string;
   name: string;
@@ -35,6 +36,7 @@ export default function ProductSelection({
   notice = "",
   shortDescription = "",
   description = "",
+  customNotes = "",
   children,
   productId,
   name,
@@ -102,6 +104,7 @@ export default function ProductSelection({
       </div>
       <ProductTabs
         description={description}
+        customNotes={customNotes}
         productId={productId}
         name={name}
         weight={shownWeight}

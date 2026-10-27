@@ -583,6 +583,7 @@
     "additionalInformation": "معلومات إضافية",
     "reviews": "التقييمات ({count})",
     "weight": "الوزن",
+    "customNotes": "ملاحظات",
     "weightValue": "غير متوفر",
     "productDetails": "تفاصيل المنتج",
     "noReviews": "لا توجد تقييمات بعد.",

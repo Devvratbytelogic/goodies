@@ -73,6 +73,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const productNotice = notices?.product_notice_enabled ? notices.product_notice?.trim() ?? "" : "";
   const shortDescription = productCopy(product.short_description);
   const description = productCopy(product.description);
+  const customNotes = productCopy(product.custom_notes);
 
   const t = await getTranslations("ProductPage");
   const nav = await getTranslations("Nav");
@@ -106,6 +107,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         notice={productNotice}
         shortDescription={shortDescription}
         description={description}
+        customNotes={customNotes}
         name={name}
         slug={product.slug}
         isVariant={isVariant}

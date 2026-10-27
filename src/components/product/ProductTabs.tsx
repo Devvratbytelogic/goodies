@@ -7,6 +7,7 @@ import type { ReviewsEntity } from "@/server/types/singleProduct";
 
 type ProductTabsProps = {
   description?: string;
+  customNotes?: string;
   productId: string;
   name: string;
   weight?: number | null;
@@ -16,7 +17,7 @@ type ProductTabsProps = {
   totalReviews: number;
 };
 
-export default function ProductTabs({ description = "", productId, name, weight, size, reviews, averageRating, totalReviews }: ProductTabsProps) {
+export default function ProductTabs({ description = "", customNotes = "", productId, name, weight, size, reviews, averageRating, totalReviews }: ProductTabsProps) {
   const t = useTranslations("ProductPage");
   const [tab, setTab] = useState<"details" | "reviews">("details");
 
@@ -87,6 +88,16 @@ export default function ProductTabs({ description = "", productId, name, weight,
                   {t("size")}
                 </th>
                 <td className="border border-border px-4 py-3 text-foreground capitalize">{size}</td>
+              </tr>
+            ) : null}
+            {customNotes ? (
+              <tr>
+                <th scope="row" className="border border-border px-4 py-3 text-start font-medium text-secondary-heading">
+                  {t("customNotes")}
+                </th>
+                <td className="border border-border px-4 py-3 text-foreground">
+                  <div className="category-description" dangerouslySetInnerHTML={{ __html: customNotes }} />
+                </td>
               </tr>
             ) : null}
           </tbody>

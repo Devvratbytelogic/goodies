@@ -583,6 +583,7 @@
     "additionalInformation": "Additional information",
     "reviews": "Reviews ({count})",
     "weight": "Weight",
+    "customNotes": "Notes",
     "weightValue": "N/A",
     "productDetails": "Product Details",
     "noReviews": "There are no reviews yet.",
