@@ -54,3 +54,4 @@ export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopH
     </div>
   );
 }
+
