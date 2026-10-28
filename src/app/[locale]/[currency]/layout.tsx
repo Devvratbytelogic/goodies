@@ -12,6 +12,7 @@ export function generateStaticParams() {
   return currencies.map((currency) => ({ currency }));
 }
 
+
 export default async function CurrencyLayout({
   children,
   params,
