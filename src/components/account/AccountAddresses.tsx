@@ -349,7 +349,7 @@ export function AccountAddresses() {
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 {address.street_address}
                 <br />
-                {address.city}
+                {[address.city, address.state, address.country].filter(Boolean).join(", ")}
               </p>
               <p className="mt-3 text-sm text-heading" dir="ltr">
                 {address.phone_number}
