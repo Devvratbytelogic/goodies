@@ -44,7 +44,8 @@ export default function TabbyCheckout({ billingAddressId, shippingAddressId, cou
     }
   }
 
-  const requestPlace = usePlaceWhenSignedIn(payWithTabby);
+  const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
+  const requestPlace = usePlaceWhenSignedIn(payWithTabby, "tabby", ready);
 
   return (
     <>

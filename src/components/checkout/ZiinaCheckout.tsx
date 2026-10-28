@@ -43,7 +43,8 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shi
     }
   }
 
-  const requestPlace = usePlaceWhenSignedIn(payWithZiina);
+  const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
+  const requestPlace = usePlaceWhenSignedIn(payWithZiina, "ziina", ready);
 
   return (
     <>

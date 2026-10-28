@@ -8,6 +8,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { LuPencil, LuPlus, LuTrash2 } from "react-icons/lu";
 import Select, { type StylesConfig } from "react-select";
 import type { InferType } from "yup";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useOpenOtp } from "@/components/auth/OTPScreen";
 import PhoneField from "@/components/auth/PhoneField";
 import CodCheckout from "@/components/checkout/CodCheckout";
 import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
@@ -19,8 +21,10 @@ import CheckoutFormSkeleton from "@/components/skeletons/CheckoutFormSkeleton";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { useAddAddressMutation, useGetAddressesQuery, useUpdateAddressMutation } from "@/store/endpoints/addressApi";
+import { sendEmailOtp } from "@/server/auth";
 import { AddressEntity } from "@/server/types/address";
 import { PlacedOrder } from "@/server/types/order";
+import { getDeviceId } from "@/utils/deviceId";
 import { checkoutValidationSchema } from "@/validations";
 type SelectOption = { value: string; label: string };
 
@@ -171,6 +175,8 @@ export default function CheckoutForm({
 }) {
   const t = useTranslations("CheckoutClassicPage");
   const locale = useLocale();
+  const { token } = useAuth();
+  const openOtp = useOpenOtp();
   const { data: addresses = [], isLoading: isLoadingAddresses } = useGetAddressesQuery();
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -207,7 +213,7 @@ export default function CheckoutForm({
           setPickedId(editingAddress._id);
         } else {
           const newAddress = await addAddress({
-            ...toAddressPayload(values, phoneCountryCode, isDefault, postalCode),
+            ...toAddressPayload(values, phoneCountryCode, addresses.length === 0 || isDefault, postalCode),
             is_selected: true,
           }).unwrap();
           // select the new address in the list it was added from (only if the API returns its _id)
@@ -216,6 +222,11 @@ export default function CheckoutForm({
             setShippingPickedId(newAddress?._id ?? null);
           } else {
             setPickedId(newAddress?._id ?? null);
+          }
+          if (!token) {
+            const email = values.email.trim();
+            const otp = await sendEmailOtp(email, getDeviceId());
+            if (otp.ok) openOtp(email, "login");
           }
         }
         setFormOpen(false);
@@ -313,11 +324,13 @@ export default function CheckoutForm({
     saveSelectedAddress(addressId);
   }
 
-  if (!formOpen && isLoadingAddresses) {
+  const addingFirstAddress = !isLoadingAddresses && addresses.length === 0;
+
+  if (isLoadingAddresses && addresses.length === 0) {
     return <CheckoutFormSkeleton label={t("loadingAddresses")} />;
   }
 
-  if (!formOpen) {
+  if (!formOpen && !addingFirstAddress) {
     return (
       <section className="rounded-2xl border border-border bg-background px-5 py-5 sm:px-6 sm:py-6">
         <div className="flex items-center justify-between gap-3">
@@ -641,9 +654,10 @@ export default function CheckoutForm({
       <label className="mt-5 flex cursor-pointer items-center gap-2.5 text-sm font-semibold text-heading">
         <input
           type="checkbox"
-          checked={isDefault}
+          checked={addresses.length === 0 || isDefault}
+          disabled={addresses.length === 0}
           onChange={(event) => setIsDefault(event.target.checked)}
-          className="size-4 accent-primary"
+          className="size-4 accent-primary disabled:cursor-default"
         />
         {t("setDefault")}
       </label>
@@ -655,13 +669,15 @@ export default function CheckoutForm({
       >
         {t("saveAddress")}
       </button>
-      <button
-        type="button"
-        onClick={() => setFormOpen(false)}
-        className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-border text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        {t("cancel")}
-      </button>
+      {addresses.length > 0 ? (
+        <button
+          type="button"
+          onClick={() => setFormOpen(false)}
+          className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-border text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          {t("cancel")}
+        </button>
+      ) : null}
     </form>
   );
 }

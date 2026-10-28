@@ -4,7 +4,7 @@ import { LuInfo } from "react-icons/lu";
 import CheckoutView from "@/components/checkout/CheckoutView";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
-import { getPageNoticeSettings } from "@/server";
+import { getGlobalSettings, getPageNoticeSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
 
@@ -47,8 +47,10 @@ export default async function CheckoutClassicPage({
   const cart = await getTranslations("CartPage");
   const query = await searchParams;
   const paymentStatus = query.tabby || query.ziina || query.tamara;
-  const notices = await getPageNoticeSettings(toCurrency(currency));
+  const country = toCurrency(currency);
+  const [notices, settings] = await Promise.all([getPageNoticeSettings(country), getGlobalSettings(country)]);
   const checkoutNotice = notices?.checkout_notice_enabled ? notices.checkout_notice?.trim() : "";
+  const defaultPaymentMethod = settings?.default_payment_method?.trim().toLowerCase() || "ziina";
 
   return (
     <div className="container section_y_space">
@@ -79,7 +81,7 @@ export default async function CheckoutClassicPage({
           />
         </div>
       ) : (
-        <CheckoutView shopHref={getShopRoutePath()} />
+        <CheckoutView shopHref={getShopRoutePath()} defaultPaymentMethod={defaultPaymentMethod} />
       )}
     </div>
   );

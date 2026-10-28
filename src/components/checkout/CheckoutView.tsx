@@ -5,20 +5,32 @@ import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
 import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import { rememberSwitchedMethod } from "@/components/checkout/usePlaceWhenSignedIn";
 import { PlacedOrder } from "@/server/types/order";
 import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
-export default function CheckoutView({ shopHref }: { shopHref: string }) {
+function startingMethod(value?: string): PaymentMethod {
+  if (value === "tabby" || value === "ziina" || value === "tamara") return value;
+  return "ziina";
+}
+
+export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopHref: string; defaultPaymentMethod?: string }) {
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const defaultMethod = startingMethod(defaultPaymentMethod);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(defaultMethod);
   const { data: cart } = useGetCartQuery(paymentMethod);
   const shippingAvailable = cart?.summary?.shipping_rate_available !== false;
 
-  // Cash on delivery is not offered for every cart.
-  if (paymentMethod === "cod" && cart && !cart.summary?.cod_status) {
-    setPaymentMethod("ziina");
+  function onPaymentMethodChange(method: PaymentMethod) {
+    rememberSwitchedMethod(method, defaultMethod);
+    setPaymentMethod(method);
   }
+
+  // Cash on delivery is not offered for every cart.
+  // if (paymentMethod === "cod" && cart && !cart.summary?.cod_status) {
+  //   setPaymentMethod("ziina");
+  // }
 
   if (placedOrder) {
     return (
@@ -37,7 +49,7 @@ export default function CheckoutView({ shopHref }: { shopHref: string }) {
 
   return (
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={setPaymentMethod} onPlaced={setPlacedOrder} />
+      <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={onPaymentMethodChange} onPlaced={setPlacedOrder} />
       <CartSummary showItems paymentMethod={paymentMethod} />
     </div>
   );

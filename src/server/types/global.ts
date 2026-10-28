@@ -30,6 +30,7 @@ export interface GlobalData {
   twitter_title: string;
   phone: string;
   whatsapp_number: string;
+  default_payment_method: string | 'ziina' | 'tamara' | 'tabby';
   schema_markup: string;
   search_console: string;
   instagram_link: string;

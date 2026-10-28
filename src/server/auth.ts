@@ -58,6 +58,10 @@ export async function resendCode(email: string, deviceId?: string | null) {
   return post("/user/resend-code", { email }, deviceId);
 }
 
+export async function sendEmailOtp(email: string, deviceId?: string | null) {
+  return post("/user/email-otp", { email }, deviceId);
+}
+
 export async function forgotPassword(email: string, deviceId?: string | null) {
   return post("/user/forgot-password", { user_id: email }, deviceId);
 }

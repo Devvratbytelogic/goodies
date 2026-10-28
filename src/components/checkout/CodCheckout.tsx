@@ -40,7 +40,8 @@ export default function CodCheckout({ billingAddressId, shippingAddressId, count
     }
   }
 
-  const requestPlace = usePlaceWhenSignedIn(placeCodOrder);
+  const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
+  const requestPlace = usePlaceWhenSignedIn(placeCodOrder, "cod", ready);
 
   return (
     <button

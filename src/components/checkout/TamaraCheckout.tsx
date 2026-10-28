@@ -43,7 +43,8 @@ export default function TamaraCheckout({ billingAddressId, shippingAddressId, sh
     }
   }
 
-  const requestPlace = usePlaceWhenSignedIn(payWithTamara);
+  const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
+  const requestPlace = usePlaceWhenSignedIn(payWithTamara, "tamara", ready);
 
   return (
     <>
