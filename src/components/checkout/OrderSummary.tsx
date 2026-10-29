@@ -8,11 +8,21 @@ import CartDetails from "@/components/cart/CartDetails";
 import { useApplyCouponMutation, useGetCartQuery } from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
 
-export default function OrderSummary() {
+export type CouponCelebration = {
+  offer: string;
+  amount: string;
+};
+
+type OrderSummaryProps = {
+  onCouponApplied?: (celebration: CouponCelebration) => void;
+};
+
+export default function OrderSummary({ onCouponApplied }: OrderSummaryProps) {
   const t = useTranslations("OrderSummary");
   const cartText = useTranslations("CartPage");
   const titleId = useId();
   const sheetRef = useRef<HTMLDivElement>(null);
+  const celebratedCodeRef = useRef<string | null>(null);
   const [open, setOpen] = useState(false);
   const { data: cart, isLoading } = useGetCartQuery();
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
@@ -27,13 +37,33 @@ export default function OrderSummary() {
   const totalAmount = summary?.total_amount ?? 0;
   const hasDiscount = Boolean(couponCode) && discountAmount > 0;
 
+  function celebrate(offer: string, amount: number, currencySymbol: string) {
+    if (!onCouponApplied || amount <= 0) return;
+    if (celebratedCodeRef.current === offer) return;
+    celebratedCodeRef.current = offer;
+    onCouponApplied({ offer, amount: formatAmount(amount, currencySymbol) });
+  }
+
   async function applyCartCoupon(code: string) {
     try {
-      await applyCoupon(code).unwrap();
+      const data = await applyCoupon(code).unwrap();
+      const next = data.summary;
+      celebrate(next?.coupon_code ?? code, next?.discount_amount ?? 0, next?.currency_symbol ?? symbol);
     } catch (error) {
       console.error("Error applying coupon", error);
     }
   }
+
+  useEffect(() => {
+    if (!couponCode) {
+      celebratedCodeRef.current = null;
+      return;
+    }
+    if (isLoading || !hasDiscount) return;
+    celebrate(couponCode, discountAmount, symbol);
+    // Once per applied code (open with coupon already on cart, or after apply)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, hasDiscount, couponCode, discountAmount, symbol]);
 
   useEffect(() => {
     if (!open) return;
@@ -67,7 +97,7 @@ export default function OrderSummary() {
             </span>
             <span className="inline-flex items-center gap-1.5 text-sm tabular-nums text-heading">
               {hasDiscount ? <span className="text-muted line-through">{formatAmount(subtotal, symbol)}</span> : null}
-              <span className="font-bold">{formatAmount(totalAmount, symbol)}</span>
+              <span className="font-bold">{totalAmount === 0 ? cartText("free") : formatAmount(totalAmount, symbol)}</span>
               <LuChevronRight aria-hidden className="size-4 text-muted rtl:rotate-180" />
             </span>
           </span>

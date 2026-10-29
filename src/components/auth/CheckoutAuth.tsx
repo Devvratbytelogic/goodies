@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuChevronLeft } from "react-icons/lu";
 import EmailVerify from "@/components/auth/EmailVerify";
-import OrderSummary from "@/components/checkout/OrderSummary";
+import OrderSummary, { type CouponCelebration } from "@/components/checkout/OrderSummary";
+import Celebration from "@/components/layout/common/Celebration";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 
 type CheckoutAuthProps = {
@@ -14,8 +15,10 @@ type CheckoutAuthProps = {
 
 export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps) {
   const t = useTranslations("EmailVerify");
+  const celebrate = useTranslations("Celebration");
   const dialogRef = useRef<HTMLDivElement>(null);
   const [dismissed, setDismissed] = useState(false);
+  const [couponCelebration, setCouponCelebration] = useState<CouponCelebration | null>(null);
   const visible = open && !dismissed;
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
     dialogRef.current?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape" && !couponCelebration) close();
     }
 
     document.addEventListener("keydown", onKeyDown);
@@ -43,7 +46,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [visible, close]);
+  }, [visible, close, couponCelebration]);
 
   if (!visible) return null;
 
@@ -70,10 +73,22 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
         </header>
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="grid gap-6">
-            <OrderSummary />
+            <OrderSummary onCouponApplied={setCouponCelebration} />
             <EmailVerify onVerified={close} />
           </div>
         </div>
+
+        {couponCelebration ? (
+          <Celebration
+            contained
+            title={celebrate("hurray")}
+            actionLabel={celebrate("thanks")}
+            onClose={() => setCouponCelebration(null)}
+          >
+            <p>{celebrate("applied", { offer: couponCelebration.offer })}</p>
+            <p className="font-bold">{celebrate("youSaved", { amount: couponCelebration.amount })}</p>
+          </Celebration>
+        ) : null}
       </div>
     </div>
   );

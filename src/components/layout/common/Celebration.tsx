@@ -11,7 +11,11 @@ type CelebrationProps = {
   title: string;
   children: ReactNode;
   actionLabel?: string;
+  /** Cover the nearest positioned parent instead of the viewport (width % follows that parent). */
+  contained?: boolean;
 };
+
+const EXIT_MS = 280;
 
 const CONFETTI_COLORS = ["#ff5b8a", "#ffd166", "#7ce577", "#5ad1e8", "#ff8a4c", "#c084fc", "#f472b6", "#ffffff", "#2cb4c1", "#d60751", "#facc15", "#fb7185"];
 
@@ -37,47 +41,87 @@ const confetti = Array.from({ length: CONFETTI_COUNT }, (_, index) => {
   };
 });
 
-export default function Celebration({ open = true, onClose, title, children, actionLabel }: CelebrationProps) {
+export default function Celebration({ open = true, onClose, title, children, actionLabel, contained = false }: CelebrationProps) {
   const t = useTranslations("Celebration");
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [dismissed, setDismissed] = useState(false);
+  const [closing, setClosing] = useState(false);
   const visible = open && !dismissed;
+  const overlayPosition = contained ? "absolute" : "fixed";
 
   useEffect(() => {
-    if (open) setDismissed(false);
+    if (open) {
+      setDismissed(false);
+      setClosing(false);
+    }
   }, [open]);
 
-  const close = useCallback(() => {
+  const finishClose = useCallback(() => {
     setDismissed(true);
+    setClosing(false);
     onClose?.();
   }, [onClose]);
 
-  useEffect(() => {
-    if (!visible) return;
+  const close = useCallback(() => {
+    if (closing) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      finishClose();
+      return;
+    }
+
+    setClosing(true);
+  }, [closing, finishClose]);
+
+  useEffect(() => {
+    if (!closing) return;
+    const timer = window.setTimeout(finishClose, EXIT_MS);
+    return () => window.clearTimeout(timer);
+  }, [closing, finishClose]);
+
+  useEffect(() => {
+    if (!visible || closing) return;
+
     dialogRef.current?.focus();
+    const autoClose = window.setTimeout(close, 2000);
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") close();
     }
 
     document.addEventListener("keydown", onKeyDown);
+
+    if (contained) {
+      return () => {
+        window.clearTimeout(autoClose);
+        document.removeEventListener("keydown", onKeyDown);
+      };
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
+      window.clearTimeout(autoClose);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [visible, close]);
+  }, [visible, closing, close, contained]);
 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-90 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={close} />
-      <div className="pointer-events-none fixed inset-0 z-110 overflow-hidden motion-reduce:hidden" aria-hidden>
+    <div className={`${overlayPosition} inset-0 z-130 flex items-center justify-center p-4`}>
+      <div
+        className={`absolute inset-0 bg-black/60 motion-reduce:animate-none ${closing ? "animate-[celebration-backdrop-out_0.28s_ease-in_forwards]" : ""}`}
+        onClick={close}
+      />
+      <div
+        className={`pointer-events-none ${overlayPosition} inset-0 z-140 overflow-hidden motion-reduce:hidden ${closing ? "animate-[celebration-backdrop-out_0.28s_ease-in_forwards]" : ""}`}
+        aria-hidden
+      >
         {confetti.map((piece, index) => (
           <span
             key={index}
@@ -103,7 +147,11 @@ export default function Celebration({ open = true, onClose, title, children, act
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
         tabIndex={-1}
-        className="relative z-100 w-[90%] rounded-2xl bg-background px-8 pb-6 pt-14 text-center shadow-lg outline-none animate-[celebration-pop_0.28s_ease-out] motion-reduce:animate-none"
+        className={`relative z-150 w-[90%] rounded-2xl bg-background px-8 pb-2 pt-8 text-center shadow-lg outline-none motion-reduce:animate-none ${
+          closing
+            ? "animate-[celebration-exit_0.28s_ease-in_forwards]"
+            : "animate-[celebration-pop_0.28s_ease-out]"
+        }`}
       >
         <div className="pointer-events-none absolute left-1/2 top-0 w-36 -translate-x-1/2 translate-y-[-70%] drop-shadow-md">
           <ImageComponent src="/images/celebration/party-popper.webp" alt="" width={144} height={144} sizes="144px" objectFit="contain" />
