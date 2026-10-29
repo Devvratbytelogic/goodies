@@ -7,6 +7,7 @@ import { LuChevronDown, LuHeart, LuShoppingCart, LuUser, LuX } from "react-icons
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useOpenLogin } from "@/components/auth/Login";
+import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import {
   getAccountRoutePath,
@@ -153,6 +154,7 @@ export default function MobileMenu({
   const tHeader = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
+  const { openCart } = useCartDrawer();
   const pathname = usePathname();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
@@ -392,7 +394,12 @@ export default function MobileMenu({
                                 onClose();
                                 requestAnimationFrame(() => openLogin());
                               }
-                            : undefined
+                            : key === "cart"
+                              ? () => {
+                                  onClose();
+                                  requestAnimationFrame(() => openCart());
+                                }
+                              : undefined
                         }
                         ariaLabel={ariaLabel}
                         count={count}

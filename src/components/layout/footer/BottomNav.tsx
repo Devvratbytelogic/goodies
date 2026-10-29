@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { IconType } from "react-icons";
 import { LuHeart, LuHouse, LuShoppingCart, LuStore, LuUser } from "react-icons/lu";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
 import { useCartCount } from "@/store/endpoints/cartApi";
 import { useWishlistCount } from "@/store/endpoints/wishlistApi";
 import { useOpenLogin } from "@/components/auth/Login";
@@ -47,6 +48,7 @@ export function BottomNav() {
   const tHeader = useTranslations("Header");
   const { token } = useAuth();
   const openLogin = useOpenLogin();
+  const { open: cartOpen, openCart } = useCartDrawer();
   const pathname = usePathname();
 
   return (
@@ -57,7 +59,7 @@ export function BottomNav() {
       >
         <ul className="grid h-14 grid-cols-5">
           {items.map(({ href, key, icon: Icon }) => {
-            const active = isActivePath(pathname, href);
+            const active = key === "cart" ? cartOpen || isActivePath(pathname, href) : isActivePath(pathname, href);
             const label =
               key === "cart"
                 ? tHeader("cartLabel", { count: cartCount })
@@ -81,6 +83,23 @@ export function BottomNav() {
                 <span>{t(key)}</span>
               </>
             );
+
+            if (key === "cart") {
+              return (
+                <li key={key}>
+                  <button
+                    type="button"
+                    aria-label={label}
+                    aria-expanded={cartOpen}
+                    aria-controls="cart-drawer"
+                    onClick={openCart}
+                    className={className}
+                  >
+                    {icon}
+                  </button>
+                </li>
+              );
+            }
 
             if (key === "account" && !token) {
               return (

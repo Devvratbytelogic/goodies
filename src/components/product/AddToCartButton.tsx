@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { LuLoaderCircle, LuShoppingBag, LuShoppingCart } from "react-icons/lu";
+import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
 import { useAddToCartMutation, useGetCartQuery } from "@/store/endpoints/cartApi";
 import { useRouter } from "@/i18n/navigation";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
@@ -31,6 +32,7 @@ export default function AddToCartButton({
   const isBuy = action === "buy";
   const t = useTranslations(variant === "product" ? "ProductPage" : "ProductCard");
   const router = useRouter();
+  const { openCart } = useCartDrawer();
   const { data: cart } = useGetCartQuery();
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
@@ -45,7 +47,9 @@ export default function AddToCartButton({
 
     try {
       const response = await addToCart(payload);
-      if (response.data && isBuy) router.push(getCheckoutClassicRoutePath());
+      if (!response.data) return;
+      if (isBuy) router.push(getCheckoutClassicRoutePath());
+      else openCart();
     } catch (error) {
       console.error("Error adding to cart", error);
     }

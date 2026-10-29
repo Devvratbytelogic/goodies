@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import CartDrawer from "@/components/cart/CartDrawer";
+import { CartDrawerProvider } from "@/components/cart/CartDrawerProvider";
 import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
 import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
@@ -46,12 +48,15 @@ export default async function CurrencyLayout({
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <Header logo={settings?.logo || ''} currency={country} headerTextFirst={settings?.header_text_first?.trim() || ''} headerTextSecond={settings?.header_text_second?.trim() || ''} />
-      <main className="flex-1">{children}</main>
-      <Footer logo={settings?.logo || ''} description={settings?.platformDescription?.trim() || ''} categories={shopCategories} contact={contact} />
-      <BottomNav />
-      <WhatsAppFloatingButton href={contact.whatsapp} />
-    </div>
+    <CartDrawerProvider>
+      <div className="flex min-h-full flex-1 flex-col">
+        <Header logo={settings?.logo || ''} currency={country} headerTextFirst={settings?.header_text_first?.trim() || ''} headerTextSecond={settings?.header_text_second?.trim() || ''} />
+        <main className="flex-1">{children}</main>
+        <Footer logo={settings?.logo || ''} description={settings?.platformDescription?.trim() || ''} categories={shopCategories} contact={contact} />
+        <BottomNav />
+        <WhatsAppFloatingButton href={contact.whatsapp} />
+      </div>
+      <CartDrawer />
+    </CartDrawerProvider>
   );
 }

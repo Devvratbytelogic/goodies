@@ -18,6 +18,13 @@
   "Modal": {
     "close": "إغلاق"
   },
+  "Celebration": {
+    "close": "إغلاق الاحتفال",
+    "hurray": "تهانينا!",
+    "applied": "تم تطبيق {offer} بنجاح.",
+    "youSaved": "وفّرت {amount} بهذه القسيمة.",
+    "thanks": "ياي، شكرًا!"
+  },
   "Login": {
     "title": "تسجيل الدخول",
     "subtitle": "سجّل الدخول ببريدك للمتابعة.",
@@ -356,7 +363,12 @@
   },
   "MiniCart": {
     "title": "سلتك",
-    "viewCart": "عرض السلة"
+    "viewCart": "عرض السلة",
+    "close": "إغلاق السلة",
+    "estimatedTotal": "الإجمالي التقديري",
+    "estimatedNote": "الضرائب مشمولة. تُحسب الخصومات والشحن عند الدفع.",
+    "color": "اللون: {value}",
+    "size": "الحجم: {value}"
   },
   "Wishlist": {
     "add": "أضف {name} إلى المفضلة",

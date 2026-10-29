@@ -18,6 +18,13 @@
   "Modal": {
     "close": "Close"
   },
+  "Celebration": {
+    "close": "Close celebration",
+    "hurray": "Hurray!",
+    "applied": "{offer} applied successfully.",
+    "youSaved": "You saved {amount} with this coupon.",
+    "thanks": "Yay, Thanks!"
+  },
   "Login": {
     "title": "Log in",
     "subtitle": "Sign in with your email to continue.",
@@ -356,7 +363,12 @@
   },
   "MiniCart": {
     "title": "Your cart",
-    "viewCart": "View cart"
+    "viewCart": "View cart",
+    "close": "Close cart",
+    "estimatedTotal": "Estimated total",
+    "estimatedNote": "Taxes included. Discounts and shipping are calculated at checkout.",
+    "color": "Color: {value}",
+    "size": "Size: {value}"
   },
   "Wishlist": {
     "add": "Add {name} to wishlist",
