@@ -25,6 +25,29 @@
     "youSaved": "وفّرت {amount} بهذه القسيمة.",
     "thanks": "ياي، شكرًا!"
   },
+  "EmailVerify": {
+    "back": "رجوع",
+    "brand": "Goodies",
+    "enterTitle": "أدخل البريد الإلكتروني",
+    "enterSubtitle": "أدخل بريدك الإلكتروني للمتابعة",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "continue": "متابعة",
+    "required": "هذا الحقل مطلوب",
+    "emailInvalid": "أدخل بريدًا إلكترونيًا صالحًا",
+    "verifyTitle": "تحقق من البريد",
+    "otpSent": "أدخل رمز التحقق المرسل إلى",
+    "editEmail": "تعديل البريد الإلكتروني",
+    "otpLabel": "رمز التحقق",
+    "resendIn": "إعادة إرسال الرمز خلال {seconds}ث",
+    "resend": "إعادة إرسال الرمز",
+    "keepLoggedIn": "أبقني مسجّل الدخول على هذا الجهاز."
+  },
+  "OrderSummary": {
+    "title": "ملخص الطلب ({count, plural, one {# منتج} other {# منتجات}})",
+    "offerApplied": "🎉 تم تطبيق {offer}! وفّرت {amount}!",
+    "close": "إغلاق ملخص الطلب"
+  },
   "Login": {
     "title": "تسجيل الدخول",
     "subtitle": "سجّل الدخول ببريدك للمتابعة.",

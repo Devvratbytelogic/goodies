@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuGift, LuMinus, LuPlus, LuShoppingBag, LuSparkles, LuTrash2, LuTruck } from "react-icons/lu";
 import CartSummary from "@/components/cart/CartSummary";
@@ -59,15 +58,18 @@ function EmptyCart() {
 }
 
 type CartDetailsProps = {
-  checkoutHref: string;
+  checkoutHref?: string;
+  /** page = cart layout; sheet = order-summary bottom sheet (CSS-only differences) */
+  variant?: "page" | "sheet";
 };
 
-export default function CartDetails({ checkoutHref }: CartDetailsProps) {
+export default function CartDetails({ checkoutHref, variant = "page" }: CartDetailsProps) {
   const t = useTranslations("CartPage");
   const { data: cart, isLoading: isLoadingCart } = useGetCartQuery();
   const [updateQuantity, { isLoading: isUpdatingQuantity }] = useUpdateCartItemQuantityMutation();
   const cartItems = cart?.items ?? [];
   const cartSummary = cart?.summary ?? null;
+  const isSheet = variant === "sheet";
 
   const { openModal } = useModal();
 
@@ -83,51 +85,55 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
     try {
       await updateQuantity({ itemId, quantity }).unwrap();
     } catch (error) {
-      console.error('Error updating quantity', error);
+      console.error("Error updating quantity", error);
     }
   };
 
   const currencySymbol = cartSummary?.currency_symbol ?? "";
 
   if (!isLoadingCart && cartItems.length === 0) {
-    return <EmptyCart />;
+    return isSheet ? null : <EmptyCart />;
   }
 
   return (
-    <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
+    <div
+      data-variant={variant}
+      className={isSheet ? "cart-details grid gap-5" : "cart-details mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10"}
+    >
       {isLoadingCart ? (
         <CartItemsSkeleton label={t("loading")} />
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
+        <ul className="cart-items divide-y divide-border overflow-hidden rounded-2xl border border-border bg-background">
           {cartItems?.map((item, index) => {
             const quantity = item?.quantity;
             const isBundle = item?.product_type === "bundle";
             const bundleSelections = isBundle ? (item?.bundle_selections ?? []) : [];
-            // bundle: bundle stock, others: selected variant stock
             const stock = isBundle ? item?.product_id?.stock : item?.selected_variant?.stock;
             const itemMaxQuantity = Math.min(maxQuantity, stock ?? maxQuantity);
 
             return (
-              <li key={index} className="flex gap-4 p-4 sm:gap-5 sm:p-5">
+              <li key={item?._id ?? index} className="cart-item flex gap-4 p-4 sm:gap-5 sm:p-5">
                 <Link
                   href={getProductRoutePath(item?.product_id?.slug)}
                   aria-label={item?.product_id?.title}
-                  className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:size-24"
+                  className="cart-item-thumb relative size-20 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:size-24"
                 >
                   <ImageComponent src={item?.product_id?.thumbnail} alt="" width={192} height={192} sizes="96px" objectFit="cover" />
                 </Link>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
+                <div className="cart-item-body flex min-w-0 flex-1 flex-col">
+                  <div className="cart-item-top flex items-start justify-between gap-3">
+                    <div className="cart-item-info min-w-0">
                       <Link
                         href={getProductRoutePath(item?.product_id?.slug)}
-                        className="font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        className="cart-item-title font-semibold text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       >
                         {item?.product_id?.title}
                       </Link>
-                      <p className="mt-1 text-sm text-muted">{formatAmount(item?.selected_variant?.price, item?.product_id?.pricing_context?.currency_symbol ?? "")}</p>
+                      <p className="cart-item-price mt-1 text-sm text-muted">
+                        {formatAmount(item?.selected_variant?.price, item?.product_id?.pricing_context?.currency_symbol ?? "")}
+                      </p>
                       {bundleSelections.length > 0 ? (
-                        <div className="mt-2">
+                        <div className="cart-item-bundle mt-2">
                           <p className="text-xs font-semibold text-heading">{t("bundleContains")}</p>
                           <ul className="mt-1 space-y-0.5 text-xs text-muted">
                             {bundleSelections.map((selection, selectionIndex) => (
@@ -149,13 +155,13 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
                       type="button"
                       aria-label={t("remove", { name: item?.product_id?.title })}
                       onClick={() => removeCartItem(item?._id, item?.product_id?.title)}
-                      className="-me-1 -mt-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="cart-item-remove -me-1 -mt-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       <LuTrash2 aria-hidden className="size-4" />
                     </button>
                   </div>
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <div className="inline-flex h-9 items-center rounded-full border border-border bg-background">
+                  <div className="cart-item-actions mt-3 flex items-center justify-between gap-3">
+                    <div className="cart-item-qty inline-flex h-9 items-center rounded-full border border-border bg-background">
                       <button
                         type="button"
                         aria-label={t("decrease", { name: item?.product_id?.title })}
@@ -181,7 +187,9 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
                         <LuPlus aria-hidden className="size-3.5" />
                       </button>
                     </div>
-                    <p className="shrink-0 text-sm font-semibold text-price sm:text-base">{formatAmount(item?.selected_variant?.price * quantity, currencySymbol)}</p>
+                    <p className="cart-item-line-total shrink-0 text-sm font-semibold text-price sm:text-base">
+                      {formatAmount(item?.selected_variant?.price * quantity, currencySymbol)}
+                    </p>
                   </div>
                 </div>
               </li>
@@ -190,7 +198,7 @@ export default function CartDetails({ checkoutHref }: CartDetailsProps) {
         </ul>
       )}
 
-      <CartSummary checkoutHref={checkoutHref} />
+      <CartSummary checkoutHref={isSheet ? undefined : checkoutHref} variant={variant} />
     </div>
   );
 }

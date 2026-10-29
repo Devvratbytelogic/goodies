@@ -19,9 +19,11 @@ type CartSummaryProps = {
   showItems?: boolean;
   // checkout page: COD charge only applies while cash on delivery is selected
   paymentMethod?: PaymentMethod;
+  // page = sticky cart sidebar; sheet = order-summary bottom sheet (CSS-only differences)
+  variant?: "page" | "sheet";
 };
 
-export default function CartSummary({ checkoutHref, showItems = false, paymentMethod }: CartSummaryProps) {
+export default function CartSummary({ checkoutHref, showItems = false, paymentMethod, variant = "page" }: CartSummaryProps) {
   const t = useTranslations("CartPage");
   const { data: cart, isLoading } = useGetCartQuery(paymentMethod);
   const totalsUpdating = useCheckoutTotalsUpdating(paymentMethod);
@@ -69,7 +71,10 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
   }
 
   return (
-    <aside className="overflow-hidden rounded-2xl border border-border bg-background lg:sticky lg:top-24">
+    <aside
+      data-variant={variant}
+      className="cart-summary overflow-hidden rounded-2xl border border-border bg-background lg:sticky lg:top-24"
+    >
       {showItems && cartItems.length > 0 ? (
         <div className="border-b border-border">
           <h2 className="px-5 pt-4 text-lg font-bold tracking-tight">{t("yourOrder")}</h2>
@@ -104,10 +109,14 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
         </div>
       ) : null}
 
-      {cartItems.length > 0 ? <CartCoupons appliedCode={couponCode} applying={isApplyingCoupon} onApply={applyCartCoupon} /> : null}
+      {cartItems.length > 0 ? (
+        <div className="cart-summary-coupons">
+          <CartCoupons appliedCode={couponCode} applying={isApplyingCoupon} onApply={applyCartCoupon} />
+        </div>
+      ) : null}
 
-      <div className="p-5">
-        <h2 className="text-lg font-bold tracking-tight">{t("summary")}</h2>
+      <div className="cart-summary-body p-5">
+        <h2 className="cart-summary-title text-lg font-bold tracking-tight">{t("summary")}</h2>
         {totalsUpdating ? (
           <div role="status" aria-busy="true" aria-label={t("loading")} className="mt-4 space-y-3.5">
             <span className="sr-only">{t("loading")}</span>
@@ -122,7 +131,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             <div className="h-12 animate-pulse rounded-xl bg-surface-muted" />
           </div>
         ) : (
-          <dl className="mt-4 space-y-3.5 text-sm">
+          <dl className="cart-summary-rows mt-4 space-y-3.5 text-sm">
             <div className="flex items-center justify-between gap-3">
               <dt className="text-muted">
                 {t("subtotal")}
@@ -134,7 +143,9 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
               <div className="flex items-center justify-between gap-3">
                 <dt className="text-muted">
                   {t("couponLabel")}
-                  <span className="mt-0.5 block text-xs font-semibold tracking-wide text-primary">{couponCode} {couponValue > 0 ? `${couponType?.toLowerCase() === "percentage" ? `(${couponValue}%)` : ``}` : ""}</span>
+                  <span className="mt-0.5 block text-xs font-semibold tracking-wide text-primary">
+                    {couponCode} {couponValue > 0 ? `${couponType?.toLowerCase() === "percentage" ? `(${couponValue}%)` : ``}` : ""}
+                  </span>
                 </dt>
                 <dd className="flex items-center gap-1 font-semibold tabular-nums text-price">
                   {discountAmount > 0 ? `−${formatAmount(discountAmount, currencySymbol)}` : t("couponShipping")}
@@ -143,7 +154,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
                     aria-label={t("removeCoupon")}
                     disabled={isRemovingCoupon}
                     onClick={removeCartCoupon}
-                    className="inline-flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cart-summary-remove-coupon inline-flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <LuX aria-hidden className="size-3.5" />
                   </button>
@@ -151,12 +162,12 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
               </div>
             ) : null}
             {cartSummary?.shipping_rate_available ? (
-              <div className="flex items-start justify-between gap-3">
+              <div className="cart-summary-shipping flex items-start justify-between gap-3">
                 <dt className="text-muted">
                   {t("shipping")}
-                  {shippingRateZone ? <span className="mt-0.5 block text-xs text-muted/80">{t("shippingZone")}: {shippingRateZone}</span> : null}
-                  {shippingRateTitle ? <span className="mt-0.5 block text-xs text-muted/80">{t("shippingTitle")}: {shippingRateTitle}</span> : null}
-                  {shippingIsFree ? <span className="mt-0.5 block text-xs font-semibold text-price">{t("couponShipping")}</span> : null}
+                  {shippingRateZone ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingZone")}: {shippingRateZone}</span> : null}
+                  {shippingRateTitle ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingTitle")}: {shippingRateTitle}</span> : null}
+                  {shippingIsFree ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs font-semibold text-price">{t("couponShipping")}</span> : null}
                 </dt>
                 <dd className={`pt-0.5 font-semibold tabular-nums ${shippingIsFree ? "text-price" : "text-heading"}`}>
                   {shippingIsFree ? t("free") : formatAmount(shippingCharge, currencySymbol)}
@@ -175,7 +186,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
                 <dd className="font-semibold tabular-nums text-heading">{formatAmount(taxAmount, currencySymbol)}</dd>
               </div>
             ) : null}
-            <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
+            <div className="cart-summary-total flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
               <dt className="text-sm font-semibold text-heading">{t("total")}</dt>
               <dd className="text-base font-bold tabular-nums text-price">{totalAmount === 0 ? t("free") : formatAmount(totalAmount, currencySymbol)}</dd>
             </div>
@@ -184,7 +195,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
         {checkoutHref && cartItems.length > 0 ? (
           <Link
             href={checkoutHref}
-            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="cart-summary-checkout mt-4 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {t("checkout")}
           </Link>

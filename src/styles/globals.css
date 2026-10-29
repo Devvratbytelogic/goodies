@@ -114,3 +114,130 @@ h3 {
 button {
   cursor: pointer;
 }
+
+/* Order summary sheet: same CartDetails/CartSummary markup, compact layout via CSS */
+.order-summary-sheet .cart-details[data-variant="sheet"] {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-details[data-variant="sheet"] .cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.order-summary-sheet .cart-details[data-variant="sheet"] .cart-items {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.order-summary-sheet .cart-details[data-variant="sheet"] .cart-summary {
+  flex-shrink: 0;
+}
+
+.cart-details[data-variant="sheet"] .cart-items > .cart-item {
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--background);
+}
+
+.cart-details[data-variant="sheet"] .cart-items > .cart-item + .cart-item {
+  border-top-width: 1px;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-body,
+.cart-details[data-variant="sheet"] .cart-item-top,
+.cart-details[data-variant="sheet"] .cart-item-actions {
+  display: contents;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.5rem;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-info {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-clamp: 2;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-price {
+  margin-top: 0.25rem;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.cart-details[data-variant="sheet"] .cart-item-remove,
+.cart-details[data-variant="sheet"] .cart-item-bundle,
+.cart-details[data-variant="sheet"] .cart-item-line-total {
+  display: none;
+}
+
+.cart-details[data-variant="sheet"] .cart-item-qty {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.cart-summary[data-variant="sheet"] {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  position: static;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-coupons,
+.cart-summary[data-variant="sheet"] .cart-summary-checkout,
+.cart-summary[data-variant="sheet"] .cart-summary-remove-coupon,
+.cart-summary[data-variant="sheet"] .cart-summary-shipping-meta {
+  display: none;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-body {
+  padding: 0;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-title {
+  font-size: 0.875rem;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-rows {
+  margin-top: 0.75rem;
+  row-gap: 0.625rem;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-total {
+  margin-top: 0.25rem;
+  border-radius: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  padding: 0.75rem 0 0;
+}
+
+.cart-summary[data-variant="sheet"] .cart-summary-total dd {
+  color: var(--heading);
+}

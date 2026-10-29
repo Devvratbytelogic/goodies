@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { LuChevronDown, LuSearch, LuTicket } from "react-icons/lu";
 import type { CouponApiResponseDataEntity } from "@/server/types/coupon";
 import { useGetCouponsQuery } from "@/store/endpoints/cartApi";
 
 type CartCouponsProps = {
+  // page = sticky cart sidebar; sheet = order-summary bottom sheet
+  variant?: "page" | "sheet";
   appliedCode: string | null;
   applying: boolean;
   onApply: (code: string) => void;
 };
 
-export default function CartCoupons({ appliedCode, applying, onApply }: CartCouponsProps) {
+export default function CartCoupons({ variant = "page", appliedCode, applying, onApply }: CartCouponsProps) {
   const t = useTranslations("CartPage");
+  const searchId = useId();
   const { data: coupons = [] } = useGetCouponsQuery();
   const [query, setQuery] = useState("");
   const couponSearch = query.trim().toLowerCase();
@@ -34,7 +37,7 @@ export default function CartCoupons({ appliedCode, applying, onApply }: CartCoup
   }
 
   return (
-    <details className="group/coupons border-b border-border">
+    <details className={`group/coupons ${variant === "sheet" ? "" : "border-b border-border"}`}>
       <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary-soft text-primary">
           <LuTicket aria-hidden className="size-5" />
@@ -54,12 +57,12 @@ export default function CartCoupons({ appliedCode, applying, onApply }: CartCoup
       </summary>
       <div className="border-t border-border px-4 pt-4">
         <form role="search" onSubmit={submitCouponSearch} className="relative">
-          <label htmlFor="cart-coupon-search" className="sr-only">
+          <label htmlFor={searchId} className="sr-only">
             {t("couponSearch")}
           </label>
           <LuSearch aria-hidden className="pointer-events-none absolute inset-s-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
           <input
-            id="cart-coupon-search"
+            id={searchId}
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}

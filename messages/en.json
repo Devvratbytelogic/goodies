@@ -25,6 +25,29 @@
     "youSaved": "You saved {amount} with this coupon.",
     "thanks": "Yay, Thanks!"
   },
+  "EmailVerify": {
+    "back": "Go back",
+    "brand": "Goodies",
+    "enterTitle": "Enter email",
+    "enterSubtitle": "Provide your email to continue",
+    "email": "Email address",
+    "emailPlaceholder": "Email address",
+    "continue": "Continue",
+    "required": "This field is required",
+    "emailInvalid": "Enter a valid email address",
+    "verifyTitle": "Verify email",
+    "otpSent": "Enter OTP sent to",
+    "editEmail": "Edit email",
+    "otpLabel": "Verification code",
+    "resendIn": "Resend OTP in {seconds}s",
+    "resend": "Resend OTP",
+    "keepLoggedIn": "Keep me logged in on this device."
+  },
+  "OrderSummary": {
+    "title": "Order summary ({count, plural, one {# Item} other {# Items}})",
+    "offerApplied": "🎉 {offer} Offer Applied! You save {amount}!",
+    "close": "Close order summary"
+  },
   "Login": {
     "title": "Log in",
     "subtitle": "Sign in with your email to continue.",

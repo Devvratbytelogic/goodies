@@ -8,6 +8,7 @@ import { getPageNoticeSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
 import Celebration from "@/components/layout/common/Celebration";
+import CheckoutAuth from "@/components/auth/CheckoutAuth";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("CartPage");
@@ -28,6 +29,7 @@ export default async function CartPage({ params }: { params: Promise<{ currency:
   return (
     <>
       <div className="section_y_space">
+        {/* <CheckoutAuth /> */}
         {/* <Celebration title={celebrate("hurray")} actionLabel={celebrate("thanks")}>
           <p>{celebrate("applied", { offer: "GET 10% OFF ON ALL ORDERS" })}</p>
           <p className="font-bold">{celebrate("youSaved", { amount: "AED 650" })}</p>
