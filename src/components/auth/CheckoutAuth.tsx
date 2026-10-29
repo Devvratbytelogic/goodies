@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LuChevronLeft } from "react-icons/lu";
+import EmailVerify from "@/components/auth/EmailVerify";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 
@@ -54,7 +55,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
-        className="relative z-100 flex h-full w-full flex-col bg-surface-soft outline-none sm:w-1/2 lg:w-1/3"
+        className="relative z-100 flex h-full w-full flex-col bg-surface-soft outline-none sm:w-1/2 xl:w-1/3"
       >
         <header className="relative flex h-16 shrink-0 items-center justify-center bg-white px-12">
           <button
@@ -67,8 +68,11 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
           </button>
           <ImageComponent src="/logo/logo.webp" alt={t("brand")} width={80} height={80} sizes="80px" objectFit="contain" className="h-14! w-auto" />
         </header>
-        <div className="flex-1 overflow-y-auto bg px-4 py-4">
-          <OrderSummary />
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div className="grid gap-6">
+            <OrderSummary />
+            <EmailVerify onVerified={close} />
+          </div>
         </div>
       </div>
     </div>
