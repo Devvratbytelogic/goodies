@@ -16,7 +16,7 @@ import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link, useRouter } from "@/i18n/navigation";
 import { PlacedOrder } from "@/server/types/order";
 import { useGetGlobalSettingsQuery } from "@/store/endpoints/settingsApi";
-import { getAccountOrderRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
 
 type CheckoutStep = "email" | "address" | "payment";
 
@@ -75,7 +75,12 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
 
   function handlePlaced(order: PlacedOrder) {
     close();
-    router.push(getAccountOrderRoutePath(order.order_id));
+    const params = new URLSearchParams({
+      cod: "success",
+      order_id: order.order_id,
+      order_number: String(order.order_number),
+    });
+    router.push(`${getCheckoutClassicRoutePath()}?${params.toString()}`);
   }
 
   function handleBack() {

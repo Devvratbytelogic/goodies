@@ -12,6 +12,7 @@ type CheckoutSearchParams = {
   ziina?: string;
   tabby?: string;
   tamara?: string;
+  cod?: string;
   order_id?: string;
   order_number?: string;
   message?: string;
@@ -20,9 +21,15 @@ type CheckoutSearchParams = {
 export async function generateMetadata({ searchParams }: { searchParams: Promise<CheckoutSearchParams> }): Promise<Metadata> {
   const t = await getTranslations("CheckoutClassicPage");
   const query = await searchParams;
-  const paymentStatus = query.tabby || query.ziina || query.tamara;
+  const paymentStatus = query.tabby || query.ziina || query.tamara || query.cod;
   if (paymentStatus) {
-    const resultTitle = query.tabby ? t("tabbyResultTitle") : query.tamara ? t("tamaraResultTitle") : t("ziinaResultTitle");
+    const resultTitle = query.tabby
+      ? t("tabbyResultTitle")
+      : query.tamara
+        ? t("tamaraResultTitle")
+        : query.cod
+          ? t("received")
+          : t("ziinaResultTitle");
     return {
       title: paymentStatus === "success" ? t("received") : resultTitle,
       robots: { index: false, follow: false },
@@ -46,7 +53,7 @@ export default async function CheckoutClassicPage({
   const nav = await getTranslations("Nav");
   const cart = await getTranslations("CartPage");
   const query = await searchParams;
-  const paymentStatus = query.tabby || query.ziina || query.tamara;
+  const paymentStatus = query.tabby || query.ziina || query.tamara || query.cod;
   const country = toCurrency(currency);
   const [notices, settings] = await Promise.all([getPageNoticeSettings(country), getGlobalSettings(country)]);
   const checkoutNotice = notices?.checkout_notice_enabled ? notices.checkout_notice?.trim() : "";
