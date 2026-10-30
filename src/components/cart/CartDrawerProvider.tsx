@@ -1,7 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "@/i18n/navigation";
+import { consumeCheckoutReopen } from "@/utils/checkoutReturn";
 
 type CartDrawerContextValue = {
   open: boolean;
@@ -43,6 +44,12 @@ export function CartDrawerProvider({ children }: { children: ReactNode }) {
     setCheckoutOpen(true);
   }, []);
   const closeCheckout = useCallback(() => setCheckoutOpen(false), []);
+
+  useEffect(() => {
+    if (!consumeCheckoutReopen()) return;
+    setOpen(false);
+    setCheckoutOpen(true);
+  }, [pathname]);
   const value = useMemo(
     () => ({ open, openCart, closeCart, checkoutOpen, openCheckout, closeCheckout }),
     [open, openCart, closeCart, checkoutOpen, openCheckout, closeCheckout],

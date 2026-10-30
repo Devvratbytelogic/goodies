@@ -16,6 +16,7 @@ import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link, useRouter } from "@/i18n/navigation";
 import { PlacedOrder } from "@/server/types/order";
 import { useGetGlobalSettingsQuery } from "@/store/endpoints/settingsApi";
+import { consumeCheckoutResume, peekCheckoutResume } from "@/utils/checkoutReturn";
 import { getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
 
 type CheckoutStep = "email" | "address" | "payment";
@@ -30,14 +31,17 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
   const paymentText = useTranslations("CheckoutPayment");
   const celebrate = useTranslations("Celebration");
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, ready } = useAuth();
   const { isOpen: isModalOpen } = useModal();
   const { data: settings } = useGetGlobalSettingsQuery();
   const dialogRef = useRef<HTMLDivElement>(null);
   const celebratedExistingRef = useRef<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [step, setStep] = useState<CheckoutStep>(token ? "address" : "email");
+  const [step, setStep] = useState<CheckoutStep>(() => {
+    if (token && peekCheckoutResume()) return "payment";
+    return token ? "address" : "email";
+  });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [couponCelebration, setCouponCelebration] = useState<CouponCelebration | null>(null);
   const visible = open && !dismissed;
@@ -59,8 +63,13 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
   }, [visible]);
 
   useEffect(() => {
+    if (!ready) return;
+    if (consumeCheckoutResume()) {
+      if (token) setStep("payment");
+      return;
+    }
     if (token && step === "email") setStep("address");
-  }, [token, step]);
+  }, [ready, token, step]);
 
   const close = useCallback(() => {
     setDismissed(true);

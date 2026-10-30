@@ -211,8 +211,7 @@ button {
 
 .cart-summary[data-variant="sheet"] .cart-summary-coupons,
 .cart-summary[data-variant="sheet"] .cart-summary-checkout,
-.cart-summary[data-variant="sheet"] .cart-summary-remove-coupon,
-.cart-summary[data-variant="sheet"] .cart-summary-shipping-meta {
+.cart-summary[data-variant="sheet"] .cart-summary-remove-coupon {
   display: none;
 }
 

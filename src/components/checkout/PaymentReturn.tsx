@@ -5,10 +5,11 @@ import { useTranslations } from "next-intl";
 import { LuCircleCheck, LuCircleX, LuClock } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import OrderAddresses from "@/components/checkout/OrderAddresses";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { api } from "@/store/api";
 import { useDownloadOrderInvoiceMutation, useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
 import { useAppDispatch } from "@/store/hooks";
+import { armCheckoutReopen, isClassicCheckoutPath, readCheckoutReturn } from "@/utils/checkoutReturn";
 import { formatAmount } from "@/utils/price";
 import { getAccountOrderRoutePath, getProductRoutePath } from "@/utils/routes";
 
@@ -27,6 +28,27 @@ type PaymentReturnProps = {
   checkoutHref: string;
   method?: "ziina" | "tabby" | "tamara";
 };
+
+function BackToCheckout({ checkoutHref }: { checkoutHref: string }) {
+  const t = useTranslations("CheckoutClassicPage");
+  const router = useRouter();
+
+  function onBack() {
+    const saved = readCheckoutReturn();
+    if (saved && !isClassicCheckoutPath(saved)) {
+      armCheckoutReopen();
+      router.push(saved);
+      return;
+    }
+    router.push(checkoutHref);
+  }
+
+  return (
+    <button type="button" onClick={onBack} className={buttonClassName}>
+      {t("backToCheckout")}
+    </button>
+  );
+}
 
 function OrderDetailsSkeleton() {
   return (
@@ -118,9 +140,7 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
             <p className="mt-2 max-w-md text-sm text-muted">{cancelledNote}</p>
           </div>
         </div>
-        <Link href={checkoutHref} className={buttonClassName}>
-          {t("backToCheckout")}
-        </Link>
+        <BackToCheckout checkoutHref={checkoutHref} />
       </section>
     );
   }
@@ -135,9 +155,7 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
             <p className="mt-2 max-w-md text-sm text-muted">{message || failedNote}</p>
           </div>
         </div>
-        <Link href={checkoutHref} className={buttonClassName}>
-          {t("backToCheckout")}
-        </Link>
+        <BackToCheckout checkoutHref={checkoutHref} />
       </section>
     );
   }

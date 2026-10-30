@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
+import { usePathname } from "@/i18n/navigation";
 import { useCreateZiinaCheckoutMutation } from "@/store/endpoints/paymentApi";
+import { rememberCheckoutReturn } from "@/utils/checkoutReturn";
 import { readOrigin } from "@/utils/origin";
 
 type ZiinaCheckoutProps = {
@@ -18,6 +20,7 @@ type ZiinaCheckoutProps = {
 
 export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: ZiinaCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
+  const pathname = usePathname();
   const totalsUpdating = useCheckoutTotalsUpdating("ziina");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
@@ -37,6 +40,7 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shi
 
       const paymentUrl = session?.payment_url || session?.redirect_url;
       if (paymentUrl) {
+        rememberCheckoutReturn(`${pathname}${window.location.search}`);
         window.location.assign(paymentUrl);
         return;
       }

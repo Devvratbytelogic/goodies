@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
+import { usePathname } from "@/i18n/navigation";
 import { useCreateTabbySessionMutation } from "@/store/endpoints/paymentApi";
+import { rememberCheckoutReturn } from "@/utils/checkoutReturn";
 import { readOrigin } from "@/utils/origin";
 
 type TabbyCheckoutProps = {
@@ -18,6 +20,7 @@ type TabbyCheckoutProps = {
 
 export default function TabbyCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, buttonClassName, autoStart = false }: TabbyCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
+  const pathname = usePathname();
   const totalsUpdating = useCheckoutTotalsUpdating("tabby");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
@@ -37,6 +40,7 @@ export default function TabbyCheckout({ billingAddressId, shippingAddressId, cou
       }).unwrap();
 
       if (session?.payment_url) {
+        rememberCheckoutReturn(`${pathname}${window.location.search}`);
         window.location.assign(session.payment_url);
         return;
       }

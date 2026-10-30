@@ -131,7 +131,7 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             <div className="h-12 animate-pulse rounded-xl bg-surface-muted" />
           </div>
         ) : (
-          <dl className="cart-summary-rows mt-4 space-y-3.5 text-sm">
+          <dl className="cart-summary-rows mt-4 space-y-1.5 text-sm">
             <div className="flex items-center justify-between gap-3">
               <dt className="text-muted">
                 {t("subtotal")}
@@ -163,11 +163,11 @@ export default function CartSummary({ checkoutHref, showItems = false, paymentMe
             ) : null}
             {cartSummary?.shipping_rate_available ? (
               <div className="cart-summary-shipping flex items-start justify-between gap-3">
-                <dt className="text-muted">
+                <dt className="flex flex-wrap text-muted">
                   {t("shipping")}
-                  {shippingRateZone ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingZone")}: {shippingRateZone}</span> : null}
-                  {shippingRateTitle ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingTitle")}: {shippingRateTitle}</span> : null}
-                  {shippingIsFree ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs font-semibold text-price">{t("couponShipping")}</span> : null}
+                  ({shippingRateZone ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingZone")}: {shippingRateZone} &nbsp;</span> : null}
+                  {shippingRateTitle ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs text-muted/80">{t("shippingTitle")}: {shippingRateTitle} &nbsp;</span> : null}
+                  {shippingIsFree ? <span className="cart-summary-shipping-meta mt-0.5 block text-xs font-semibold text-price">{t("couponShipping")}</span> : null})
                 </dt>
                 <dd className={`pt-0.5 font-semibold tabular-nums ${shippingIsFree ? "text-price" : "text-heading"}`}>
                   {shippingIsFree ? t("free") : formatAmount(shippingCharge, currencySymbol)}

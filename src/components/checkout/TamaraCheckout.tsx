@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
+import { usePathname } from "@/i18n/navigation";
 import { useCreateTamaraCheckoutMutation } from "@/store/endpoints/paymentApi";
+import { rememberCheckoutReturn } from "@/utils/checkoutReturn";
 import { readOrigin } from "@/utils/origin";
 
 type TamaraCheckoutProps = {
@@ -17,6 +19,7 @@ type TamaraCheckoutProps = {
 
 export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: TamaraCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
+  const pathname = usePathname();
   const totalsUpdating = useCheckoutTotalsUpdating("tamara");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
@@ -36,6 +39,7 @@ export default function TamaraCheckout({ billingAddressId, shippingAddressId, sh
 
       const paymentUrl = session?.payment_url || session?.checkout_url || session?.redirect_url;
       if (paymentUrl) {
+        rememberCheckoutReturn(`${pathname}${window.location.search}`);
         window.location.assign(paymentUrl);
         return;
       }
