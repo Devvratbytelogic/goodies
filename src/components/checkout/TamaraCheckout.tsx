@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { usePathname } from "@/i18n/navigation";
@@ -15,12 +16,14 @@ type TamaraCheckoutProps = {
   shippingAvailable: boolean;
   buttonClassName?: string;
   autoStart?: boolean;
+  /** null reuses the page cart. Omitted watches this gateway's own method. */
+  totalsMethod?: PaymentMethod | null;
 };
 
-export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: TamaraCheckoutProps) {
+export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false, totalsMethod }: TamaraCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const pathname = usePathname();
-  const totalsUpdating = useCheckoutTotalsUpdating("tamara");
+  const totalsUpdating = useCheckoutTotalsUpdating(totalsMethod === null ? undefined : totalsMethod ?? "tamara");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createTamaraCheckout, { isLoading }] = useCreateTamaraCheckoutMutation();

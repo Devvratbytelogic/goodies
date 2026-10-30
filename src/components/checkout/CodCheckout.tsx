@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { PlacedOrder } from "@/server/types/order";
@@ -14,11 +15,13 @@ type CodCheckoutProps = {
   shippingAvailable: boolean;
   onPlaced: (order: PlacedOrder) => void;
   buttonClassName?: string;
+  /** null reuses the page cart. Omitted watches cash on delivery. */
+  totalsMethod?: PaymentMethod | null;
 };
 
-export default function CodCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, onPlaced, buttonClassName }: CodCheckoutProps) {
+export default function CodCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, onPlaced, buttonClassName, totalsMethod }: CodCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
-  const totalsUpdating = useCheckoutTotalsUpdating("cod");
+  const totalsUpdating = useCheckoutTotalsUpdating(totalsMethod === null ? undefined : totalsMethod ?? "cod");
   const [placeOrder, { isLoading }] = usePlaceOrderMutation();
 
   async function placeCodOrder() {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { usePathname } from "@/i18n/navigation";
@@ -16,12 +17,14 @@ type TabbyCheckoutProps = {
   shippingAvailable: boolean;
   buttonClassName?: string;
   autoStart?: boolean;
+  /** null reuses the page cart. Omitted watches this gateway's own method. */
+  totalsMethod?: PaymentMethod | null;
 };
 
-export default function TabbyCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, buttonClassName, autoStart = false }: TabbyCheckoutProps) {
+export default function TabbyCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, buttonClassName, autoStart = false, totalsMethod }: TabbyCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const pathname = usePathname();
-  const totalsUpdating = useCheckoutTotalsUpdating("tabby");
+  const totalsUpdating = useCheckoutTotalsUpdating(totalsMethod === null ? undefined : totalsMethod ?? "tabby");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createTabbySession, { isLoading }] = useCreateTabbySessionMutation();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import CodCheckout from "@/components/checkout/CodCheckout";
 import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
@@ -10,12 +10,13 @@ import ZiinaCheckout from "@/components/checkout/ZiinaCheckout";
 import { PlacedOrder } from "@/server/types/order";
 import { useGetAddressesQuery } from "@/store/endpoints/addressApi";
 import { useGetCartQuery } from "@/store/endpoints/cartApi";
-import { useGetGlobalSettingsQuery } from "@/store/endpoints/settingsApi";
 
 type CheckoutPaymentProps = {
   header?: ReactNode;
+  paymentMethod: PaymentMethod | null;
+  defaultPaymentMethod?: string | null;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
   onPlaced?: (order: PlacedOrder) => void;
-  onPaymentMethodChange?: (method: PaymentMethod) => void;
 };
 
 const placeButtonClassName =
@@ -24,20 +25,18 @@ const placeButtonClassName =
 const footerClassName =
   "grid shrink-0 gap-2 border-t border-border bg-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]";
 
-function startingMethod(value?: string | null): PaymentMethod {
-  const method = value?.trim().toLowerCase();
-  if (method === "tabby" || method === "ziina" || method === "tamara" || method === "cod") return method;
-  return "ziina";
-}
-
-export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChange }: CheckoutPaymentProps) {
+export default function CheckoutPayment({
+  header,
+  paymentMethod,
+  defaultPaymentMethod = null,
+  onPaymentMethodChange,
+  onPlaced,
+}: CheckoutPaymentProps) {
   const t = useTranslations("CheckoutPayment");
   const fields = useTranslations("CheckoutClassicPage");
-  const { data: settings } = useGetGlobalSettingsQuery();
   const { data: addresses = [] } = useGetAddressesQuery();
-  const primaryMethod = startingMethod(settings?.default_payment_method);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
-  const { data: cart } = useGetCartQuery(paymentMethod ?? primaryMethod);
+  const cartMethod = paymentMethod && paymentMethod !== defaultPaymentMethod ? paymentMethod : undefined;
+  const { data: cart } = useGetCartQuery(cartMethod);
   const shippingAvailable = cart?.summary?.shipping_rate_available !== false;
 
   const selectedId =
@@ -48,10 +47,6 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
   const selectedAddress = addresses.find((address) => address._id === selectedId) ?? null;
   const country = selectedAddress?.country_code ?? "AE";
   const showCodFooter = paymentMethod === "cod";
-
-  useEffect(() => {
-    if (paymentMethod) onPaymentMethodChange?.(paymentMethod);
-  }, [paymentMethod, onPaymentMethodChange]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -67,8 +62,8 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
             <PaymentMethods
               variant="sheet"
               value={paymentMethod}
-              primaryMethod={primaryMethod}
-              onChange={setPaymentMethod}
+              primaryMethod={defaultPaymentMethod}
+              onChange={onPaymentMethodChange}
             />
 
             {selectedId && !shippingAvailable ? (
@@ -80,6 +75,7 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
             {paymentMethod === "tabby" ? (
               <TabbyCheckout
                 autoStart
+                totalsMethod={cartMethod ?? null}
                 billingAddressId={selectedId}
                 shippingAddressId={selectedId}
                 country={country}
@@ -90,6 +86,7 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
             {paymentMethod === "ziina" ? (
               <ZiinaCheckout
                 autoStart
+                totalsMethod={cartMethod ?? null}
                 billingAddressId={selectedId}
                 shippingAddressId={selectedId}
                 shippingAvailable={shippingAvailable}
@@ -99,6 +96,7 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
             {paymentMethod === "tamara" ? (
               <TamaraCheckout
                 autoStart
+                totalsMethod={cartMethod ?? null}
                 billingAddressId={selectedId}
                 shippingAddressId={selectedId}
                 shippingAvailable={shippingAvailable}
@@ -111,6 +109,7 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
       {showCodFooter ? (
         <div className={footerClassName}>
           <CodCheckout
+            totalsMethod={cartMethod ?? null}
             billingAddressId={selectedId}
             shippingAddressId={selectedId}
             country={country}
@@ -123,5 +122,3 @@ export default function CheckoutPayment({ header, onPlaced, onPaymentMethodChang
     </div>
   );
 }
-
-export { startingMethod };

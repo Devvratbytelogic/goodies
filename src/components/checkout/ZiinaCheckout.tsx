@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
 import { usePathname } from "@/i18n/navigation";
@@ -16,12 +17,14 @@ type ZiinaCheckoutProps = {
   buttonClassName?: string;
   /** Start gateway as soon as ready (no Place order click). */
   autoStart?: boolean;
+  /** null reuses the page cart. Omitted watches this gateway's own method. */
+  totalsMethod?: PaymentMethod | null;
 };
 
-export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: ZiinaCheckoutProps) {
+export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false, totalsMethod }: ZiinaCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const pathname = usePathname();
-  const totalsUpdating = useCheckoutTotalsUpdating("ziina");
+  const totalsUpdating = useCheckoutTotalsUpdating(totalsMethod === null ? undefined : totalsMethod ?? "ziina");
   const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createZiinaCheckout, { isLoading }] = useCreateZiinaCheckoutMutation();

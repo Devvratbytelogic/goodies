@@ -7,7 +7,7 @@ import { LuChevronLeft } from "react-icons/lu";
 import { useAuth } from "@/components/auth/AuthProvider";
 import CheckoutAddress from "@/components/auth/CheckoutAddress";
 import EmailVerify from "@/components/auth/EmailVerify";
-import CheckoutPayment, { startingMethod } from "@/components/checkout/CheckoutPayment";
+import CheckoutPayment from "@/components/checkout/CheckoutPayment";
 import OrderSummary, { type CouponCelebration, type CouponCelebrationEvent } from "@/components/checkout/OrderSummary";
 import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import Celebration from "@/components/layout/common/Celebration";
@@ -45,7 +45,8 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [couponCelebration, setCouponCelebration] = useState<CouponCelebration | null>(null);
   const visible = open && !dismissed;
-  const selectedMethod = paymentMethod ?? startingMethod(settings?.default_payment_method);
+  const defaultPaymentMethod = settings?.default_payment_method?.trim().toLowerCase() || null;
+  const cartMethod = paymentMethod && paymentMethod !== defaultPaymentMethod ? paymentMethod : undefined;
 
   useEffect(() => {
     setMounted(true);
@@ -94,6 +95,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
 
   function handleBack() {
     if (step === "payment") {
+      setPaymentMethod(null);
       setStep("address");
       return;
     }
@@ -145,7 +147,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
 
   if (!mounted || !visible) return null;
 
-  const orderSummary = <OrderSummary paymentMethod={selectedMethod} onCouponApplied={onCouponApplied} />;
+  const orderSummary = <OrderSummary paymentMethod={cartMethod} onCouponApplied={onCouponApplied} />;
   const backLabel = step === "payment" ? paymentText("back") : t("back");
 
   return createPortal(
@@ -184,7 +186,13 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
         ) : step === "address" ? (
           <CheckoutAddress onDone={() => setStep("payment")} header={orderSummary} />
         ) : (
-          <CheckoutPayment header={orderSummary} onPaymentMethodChange={setPaymentMethod} onPlaced={handlePlaced} />
+          <CheckoutPayment
+            header={orderSummary}
+            paymentMethod={paymentMethod}
+            defaultPaymentMethod={defaultPaymentMethod}
+            onPaymentMethodChange={setPaymentMethod}
+            onPlaced={handlePlaced}
+          />
         )}
 
         {couponCelebration ? (
