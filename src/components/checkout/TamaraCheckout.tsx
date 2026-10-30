@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
@@ -12,11 +12,13 @@ type TamaraCheckoutProps = {
   shippingAddressId: string | null;
   shippingAvailable: boolean;
   buttonClassName?: string;
+  autoStart?: boolean;
 };
 
-export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName }: TamaraCheckoutProps) {
+export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: TamaraCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const totalsUpdating = useCheckoutTotalsUpdating("tamara");
+  const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createTamaraCheckout, { isLoading }] = useCreateTamaraCheckoutMutation();
 
@@ -46,6 +48,28 @@ export default function TamaraCheckout({ billingAddressId, shippingAddressId, sh
 
   const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
   const requestPlace = usePlaceWhenSignedIn(payWithTamara, "tamara", ready);
+
+  useEffect(() => {
+    if (!autoStart || !ready || startedRef.current) return;
+    startedRef.current = true;
+    requestPlace();
+  }, [autoStart, ready, requestPlace]);
+
+  if (autoStart) {
+    return (
+      <>
+        {error ? (
+          <p role="alert" className="mt-4 text-sm font-medium text-primary">
+            {error}
+          </p>
+        ) : (
+          <p role="status" className="mt-4 text-sm text-muted">
+            {t("tamaraRedirecting")}
+          </p>
+        )}
+      </>
+    );
+  }
 
   return (
     <>

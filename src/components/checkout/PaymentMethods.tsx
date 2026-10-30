@@ -7,14 +7,16 @@ import { formatAmount } from "@/utils/price";
 export type PaymentMethod = "cod" | "tabby" | "ziina" | "tamara";
 
 type PaymentMethodsProps = {
-  value: PaymentMethod;
+  value: PaymentMethod | null;
   onChange: (method: PaymentMethod) => void;
   variant?: "default" | "sheet";
+  /** Settings default — shown as a badge, not auto-selected. */
+  primaryMethod?: PaymentMethod | null;
 };
 
-export default function PaymentMethods({ value, onChange, variant = "default" }: PaymentMethodsProps) {
+export default function PaymentMethods({ value, onChange, variant = "default", primaryMethod = null }: PaymentMethodsProps) {
   const t = useTranslations("CheckoutClassicPage");
-  const { data: cart } = useGetCartQuery(value);
+  const { data: cart } = useGetCartQuery(value ?? undefined);
   const cod = cart?.summary?.cod_status ? cart.cod_method : null;
   const methods = (["cod", "ziina", "tabby", "tamara"] as const).filter((method) => method !== "cod" || cod);
   const sheet = variant === "sheet";
@@ -25,6 +27,7 @@ export default function PaymentMethods({ value, onChange, variant = "default" }:
       <div className={sheet ? "grid gap-3" : "mt-4 grid gap-3"} role="radiogroup" aria-label={t("paymentMethod")}>
         {methods.map((method) => {
           const selected = value === method;
+          const isPrimary = primaryMethod === method;
           const title = method === "ziina" ? t("payZiina") : method === "tabby" ? t("payTabby") : method === "tamara" ? t("payTamara") : t("payCod");
           const note = method === "ziina" ? t("payZiinaNote") : method === "tabby" ? t("payTabbyNote") : method === "tamara" ? t("payTamaraNote") : null;
 
@@ -42,7 +45,12 @@ export default function PaymentMethods({ value, onChange, variant = "default" }:
                 className="mt-1 size-4 accent-primary"
               />
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-bold text-heading">{title}</span>
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-bold text-heading">{title}</span>
+                  {isPrimary ? (
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">{t("primaryMethod")}</span>
+                  ) : null}
+                </span>
                 {note ? <span className="mt-1 block text-sm text-muted">{note}</span> : null}
               </span>
               {method === "cod" && cod ? (

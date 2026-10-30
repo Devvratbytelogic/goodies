@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
@@ -13,11 +13,13 @@ type TabbyCheckoutProps = {
   country: string;
   shippingAvailable: boolean;
   buttonClassName?: string;
+  autoStart?: boolean;
 };
 
-export default function TabbyCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, buttonClassName }: TabbyCheckoutProps) {
+export default function TabbyCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, buttonClassName, autoStart = false }: TabbyCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const totalsUpdating = useCheckoutTotalsUpdating("tabby");
+  const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createTabbySession, { isLoading }] = useCreateTabbySessionMutation();
 
@@ -47,6 +49,28 @@ export default function TabbyCheckout({ billingAddressId, shippingAddressId, cou
 
   const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
   const requestPlace = usePlaceWhenSignedIn(payWithTabby, "tabby", ready);
+
+  useEffect(() => {
+    if (!autoStart || !ready || startedRef.current) return;
+    startedRef.current = true;
+    requestPlace();
+  }, [autoStart, ready, requestPlace]);
+
+  if (autoStart) {
+    return (
+      <>
+        {error ? (
+          <p role="alert" className="mt-4 text-sm font-medium text-primary">
+            {error}
+          </p>
+        ) : (
+          <p role="status" className="mt-4 text-sm text-muted">
+            {t("tabbyRedirecting")}
+          </p>
+        )}
+      </>
+    );
+  }
 
   return (
     <>

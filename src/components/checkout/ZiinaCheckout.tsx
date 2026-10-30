@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCheckoutTotalsUpdating } from "@/components/checkout/useCheckoutTotalsUpdating";
 import { usePlaceWhenSignedIn } from "@/components/checkout/usePlaceWhenSignedIn";
@@ -12,11 +12,14 @@ type ZiinaCheckoutProps = {
   shippingAddressId: string | null;
   shippingAvailable: boolean;
   buttonClassName?: string;
+  /** Start gateway as soon as ready (no Place order click). */
+  autoStart?: boolean;
 };
 
-export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName }: ZiinaCheckoutProps) {
+export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName, autoStart = false }: ZiinaCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const totalsUpdating = useCheckoutTotalsUpdating("ziina");
+  const startedRef = useRef(false);
   const [error, setError] = useState("");
   const [createZiinaCheckout, { isLoading }] = useCreateZiinaCheckoutMutation();
 
@@ -46,6 +49,28 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shi
 
   const ready = Boolean(shippingAvailable && billingAddressId && shippingAddressId && !totalsUpdating);
   const requestPlace = usePlaceWhenSignedIn(payWithZiina, "ziina", ready);
+
+  useEffect(() => {
+    if (!autoStart || !ready || startedRef.current) return;
+    startedRef.current = true;
+    requestPlace();
+  }, [autoStart, ready, requestPlace]);
+
+  if (autoStart) {
+    return (
+      <>
+        {error ? (
+          <p role="alert" className="mt-4 text-sm font-medium text-primary">
+            {error}
+          </p>
+        ) : (
+          <p role="status" className="mt-4 text-sm text-muted">
+            {t("ziinaRedirecting")}
+          </p>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
