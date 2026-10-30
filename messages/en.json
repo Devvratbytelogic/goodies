@@ -48,6 +48,18 @@
     "verifyFailed": "Could not verify the code. Try again.",
     "keepLoggedIn": "Keep me logged in on this device."
   },
+  "CheckoutAddress": {
+    "title": "Delivery address",
+    "subtitleAdd": "Add an address to continue checkout.",
+    "subtitleSelect": "Choose where we should deliver your order.",
+    "continue": "Continue",
+    "saving": "Saving…"
+  },
+  "CheckoutPayment": {
+    "title": "Payment method",
+    "subtitle": "Choose how you want to pay for your order.",
+    "back": "Back to delivery address"
+  },
   "OrderSummary": {
     "title": "Order summary ({count, plural, one {# Item} other {# Items}})",
     "offerApplied": "🎉 {offer} Offer Applied! You save {amount}!",
@@ -692,6 +704,7 @@
     "placingOrder": "Placing order…",
     "shippingUnavailable": "Shipping is not available for this address. Please choose another address.",
     "payCod": "Cash on delivery",
+    "codExtra": "+{amount} extra",
     "free": "Free",
     "payTabby": "Pay in 4 with Tabby",
     "payTabbyNote": "Split your purchase into 4 interest-free payments. You will be redirected to Tabby to complete your order.",

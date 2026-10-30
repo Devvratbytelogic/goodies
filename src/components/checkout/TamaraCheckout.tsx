@@ -11,9 +11,10 @@ type TamaraCheckoutProps = {
   billingAddressId: string | null;
   shippingAddressId: string | null;
   shippingAvailable: boolean;
+  buttonClassName?: string;
 };
 
-export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable }: TamaraCheckoutProps) {
+export default function TamaraCheckout({ billingAddressId, shippingAddressId, shippingAvailable, buttonClassName }: TamaraCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const totalsUpdating = useCheckoutTotalsUpdating("tamara");
   const [error, setError] = useState("");
@@ -58,7 +59,10 @@ export default function TamaraCheckout({ billingAddressId, shippingAddressId, sh
         type="button"
         onClick={requestPlace}
         disabled={!shippingAvailable || !billingAddressId || !shippingAddressId || isLoading || totalsUpdating}
-        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
+        className={
+          buttonClassName ??
+          "mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
+        }
       >
         {isLoading ? t("tamaraRedirecting") : t("placeOrder")}
       </button>

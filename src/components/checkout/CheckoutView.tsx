@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+// import { useAuth } from "@/components/auth/AuthProvider";
+// import CheckoutAuth from "@/components/auth/CheckoutAuth";
 import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
@@ -16,21 +18,22 @@ function startingMethod(value?: string): PaymentMethod {
 }
 
 export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopHref: string; defaultPaymentMethod?: string }) {
+  // const { token, ready } = useAuth();
+  // const [showAuth, setShowAuth] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
   const defaultMethod = startingMethod(defaultPaymentMethod);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(defaultMethod);
   const { data: cart } = useGetCartQuery(paymentMethod);
   const shippingAvailable = cart?.summary?.shipping_rate_available !== false;
 
+  // useEffect(() => {
+  //   if (ready && !token) setShowAuth(true);
+  // }, [ready, token]);
+
   function onPaymentMethodChange(method: PaymentMethod) {
     rememberSwitchedMethod(method, defaultMethod);
     setPaymentMethod(method);
   }
-
-  // Cash on delivery is not offered for every cart.
-  // if (paymentMethod === "cod" && cart && !cart.summary?.cod_status) {
-  //   setPaymentMethod("ziina");
-  // }
 
   if (placedOrder) {
     return (
@@ -48,10 +51,20 @@ export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopH
   }
 
   return (
-    <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-      <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={onPaymentMethodChange} onPlaced={setPlacedOrder} />
-      <CartSummary showItems paymentMethod={paymentMethod} />
-    </div>
+    <>
+      {/* {!showAuth ? ( */}
+        {/* <CheckoutAuth
+          onClose={() => setShowAuth(false)}
+          paymentMethod={paymentMethod}
+          shippingAvailable={shippingAvailable}
+          onPaymentMethodChange={onPaymentMethodChange}
+          onPlaced={setPlacedOrder}
+        /> */}
+      {/* ) : null} */}
+      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
+        <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={onPaymentMethodChange} onPlaced={setPlacedOrder} />
+        <CartSummary showItems paymentMethod={paymentMethod} />
+      </div>
+    </>
   );
 }
-

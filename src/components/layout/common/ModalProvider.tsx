@@ -29,6 +29,7 @@ type ModalState = ModalOptions & {
 type ModalContextValue = {
   openModal: (options: ModalOptions) => void;
   closeModal: () => void;
+  isOpen: boolean;
   data?: unknown;
 };
 
@@ -98,16 +99,18 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         closeModal();
       }
     }
 
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown, true);
 
     return () => {
       document.body.style.overflow = "";
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown, true);
     };
   }, [isOpen]);
 
@@ -123,10 +126,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const shown = modal?.phase === "open";
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, data: modal?.data }}>
+    <ModalContext.Provider value={{ openModal, closeModal, isOpen, data: modal?.data }}>
       {children}
       {modal ? (
-        <div className="fixed inset-0 z-80 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-210 flex items-center justify-center p-4">
           <div
             className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ease-out motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
             onClick={closeModal}
@@ -135,7 +138,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
-            className={`relative z-90 max-h-[calc(100dvh-2rem)] w-full ${modalWidth[modal.size]} overflow-y-auto rounded-2xl bg-background p-5 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${shown ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+            className={`relative z-220 max-h-[calc(100dvh-2rem)] w-full ${modalWidth[modal.size]} overflow-y-auto rounded-2xl bg-background p-5 shadow-lg transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${shown ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
           >
             <div className="flex items-start justify-between gap-4">
               <h2 id="modal-title" className="text-lg font-bold tracking-tight">

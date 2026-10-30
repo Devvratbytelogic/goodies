@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { LuChevronRight, LuX } from "react-icons/lu";
 import CartCoupons from "@/components/cart/CartCoupons";
 import CartDetails from "@/components/cart/CartDetails";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { useApplyCouponMutation, useGetCartQuery } from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
 
@@ -13,18 +14,23 @@ export type CouponCelebration = {
   amount: string;
 };
 
-type OrderSummaryProps = {
-  onCouponApplied?: (celebration: CouponCelebration) => void;
+export type CouponCelebrationEvent = CouponCelebration & {
+  /** Manual apply always shows; existing cart coupon only shows once per open. */
+  source: "apply" | "existing";
 };
 
-export default function OrderSummary({ onCouponApplied }: OrderSummaryProps) {
+type OrderSummaryProps = {
+  paymentMethod?: PaymentMethod;
+  onCouponApplied?: (celebration: CouponCelebrationEvent) => void;
+};
+
+export default function OrderSummary({ paymentMethod, onCouponApplied }: OrderSummaryProps) {
   const t = useTranslations("OrderSummary");
   const cartText = useTranslations("CartPage");
   const titleId = useId();
   const sheetRef = useRef<HTMLDivElement>(null);
-  const celebratedCodeRef = useRef<string | null>(null);
   const [open, setOpen] = useState(false);
-  const { data: cart, isLoading } = useGetCartQuery();
+  const { data: cart, isLoading } = useGetCartQuery(paymentMethod);
   const [applyCoupon, { isLoading: isApplyingCoupon }] = useApplyCouponMutation();
 
   const items = cart?.items ?? [];
@@ -37,33 +43,32 @@ export default function OrderSummary({ onCouponApplied }: OrderSummaryProps) {
   const totalAmount = summary?.total_amount ?? 0;
   const hasDiscount = Boolean(couponCode) && discountAmount > 0;
 
-  function celebrate(offer: string, amount: number, currencySymbol: string) {
-    if (!onCouponApplied || amount <= 0) return;
-    if (celebratedCodeRef.current === offer) return;
-    celebratedCodeRef.current = offer;
-    onCouponApplied({ offer, amount: formatAmount(amount, currencySymbol) });
-  }
-
   async function applyCartCoupon(code: string) {
     try {
       const data = await applyCoupon(code).unwrap();
       const next = data.summary;
-      celebrate(next?.coupon_code ?? code, next?.discount_amount ?? 0, next?.currency_symbol ?? symbol);
+      const offer = next?.coupon_code ?? code;
+      const amount = next?.discount_amount ?? 0;
+      if (onCouponApplied && amount > 0) {
+        onCouponApplied({
+          offer,
+          amount: formatAmount(amount, next?.currency_symbol ?? symbol),
+          source: "apply",
+        });
+      }
     } catch (error) {
       console.error("Error applying coupon", error);
     }
   }
 
   useEffect(() => {
-    if (!couponCode) {
-      celebratedCodeRef.current = null;
-      return;
-    }
-    if (isLoading || !hasDiscount) return;
-    celebrate(couponCode, discountAmount, symbol);
-    // Once per applied code (open with coupon already on cart, or after apply)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, hasDiscount, couponCode, discountAmount, symbol]);
+    if (!onCouponApplied || isLoading || !couponCode || !hasDiscount) return;
+    onCouponApplied({
+      offer: couponCode,
+      amount: formatAmount(discountAmount, symbol),
+      source: "existing",
+    });
+  }, [onCouponApplied, isLoading, couponCode, hasDiscount, discountAmount, symbol]);
 
   useEffect(() => {
     if (!open) return;
@@ -138,7 +143,7 @@ export default function OrderSummary({ onCouponApplied }: OrderSummaryProps) {
               <h2 id={titleId} className="order-summary-sheet-header shrink-0 pb-4 text-base font-bold tracking-tight text-heading">
                 {t("title", { count: itemCount })}
               </h2>
-              <CartDetails variant="sheet" />
+              <CartDetails variant="sheet" paymentMethod={paymentMethod} />
             </div>
           </div>
         </div>

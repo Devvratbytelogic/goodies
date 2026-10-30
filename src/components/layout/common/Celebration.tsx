@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import type { CreateTypes, Options } from "canvas-confetti";
 import { useTranslations } from "next-intl";
 import { LuX } from "react-icons/lu";
 import ImageComponent from "@/components/layout/common/ImageComponent";
@@ -17,35 +18,32 @@ type CelebrationProps = {
 
 const EXIT_MS = 280;
 
-const CONFETTI_COLORS = ["#ff5b8a", "#ffd166", "#7ce577", "#5ad1e8", "#ff8a4c", "#c084fc", "#f472b6", "#ffffff", "#2cb4c1", "#d60751", "#facc15", "#fb7185"];
+/** https://www.kirilv.com/canvas-confetti/ — Realistic Look. Several cones, so the burst is uneven. */
+function fireRealistic(shoot: CreateTypes) {
+  const count = 200;
+  const defaults: Options = { origin: { y: 0.7 } };
 
-function confettiShape(index: number) {
-  const kind = index % 5;
-  if (kind === 0) return { width: `${5 + (index % 4)}px`, height: `${5 + (index % 4)}px`, radius: "999px" };
-  if (kind === 1) return { width: `${5 + (index % 5)}px`, height: `${5 + (index % 5)}px`, radius: "1px" };
-  return { width: `${2 + (index % 3)}px`, height: `${10 + (index % 12)}px`, radius: "1px" };
+  function fire(particleRatio: number, opts: Options) {
+    void shoot({
+      ...defaults,
+      ...opts,
+      particleCount: Math.floor(count * particleRatio),
+    });
+  }
+
+  fire(0.25, { spread: 26, startVelocity: 55 });
+  fire(0.2, { spread: 60 });
+  fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+  fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+  fire(0.1, { spread: 120, startVelocity: 45 });
 }
-
-const CONFETTI_COUNT = 280;
-
-const confetti = Array.from({ length: CONFETTI_COUNT }, (_, index) => {
-  const duration = 3.2 + (index % 10) * 0.28;
-  return {
-    left: `${(index * 3.7) % 100}%`,
-    delay: `${-((index / CONFETTI_COUNT) * duration)}s`,
-    duration: `${duration}s`,
-    color: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
-    ...confettiShape(index),
-    dx: `${(index % 2 ? 1 : -1) * (18 + (index % 36))}px`,
-    rot: `${(index % 2 ? 1 : -1) * (220 + (index % 18) * 38)}deg`,
-  };
-});
 
 export default function Celebration({ open = true, onClose, title, children, actionLabel, contained = false }: CelebrationProps) {
   const t = useTranslations("Celebration");
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dismissed, setDismissed] = useState(false);
   const [closing, setClosing] = useState(false);
   const visible = open && !dismissed;
@@ -110,6 +108,27 @@ export default function Celebration({ open = true, onClose, title, children, act
     };
   }, [visible, closing, close, contained]);
 
+  useEffect(() => {
+    if (!visible) return;
+    const canvas = canvasRef.current;
+    if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cancelled = false;
+    let reset: (() => void) | undefined;
+
+    void import("canvas-confetti").then(({ default: confetti }) => {
+      if (cancelled) return;
+      const shoot = confetti.create(canvas, { resize: true, useWorker: true });
+      reset = () => shoot.reset();
+      fireRealistic(shoot);
+    });
+
+    return () => {
+      cancelled = true;
+      reset?.();
+    };
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
@@ -118,28 +137,6 @@ export default function Celebration({ open = true, onClose, title, children, act
         className={`absolute inset-0 bg-black/60 motion-reduce:animate-none ${closing ? "animate-[celebration-backdrop-out_0.28s_ease-in_forwards]" : ""}`}
         onClick={close}
       />
-      <div
-        className={`pointer-events-none ${overlayPosition} inset-0 z-140 overflow-hidden motion-reduce:hidden ${closing ? "animate-[celebration-backdrop-out_0.28s_ease-in_forwards]" : ""}`}
-        aria-hidden
-      >
-        {confetti.map((piece, index) => (
-          <span
-            key={index}
-            className="absolute top-0"
-            style={{
-              left: piece.left,
-              width: piece.width,
-              height: piece.height,
-              borderRadius: piece.radius,
-              background: piece.color,
-              animation: `celebration-fall ${piece.duration} linear ${piece.delay} infinite`,
-              ["--dx" as string]: piece.dx,
-              ["--rot" as string]: piece.rot,
-            }}
-          />
-        ))}
-      </div>
-
       <div
         ref={dialogRef}
         role="dialog"
@@ -180,6 +177,11 @@ export default function Celebration({ open = true, onClose, title, children, act
           </button>
         ) : null}
       </div>
+      <canvas
+        ref={canvasRef}
+        className={`pointer-events-none absolute inset-0 z-160 h-full w-full motion-reduce:hidden ${closing ? "animate-[celebration-backdrop-out_0.28s_ease-in_forwards]" : ""}`}
+        aria-hidden
+      />
     </div>
   );
 }

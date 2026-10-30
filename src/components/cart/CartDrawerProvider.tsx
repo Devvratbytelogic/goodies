@@ -7,6 +7,9 @@ type CartDrawerContextValue = {
   open: boolean;
   openCart: () => void;
   closeCart: () => void;
+  checkoutOpen: boolean;
+  openCheckout: () => void;
+  closeCheckout: () => void;
 };
 
 const CartDrawerContext = createContext<CartDrawerContextValue | null>(null);
@@ -24,16 +27,26 @@ export function useCartDrawer() {
 export function CartDrawerProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [renderedPathname, setRenderedPathname] = useState(pathname);
 
   if (pathname !== renderedPathname) {
     setRenderedPathname(pathname);
     if (open) setOpen(false);
+    if (checkoutOpen) setCheckoutOpen(false);
   }
 
   const openCart = useCallback(() => setOpen(true), []);
   const closeCart = useCallback(() => setOpen(false), []);
-  const value = useMemo(() => ({ open, openCart, closeCart }), [open, openCart, closeCart]);
+  const openCheckout = useCallback(() => {
+    setOpen(false);
+    setCheckoutOpen(true);
+  }, []);
+  const closeCheckout = useCallback(() => setCheckoutOpen(false), []);
+  const value = useMemo(
+    () => ({ open, openCart, closeCart, checkoutOpen, openCheckout, closeCheckout }),
+    [open, openCart, closeCart, checkoutOpen, openCheckout, closeCheckout],
+  );
 
   return <CartDrawerContext.Provider value={value}>{children}</CartDrawerContext.Provider>;
 }

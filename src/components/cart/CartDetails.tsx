@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { LuGift, LuMinus, LuPlus, LuShoppingBag, LuSparkles, LuTrash2, LuTruck } from "react-icons/lu";
 import CartSummary from "@/components/cart/CartSummary";
 import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
+import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import CartItemsSkeleton from "@/components/skeletons/CartItemsSkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { useModal } from "@/components/layout/common/ModalProvider";
@@ -61,11 +62,12 @@ type CartDetailsProps = {
   checkoutHref?: string;
   /** page = cart layout; sheet = order-summary bottom sheet (CSS-only differences) */
   variant?: "page" | "sheet";
+  paymentMethod?: PaymentMethod;
 };
 
-export default function CartDetails({ checkoutHref, variant = "page" }: CartDetailsProps) {
+export default function CartDetails({ checkoutHref, variant = "page", paymentMethod }: CartDetailsProps) {
   const t = useTranslations("CartPage");
-  const { data: cart, isLoading: isLoadingCart } = useGetCartQuery();
+  const { data: cart, isLoading: isLoadingCart } = useGetCartQuery(paymentMethod);
   const [updateQuantity, { isLoading: isUpdatingQuantity }] = useUpdateCartItemQuantityMutation();
   const cartItems = cart?.items ?? [];
   const cartSummary = cart?.summary ?? null;
@@ -198,7 +200,7 @@ export default function CartDetails({ checkoutHref, variant = "page" }: CartDeta
         </ul>
       )}
 
-      <CartSummary checkoutHref={isSheet ? undefined : checkoutHref} variant={variant} />
+      <CartSummary checkoutHref={isSheet ? undefined : checkoutHref} variant={variant} paymentMethod={paymentMethod} />
     </div>
   );
 }

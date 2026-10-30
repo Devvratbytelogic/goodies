@@ -9,18 +9,20 @@ export type PaymentMethod = "cod" | "tabby" | "ziina" | "tamara";
 type PaymentMethodsProps = {
   value: PaymentMethod;
   onChange: (method: PaymentMethod) => void;
+  variant?: "default" | "sheet";
 };
 
-export default function PaymentMethods({ value, onChange }: PaymentMethodsProps) {
+export default function PaymentMethods({ value, onChange, variant = "default" }: PaymentMethodsProps) {
   const t = useTranslations("CheckoutClassicPage");
   const { data: cart } = useGetCartQuery(value);
   const cod = cart?.summary?.cod_status ? cart.cod_method : null;
   const methods = (["cod", "ziina", "tabby", "tamara"] as const).filter((method) => method !== "cod" || cod);
-  
+  const sheet = variant === "sheet";
+
   return (
-    <div className="mt-6 border-t border-border pt-5">
-      <h2 className="text-base font-bold">{t("paymentMethod")}</h2>
-      <div className="mt-4 grid gap-3" role="radiogroup" aria-label={t("paymentMethod")}>
+    <div className={sheet ? "grid gap-3" : "mt-6 border-t border-border pt-5"}>
+      {sheet ? null : <h2 className="text-base font-bold">{t("paymentMethod")}</h2>}
+      <div className={sheet ? "grid gap-3" : "mt-4 grid gap-3"} role="radiogroup" aria-label={t("paymentMethod")}>
         {methods.map((method) => {
           const selected = value === method;
           const title = method === "ziina" ? t("payZiina") : method === "tabby" ? t("payTabby") : method === "tamara" ? t("payTamara") : t("payCod");
@@ -29,11 +31,11 @@ export default function PaymentMethods({ value, onChange }: PaymentMethodsProps)
           return (
             <label
               key={method}
-              className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
+              className={`flex cursor-pointer items-start gap-3 rounded-xl border ${sheet ? "p-3.5" : "p-4"} ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
             >
               <input
                 type="radio"
-                name="payment-method"
+                name={sheet ? "checkout-auth-payment-method" : "payment-method"}
                 value={method}
                 checked={selected}
                 onChange={() => onChange(method)}
@@ -44,8 +46,10 @@ export default function PaymentMethods({ value, onChange }: PaymentMethodsProps)
                 {note ? <span className="mt-1 block text-sm text-muted">{note}</span> : null}
               </span>
               {method === "cod" && cod ? (
-                <span className="shrink-0 text-sm font-bold tabular-nums text-price">
-                  {cod.is_free ? t("free") : formatAmount(cod.charge, cart?.summary?.currency_symbol ?? "")}
+                <span className="shrink-0 text-end text-sm font-bold tabular-nums text-price">
+                  {cod.is_free
+                    ? t("free")
+                    : t("codExtra", { amount: formatAmount(cod.charge, cart?.summary?.currency_symbol ?? "") })}
                 </span>
               ) : null}
               {method === "tabby" ? (

@@ -3,15 +3,16 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus, LuShoppingBag, LuTrash2, LuX } from "react-icons/lu";
+import CheckoutAuth from "@/components/auth/CheckoutAuth";
 import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
 import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link } from "@/i18n/navigation";
-import { useGetCartQuery, useUpdateCartItemQuantityMutation } from "@/store/endpoints/cartApi";
 import type { CartItem } from "@/server/types/cart";
+import { useGetCartQuery, useUpdateCartItemQuantityMutation } from "@/store/endpoints/cartApi";
 import { formatAmount } from "@/utils/price";
-import { getCartRoutePath, getCheckoutClassicRoutePath, getProductRoutePath, getShopRoutePath } from "@/utils/routes";
+import { getProductRoutePath, getShopRoutePath } from "@/utils/routes";
 
 const minQuantity = 1;
 const maxQuantity = 99;
@@ -28,7 +29,7 @@ function itemColor(item: CartItem) {
 export default function CartDrawer() {
   const t = useTranslations("MiniCart");
   const cartText = useTranslations("CartPage");
-  const { open, closeCart } = useCartDrawer();
+  const { open, closeCart, checkoutOpen, openCheckout, closeCheckout } = useCartDrawer();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { data: cart, isLoading } = useGetCartQuery();
   const [updateQuantity, { isLoading: isUpdatingQuantity }] = useUpdateCartItemQuantityMutation();
@@ -246,23 +247,20 @@ export default function CartDrawer() {
                   <span className="text-base font-bold tabular-nums text-heading">{formatAmount(estimatedTotal, symbol)}</span>
                 </p>
                 <p className="mt-1 text-xs leading-5 text-muted">{t("estimatedNote")}</p>
-                <Link
-                  href={getCheckoutClassicRoutePath()}
+                <button
+                  type="button"
+                  onClick={openCheckout}
                   className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   {cartText("checkout")}
-                </Link>
-                {/* <Link
-                  href={getCartRoutePath()}
-                  className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-full border border-border px-4 text-sm font-semibold text-heading transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                >
-                  {t("viewCart")}
-                </Link> */}
+                </button>
               </div>
             </>
           )}
         </div>
       </div>
+
+      {checkoutOpen ? <CheckoutAuth onClose={closeCheckout} /> : null}
     </>
   );
 }

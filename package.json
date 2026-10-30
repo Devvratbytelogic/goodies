@@ -11,6 +11,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
     "axios": "^1.20.0",
+    "canvas-confetti": "^1.9.4",
     "country-state-city": "^3.2.1",
     "formik": "^2.4.9",
     "js-cookie": "^3.0.8",
@@ -27,9 +28,15 @@
     "swiper": "^14.2.0",
     "yup": "^1.7.1"
   },
-  "browserslist": ["chrome 111", "edge 111", "firefox 111", "safari 16.4"],
+  "browserslist": [
+    "chrome 111",
+    "edge 111",
+    "firefox 111",
+    "safari 16.4"
+  ],
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",

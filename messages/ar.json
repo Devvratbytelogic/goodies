@@ -48,6 +48,18 @@
     "verifyFailed": "تعذر التحقق من الرمز. حاول مرة أخرى.",
     "keepLoggedIn": "أبقني مسجّل الدخول على هذا الجهاز."
   },
+  "CheckoutAddress": {
+    "title": "عنوان التوصيل",
+    "subtitleAdd": "أضف عنوانًا لمتابعة الدفع.",
+    "subtitleSelect": "اختر مكان توصيل طلبك.",
+    "continue": "متابعة",
+    "saving": "جارٍ الحفظ…"
+  },
+  "CheckoutPayment": {
+    "title": "طريقة الدفع",
+    "subtitle": "اختر كيف تريد دفع طلبك.",
+    "back": "العودة إلى عنوان التوصيل"
+  },
   "OrderSummary": {
     "title": "ملخص الطلب ({count, plural, one {# منتج} other {# منتجات}})",
     "offerApplied": "🎉 تم تطبيق {offer}! وفّرت {amount}!",
@@ -692,6 +704,7 @@
     "placingOrder": "جارٍ تأكيد الطلب…",
     "shippingUnavailable": "الشحن غير متاح لهذا العنوان. يرجى اختيار عنوان آخر.",
     "payCod": "الدفع عند الاستلام",
+    "codExtra": "+{amount} إضافية",
     "free": "مجاني",
     "payTabby": "قسّمها على 4 دفعات مع تابي",
     "payTabbyNote": "قسّم مشترياتك على 4 دفعات بدون فوائد. سيتم تحويلك إلى تابي لإتمام طلبك.",

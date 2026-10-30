@@ -13,9 +13,10 @@ type CodCheckoutProps = {
   country: string;
   shippingAvailable: boolean;
   onPlaced: (order: PlacedOrder) => void;
+  buttonClassName?: string;
 };
 
-export default function CodCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, onPlaced }: CodCheckoutProps) {
+export default function CodCheckout({ billingAddressId, shippingAddressId, country, shippingAvailable, onPlaced, buttonClassName }: CodCheckoutProps) {
   const t = useTranslations("CheckoutClassicPage");
   const totalsUpdating = useCheckoutTotalsUpdating("cod");
   const [placeOrder, { isLoading }] = usePlaceOrderMutation();
@@ -48,7 +49,10 @@ export default function CodCheckout({ billingAddressId, shippingAddressId, count
       type="button"
       onClick={requestPlace}
       disabled={!shippingAvailable || !billingAddressId || !shippingAddressId || isLoading || totalsUpdating}
-      className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
+      className={
+        buttonClassName ??
+        "mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
+      }
     >
       {isLoading ? t("placingOrder") : t("placeOrder")}
     </button>

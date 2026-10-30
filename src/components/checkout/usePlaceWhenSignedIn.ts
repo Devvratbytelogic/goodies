@@ -8,8 +8,8 @@ import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
 let switchedTo: PaymentMethod | null = null;
 
 export function rememberSwitchedMethod(method: PaymentMethod, defaultMethod: PaymentMethod) {
-  // switchedTo = method !== defaultMethod && method !== "cod" ? method : null;
-  switchedTo = method !== defaultMethod ? method : null;
+  switchedTo = method !== defaultMethod && method !== "cod" ? method : null;
+  // switchedTo = method !== defaultMethod ? method : null;
 }
 
 export function usePlaceWhenSignedIn(place: () => void, method: PaymentMethod, ready: boolean) {

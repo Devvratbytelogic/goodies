@@ -7,8 +7,6 @@ import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { getPageNoticeSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
-import Celebration from "@/components/layout/common/Celebration";
-import CheckoutAuth from "@/components/auth/CheckoutAuth";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("CartPage");
@@ -22,18 +20,12 @@ export default async function CartPage({ params }: { params: Promise<{ currency:
   const { currency } = await params;
   const t = await getTranslations("CartPage");
   const nav = await getTranslations("Nav");
-  const celebrate = await getTranslations("Celebration");
   const notices = await getPageNoticeSettings(toCurrency(currency));
   const cartNotice = notices?.cart_notice_enabled ? notices.cart_notice?.trim() : "";
 
   return (
     <>
       <div className="section_y_space">
-        {/* <CheckoutAuth /> */}
-        {/* <Celebration title={celebrate("hurray")} actionLabel={celebrate("thanks")}>
-          <p>{celebrate("applied", { offer: "GET 10% OFF ON ALL ORDERS" })}</p>
-          <p className="font-bold">{celebrate("youSaved", { amount: "AED 650" })}</p>
-        </Celebration> */}
         <div className="container">
           <Breadcrumbs
             className="mb-4"
