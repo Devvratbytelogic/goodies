@@ -799,6 +799,7 @@
     "instagram": "Instagram",
     "youtube": "YouTube",
     "whatsapp": "WhatsApp",
+    "scrollToTop": "Scroll to top",
     "facebook": "Facebook",
     "x": "X",
     "linkedin": "LinkedIn",
@@ -817,7 +818,7 @@
     "contactUs": "Contact us",
     "contact": "Contact",
     "location": "Dubai, UAE",
-    "copyright": "© {year} Goodies. All rights reserved.",
+    "copyright": "© Goodiesfruits. {year} All Right Reserved || Developed By <developer>Bytelogic Technologies</developer>",
     "madeWithLove": "Made with love in the UAE"
   },
   "MadeWithLoveSection": {

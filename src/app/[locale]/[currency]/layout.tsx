@@ -4,6 +4,7 @@ import CartDrawer from "@/components/cart/CartDrawer";
 import { CartDrawerProvider } from "@/components/cart/CartDrawerProvider";
 import { BottomNav } from "@/components/layout/footer/BottomNav";
 import Footer from "@/components/layout/footer/Footer";
+import { ScrollToTopButton } from "@/components/layout/common/ScrollToTopButton";
 import { WhatsAppFloatingButton } from "@/components/layout/common/WhatsAppFloatingButton";
 import { Header } from "@/components/layout/header/Header";
 import { getCategories, getGlobalSettings } from "@/server";
@@ -55,6 +56,7 @@ export default async function CurrencyLayout({
         <Footer logo={settings?.logo || ''} description={settings?.platformDescription?.trim() || ''} categories={shopCategories} contact={contact} />
         <BottomNav />
         <WhatsAppFloatingButton href={contact.whatsapp} />
+        <ScrollToTopButton />
       </div>
       <CartDrawer />
     </CartDrawerProvider>

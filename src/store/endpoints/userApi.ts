@@ -31,6 +31,14 @@ export const userApi = api.injectEndpoints({
         body,
       }),
     }),
+    subscribe: build.mutation<{ success?: boolean; message?: string }, { email: string; country: string }>({
+      query: ({ email, country }) => ({
+        url: "/user/post-subscribers",
+        method: "POST",
+        body: { email },
+        params: { country },
+      }),
+    }),
     getMyReviews: build.query<MyReviewsData, MyReviewsArgs | void>({
       query: (args) => {
         const { page = 1, limit = 10 } = args ?? {};
@@ -48,4 +56,5 @@ export const {
   useDeleteUserAccountMutation,
   useChangePasswordMutation,
   useGetMyReviewsQuery,
+  useSubscribeMutation,
 } = userApi;

@@ -11,7 +11,7 @@ export function WhatsAppFloatingButton({ href }: { href: string }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t("whatsapp")}
-      className="whatsapp-fab fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+1rem+var(--purchase-bar-offset,0px))] right-4 z-40 flex size-16 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_28px_rgba(37,211,102,0.42)] transition-[transform,bottom] hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] lg:bottom-[calc(1.5rem+var(--purchase-bar-offset,0px))]"
+      className="whatsapp-fab fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px)+1rem+var(--purchase-bar-offset,0px))] left-4 z-40 flex size-16 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_28px_rgba(37,211,102,0.42)] transition-[transform,bottom] hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] lg:bottom-[calc(1.5rem+var(--purchase-bar-offset,0px))]"
     >
       <span aria-hidden className="whatsapp-fab__ring" />
       <FaWhatsapp aria-hidden className="relative size-8" />

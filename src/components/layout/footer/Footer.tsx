@@ -317,7 +317,21 @@ export default function Footer({ logo, description, categories, contact }: { log
 
       <div className="bg-accent-deep text-accent-foreground">
         <div className="container flex flex-col items-center justify-between gap-2 py-3.5 text-center text-xs sm:flex-row sm:text-start">
-          <p>{t("copyright", { year })}</p>
+          <p>
+            {t.rich("copyright", {
+              year,
+              developer: (chunks) => (
+                <a
+                  href="https://bytelogicindia.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-current/70 underline-offset-2 transition-opacity hover:opacity-80 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
           <p className="inline-flex items-center gap-1.5">
             <LuHeart aria-hidden className="size-3.5 fill-current" />
             {t("madeWithLove")}
