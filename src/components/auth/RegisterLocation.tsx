@@ -76,7 +76,7 @@ function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
     }),
     menuPortal: (base) => ({
       ...base,
-      zIndex: 100,
+      zIndex: 230,
     }),
     menuList: (base) => ({
       ...base,
