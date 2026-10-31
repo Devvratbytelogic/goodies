@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { LuMinus, LuPlus } from "react-icons/lu";
@@ -32,18 +32,21 @@ function PurchaseControls({
   needsSize,
   payload,
   onQuantityChange,
-}: PurchaseActionsProps & { inputId: string }) {
+  bar = false,
+}: PurchaseActionsProps & { inputId: string; bar?: boolean }) {
   const t = useTranslations("ProductPage");
+  const stepButton =
+    "inline-flex size-9 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border @max-[22rem]:size-8 lg:size-11";
 
   return (
-    <div className="flex flex-col gap-2.5 @min-[30rem]:flex-row @min-[30rem]:items-center @min-[30rem]:gap-3">
-      <div className="inline-flex h-11 w-fit shrink-0 items-center rounded-full border border-border bg-background">
+    <div className={`flex w-full flex-row items-center gap-2 lg:gap-3 ${bar ? "lg:justify-between" : ""}`}>
+      <div className="inline-flex h-10 shrink-0 items-center rounded-full border border-border bg-background lg:h-11">
         <button
           type="button"
           aria-label={t("decreaseQuantity")}
           disabled={quantity <= 1}
           onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
-          className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
+          className={stepButton}
         >
           <LuMinus aria-hidden className="size-4" />
         </button>
@@ -61,27 +64,31 @@ function PurchaseControls({
             const next = Number.parseInt(event.target.value, 10);
             onQuantityChange(Number.isFinite(next) && next > 0 ? Math.min(next, maxQuantity) : 1);
           }}
-          className="h-11 w-10 border-0 bg-transparent text-center text-sm font-semibold text-heading outline-none [appearance:textfield] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="h-10 w-7 border-0 bg-transparent text-center text-sm font-semibold text-heading outline-none [appearance:textfield] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:h-11 lg:w-10 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         <button
           type="button"
           aria-label={t("increaseQuantity")}
           disabled={quantity >= maxQuantity}
           onClick={() => onQuantityChange(quantity + 1)}
-          className="inline-flex size-11 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border"
+          className={stepButton}
         >
           <LuPlus aria-hidden className="size-4" />
         </button>
       </div>
-      <div className="grid w-full grid-cols-2 gap-2.5 @min-[30rem]:flex @min-[30rem]:w-auto @min-[30rem]:gap-3">
+      <div
+        className="grid min-w-0 flex-1 grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-none lg:gap-3"
+      >
         <AddToCartButton
           variant="product"
+          compact
           disabled={disabled}
           describedBy={needsSize ? "choose-size" : undefined}
           payload={payload}
         />
         <AddToCartButton
           variant="product"
+          compact
           action="buy"
           disabled={disabled}
           describedBy={needsSize ? "choose-size" : undefined}
@@ -92,10 +99,9 @@ function PurchaseControls({
   );
 }
 
-const SHOW_AFTER_SCROLL = 160;
-
 export default function PurchaseActions(props: PurchaseActionsProps) {
   const t = useTranslations("ProductPage");
+  const anchorRef = useRef<HTMLDivElement>(null);
   const [bar, setBar] = useState<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -105,14 +111,26 @@ export default function PurchaseActions(props: PurchaseActionsProps) {
   }, []);
 
   useEffect(() => {
-    function onScroll() {
-      const next = window.scrollY > SHOW_AFTER_SCROLL;
-      setPinned((current) => (current === next ? current : next));
+    // The sticky header covers the top, and the mobile nav covers the bottom.
+    // The in-page controls count as on screen only in the space between them.
+    function sync() {
+      const node = anchorRef.current;
+      if (!node) return;
+
+      const rect = node.getBoundingClientRect();
+      const header = 72;
+      const nav = window.matchMedia("(min-width: 1024px)").matches ? 0 : 56;
+      const visible = rect.bottom > header && rect.top < window.innerHeight - nav;
+      setPinned((current) => (current === !visible ? current : !visible));
     }
 
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -120,7 +138,7 @@ export default function PurchaseActions(props: PurchaseActionsProps) {
 
     const root = document.documentElement;
     const sync = () => {
-      root.style.setProperty("--purchase-bar-offset", `${bar.offsetHeight}px`);
+      root.style.setProperty("--purchase-bar-offset", pinned ? `${bar.offsetHeight}px` : "0px");
     };
 
     sync();
@@ -130,22 +148,30 @@ export default function PurchaseActions(props: PurchaseActionsProps) {
       observer.disconnect();
       root.style.removeProperty("--purchase-bar-offset");
     };
-  }, [bar]);
+  }, [bar, pinned]);
 
   return (
     <>
-      <PurchaseControls inputId="product-quantity" {...props} />
-      {mounted && pinned
+      <div ref={anchorRef}>
+        <PurchaseControls inputId="product-quantity" {...props} />
+      </div>
+      {mounted
         ? createPortal(
             <div
               ref={setBar}
               data-purchase-bar
               role="region"
               aria-label={t("purchaseBar")}
-              className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 border-t border-border bg-background/95 py-2.5 shadow-[0_-12px_32px_-24px_rgb(0_0_0/0.45)] backdrop-blur-xl lg:bottom-0 lg:pb-[max(0.625rem,env(safe-area-inset-bottom))]"
+              aria-hidden={!pinned}
+              inert={!pinned}
+              className={`fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 border-t border-border bg-background/95 py-2 shadow-[0_-12px_32px_-24px_rgb(0_0_0/0.45)] backdrop-blur-xl transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none lg:bottom-0 lg:py-2.5 lg:pb-[max(0.625rem,env(safe-area-inset-bottom))] ${
+                pinned
+                  ? "translate-y-0 opacity-100"
+                  : "pointer-events-none translate-y-[calc(100%+3.5rem+env(safe-area-inset-bottom))] opacity-0 lg:translate-y-full"
+              }`}
             >
-              <div className="@container container lg:[&>div]:justify-between">
-                <PurchaseControls inputId="product-quantity-sticky" {...props} />
+              <div className="@container container">
+                <PurchaseControls inputId="product-quantity-sticky" bar {...props} />
               </div>
             </div>,
             document.body,

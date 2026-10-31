@@ -205,7 +205,7 @@ export default function EmailVerify({ onVerified }: { onVerified?: () => void })
         </p>
       </div>
 
-      <div className="grid w-[70%] grid-cols-6 gap-2" role="group" aria-label={t("otpLabel")}>
+      <div className="grid w-full sm:w-[70%] grid-cols-6 gap-2" role="group" aria-label={t("otpLabel")}>
         {digits.map((digit, index) => (
           <input
             key={index}

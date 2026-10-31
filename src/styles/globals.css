@@ -264,3 +264,14 @@ button {
 .checkout-auth-scroll::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--primary) 70%, transparent);
 }
+
+/* iPhone zooms the page when a focused field is under 16px. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="hidden"]),
+  textarea,
+  select,
+  .react-tel-input .form-control,
+  .react-tel-input .search-box {
+    font-size: 16px !important;
+  }
+}
