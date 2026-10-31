@@ -37,6 +37,8 @@ type ShopResultColumnProps = {
   onClearPrice?: () => void;
   onClearSort?: () => void;
   onClearSearch?: () => void;
+  clearFiltersLabel?: string;
+  onClearFilters?: () => void;
   list: ReactNode;
 };
 
@@ -58,6 +60,8 @@ export function ShopResultColumn({
   onClearPrice,
   onClearSort,
   onClearSearch,
+  clearFiltersLabel,
+  onClearFilters,
   list,
 }: ShopResultColumnProps) {
   return (
@@ -122,6 +126,17 @@ export function ShopResultColumn({
               </button>
             </li>
           ) : null}
+          {clearFiltersLabel && onClearFilters ? (
+            <li>
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="inline-flex items-center rounded-full px-2 py-1 text-sm font-semibold text-primary underline-offset-2 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {clearFiltersLabel}
+              </button>
+            </li>
+          ) : null}
         </ul>
       ) : null}
       {list}
@@ -139,6 +154,7 @@ type ShopResultsProps = {
   removePriceLabel: string;
   removeSortLabel: string;
   removeSearchLabel: string;
+  clearFiltersLabel: string;
   filtersButton: ReactNode;
   fallback: ReactNode;
 };
@@ -154,6 +170,7 @@ export default function ShopResults({
   removePriceLabel,
   removeSortLabel,
   removeSearchLabel,
+  clearFiltersLabel,
   filtersButton,
   fallback,
 }: ShopResultsProps) {
@@ -188,6 +205,7 @@ export default function ShopResults({
   const path = category ? getProductCategoryRoutePath(category) : getShopRoutePath();
   const sortLabel = sort ? sortOptions.find((option) => option.value === sort)?.label : undefined;
   const priceLabel = hasPrice ? `${formatAmount(minPrice, currencySymbol)} – ${formatAmount(maxPrice, currencySymbol)}` : undefined;
+  const activeFilters = Number(hasPrice) + Number(Boolean(sort)) + Number(Boolean(search));
   const loading = refresh && !isError && (isFetching || !data);
 
   let list = fallback;
@@ -236,6 +254,8 @@ export default function ShopResults({
       onClearPrice={() => clearSearch({ min_price: null, max_price: null })}
       onClearSort={() => clearSearch({ sort: null })}
       onClearSearch={() => clearSearch({ search: null })}
+      clearFiltersLabel={activeFilters > 1 ? clearFiltersLabel : undefined}
+      onClearFilters={activeFilters > 1 ? () => clearSearch({ min_price: null, max_price: null, sort: null, search: null }) : undefined}
       list={list}
     />
   );

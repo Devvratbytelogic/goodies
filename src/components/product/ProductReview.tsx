@@ -122,7 +122,7 @@ export default function ProductReview({
       </div>
 
       {submitted ? (
-        <div role="status" className="mt-5 flex items-start gap-3 rounded-2xl border border-border bg-background px-4 py-4">
+        <div role="status" className="mt-5 flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-4">
           <LuCircleCheck aria-hidden className="mt-0.5 size-6 shrink-0 text-primary" />
           <p className="text-sm font-semibold text-heading">{t("reviewThanks")}</p>
         </div>

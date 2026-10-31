@@ -15,6 +15,7 @@ export default function NewArrivalsSection({ newArrivals }: { newArrivals: HomeP
       previousLabel={t("previous")}
       nextLabel={t("next")}
       products={newArrivals ?? []}
+      sortBy="newest"
     />
   );
 }

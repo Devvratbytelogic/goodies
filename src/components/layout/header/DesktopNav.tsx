@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { LuArrowRight, LuChevronDown } from "react-icons/lu";
+import { LuChevronDown } from "react-icons/lu";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isActivePath, navItems, type ShopCategory } from "./navigation";
 
@@ -133,19 +133,6 @@ export function DesktopNav({ shopCategories }: { shopCategories: ShopCategory[] 
                       </li>
                     ))}
                   </ul>
-
-                  <div className="mt-1 border-t border-border/60 pt-1">
-                    <Link
-                      href={item.href}
-                      className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft"
-                    >
-                      {tHeader("shopAll")}
-                      <LuArrowRight
-                        aria-hidden
-                        className="size-4 rtl:-scale-x-100"
-                      />
-                    </Link>
-                  </div>
                 </div>
               </div>
             </li>

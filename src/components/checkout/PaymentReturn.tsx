@@ -199,9 +199,9 @@ export default function PaymentReturn({ status, orderId, orderNumber, message, s
         <div>
           <h1 className="text-2xl font-bold">{t("received")}</h1>
           <p className="mt-1 max-w-md text-sm text-muted">{t("receivedNote")}</p>
-          {isCod && summary ? (
+          {/* {isCod && summary ? (
             <p className="mt-2 max-w-md text-sm text-muted">{t("codNote", { amount: formatAmount(summary.grand_total, currency) })}</p>
-          ) : null}
+          ) : null} */}
           {order && !paid && !isCod ? <p className="mt-2 max-w-md text-sm text-muted">{t("ziinaPendingTitle")}</p> : null}
         </div>
       </div>

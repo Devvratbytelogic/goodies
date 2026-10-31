@@ -27,6 +27,7 @@ type ShopFiltersProps = {
   currencySymbol?: string;
   removeSortLabel: string;
   removeSearchLabel: string;
+  clearFiltersLabel: string;
   title: string;
   allLabel: string;
   total: number;
@@ -56,7 +57,7 @@ function FilterList({
           className={filterRowClassName(allSelected)}
         >
           <span>{allLabel}</span>
-          <span className={allSelected ? "text-primary/70" : "text-muted"}>{total}</span>
+          <span className={allSelected ? "text-primary/70" : "text-muted transition-colors group-hover:text-primary/70"}>{total}</span>
         </Link>
       </li>
       {categories.map((category) => {
@@ -71,7 +72,7 @@ function FilterList({
             >
               <span>{category.label}</span>
               {category.count != null ? (
-                <span className={selected ? "text-primary/70" : "text-muted"}>{category.count}</span>
+                <span className={selected ? "text-primary/70" : "text-muted transition-colors group-hover:text-primary/70"}>{category.count}</span>
               ) : null}
             </Link>
           </li>
@@ -83,9 +84,9 @@ function FilterList({
 
 function filterRowClassName(selected: boolean) {
   const row =
-    "flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+    "group flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-  return selected ? `${row} bg-primary-soft font-semibold text-primary` : `${row} text-heading hover:bg-surface`;
+  return selected ? `${row} bg-primary-soft font-semibold text-primary` : `${row} text-heading hover:bg-primary-soft hover:text-primary`;
 }
 
 function FilterBody({
@@ -100,7 +101,7 @@ function FilterBody({
   total,
   categories,
   activeCategoryId,
-}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sortFieldLabel" | "sortOptions" | "currency" | "children" | "removePriceLabel" | "removeSortLabel" | "removeSearchLabel">) {
+}: Omit<ShopFiltersProps, "filtersLabel" | "closeFiltersLabel" | "showResultsLabel" | "showing" | "sortFieldLabel" | "sortOptions" | "currency" | "children" | "removePriceLabel" | "removeSortLabel" | "removeSearchLabel" | "clearFiltersLabel">) {
   return (
     <div className="min-w-0 space-y-5 lg:space-y-8">
       {minPrice != null && maxPrice != null ? (
@@ -130,6 +131,7 @@ export default function ShopFilters({
   removePriceLabel,
   removeSortLabel,
   removeSearchLabel,
+  clearFiltersLabel,
   showing,
   sortFieldLabel,
   sortOptions,
@@ -198,6 +200,7 @@ export default function ShopFilters({
               removePriceLabel={removePriceLabel}
               removeSortLabel={removeSortLabel}
               removeSearchLabel={removeSearchLabel}
+              clearFiltersLabel={clearFiltersLabel}
               fallback={children}
             />
           </Suspense>

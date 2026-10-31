@@ -23,9 +23,10 @@ type ProductSliderProps = {
   nextLabel: string;
   products: HomeProduct[];
   variant?: "default" | "decorated";
+  sortBy?: string;
 };
 
-export default function ProductSlider({ id, title, seeAllLabel, previousLabel, nextLabel, products, variant = "default" }: ProductSliderProps) {
+export default function ProductSlider({ id, title, seeAllLabel, previousLabel, nextLabel, products, variant = "default", sortBy = "default" }: ProductSliderProps) {
   const locale = useLocale();
   const isRtl = locale === "ar";
   const prevClass = `${id}-prev`;
@@ -49,7 +50,7 @@ export default function ProductSlider({ id, title, seeAllLabel, previousLabel, n
           </div>
 
           <Link
-            href={getShopRoutePath()}
+            href={sortBy ? `${getShopRoutePath()}?sort=${sortBy}` : getShopRoutePath()}
             className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
           >
             {seeAllLabel}
