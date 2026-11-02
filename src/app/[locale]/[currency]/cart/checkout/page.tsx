@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { getGlobalSettings, getPageNoticeSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
 type CheckoutSearchParams = {
   ziina?: string;
@@ -18,9 +19,17 @@ type CheckoutSearchParams = {
   message?: string;
 };
 
-export async function generateMetadata({ searchParams }: { searchParams: Promise<CheckoutSearchParams> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<CheckoutSearchParams>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("CheckoutClassicPage");
   const query = await searchParams;
+  const alternates = pageAlternates(locale, getCheckoutClassicRoutePath());
   const paymentStatus = query.tabby || query.ziina || query.tamara || query.cod;
   if (paymentStatus) {
     const resultTitle = query.tabby
@@ -33,11 +42,13 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
     return {
       title: paymentStatus === "success" ? t("received") : resultTitle,
       robots: { index: false, follow: false },
+      alternates,
     };
   }
   return {
     title: t("title"),
     description: t("description"),
+    alternates,
   };
 }
 

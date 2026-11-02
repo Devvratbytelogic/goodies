@@ -10,6 +10,7 @@ import { getBlogCategories, getBlogCategory } from "@/server";
 import { defaultCurrency, toCurrency } from "@/utils/currency";
 import { markdownToHtml } from "@/utils/markdown";
 import { getBlogCategoryRoutePath, getBlogsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
 export const revalidate = 600;
 export const dynamicParams = true;
@@ -38,12 +39,17 @@ type BlogCategoryPageProps = {
 };
 
 export async function generateMetadata({ params }: BlogCategoryPageProps): Promise<Metadata> {
-  const { currency, slug } = await params;
-  const category = await getBlogCategory(toCurrency(currency), readSlug(slug));
+  const { locale, currency, slug } = await params;
+  const categorySlug = readSlug(slug);
+  const category = await getBlogCategory(toCurrency(currency), categorySlug);
   if (!category?.name) return {};
   const title = category.meta_title?.trim() || category.name;
   const description = category.meta_description?.trim() || category.description?.trim() || undefined;
-  return { title, description };
+  return {
+    title,
+    description,
+    alternates: pageAlternates(locale, getBlogCategoryRoutePath(categorySlug)),
+  };
 }
 
 export default async function BlogCategoryPage({ params, searchParams }: BlogCategoryPageProps) {

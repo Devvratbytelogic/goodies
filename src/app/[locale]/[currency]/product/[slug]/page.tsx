@@ -4,7 +4,8 @@ import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductSelection from "@/components/product/ProductSelection";
-import { getHomeRoutePath, getProductCategoryRoutePath } from "@/utils/routes";
+import { getHomeRoutePath, getProductCategoryRoutePath, getProductRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 import { getPageNoticeSettings, getProduct, getProducts } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { markdownToHtml } from "@/utils/markdown";
@@ -37,7 +38,7 @@ function productCopy(value?: string | null) {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { currency, slug } = await params;
+  const { locale, currency, slug } = await params;
 
   const product = await getProduct(toCurrency(currency), slug);
   const title = metaText(product.meta_title) ?? product.title;
@@ -62,6 +63,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description: metaText(product.twitter_description) ?? description,
       images: twitterImage ? [twitterImage] : undefined,
     },
+    alternates: pageAlternates(locale, getProductRoutePath(slug)),
   };
 }
 

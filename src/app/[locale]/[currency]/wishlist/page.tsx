@@ -2,13 +2,20 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import WishlistDetails from "@/components/wishlist/WishlistDetails";
-import { getHomeRoutePath } from "@/utils/routes";
+import { getHomeRoutePath, getWishlistRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("WishlistPage");
   return {
     title: t("title"),
     description: t("description"),
+    alternates: pageAlternates(locale, getWishlistRoutePath()),
   };
 }
 

@@ -5,7 +5,8 @@ import FaqList from "@/components/layout/common/FaqList";
 import { getAllProducts, getCategories, getCategory } from "@/server";
 import { markdownToHtml } from "@/utils/markdown";
 import { defaultCurrency, toCurrency } from "@/utils/currency";
-import { getHomeRoutePath, getShopRoutePath } from "@/utils/routes";
+import { getHomeRoutePath, getProductCategoryRoutePath, getShopRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 import { HomeProduct } from "@/server/types/Home";
 
 export const revalidate = 600;
@@ -41,8 +42,9 @@ function metaText(value?: string | null) {
 }
 
 export async function generateMetadata({ params }: ProductCategoryPageProps): Promise<Metadata> {
-  const { currency, slug } = await params;
-  const data = await getCategory(toCurrency(currency), readSlug(slug));
+  const { locale, currency, slug } = await params;
+  const categorySlug = readSlug(slug);
+  const data = await getCategory(toCurrency(currency), categorySlug);
   const category = data?.category;
   if (!category) return {};
 
@@ -65,6 +67,7 @@ export async function generateMetadata({ params }: ProductCategoryPageProps): Pr
       description: metaText(category.twitter_description) ?? description,
       images: twitterImage ? [twitterImage] : undefined,
     },
+    alternates: pageAlternates(locale, getProductCategoryRoutePath(categorySlug)),
   };
 }
 

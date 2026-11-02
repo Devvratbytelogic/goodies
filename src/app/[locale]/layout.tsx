@@ -80,13 +80,6 @@ export async function generateMetadata({
     other: {
       "apple-mobile-web-app-capable": "yes",
     },
-    alternates: {
-      languages: {
-        en: "/",
-        ar: "/ar",
-        "x-default": "/",
-      },
-    },
   };
 }
 

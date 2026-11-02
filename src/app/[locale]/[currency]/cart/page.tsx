@@ -6,13 +6,20 @@ import CartProducts from "@/components/cart/CartProducts";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { getPageNoticeSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
-import { getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { getCartRoutePath, getCheckoutClassicRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("CartPage");
   return {
     title: t("title"),
     description: t("description"),
+    alternates: pageAlternates(locale, getCartRoutePath()),
   };
 }
 

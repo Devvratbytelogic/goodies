@@ -1,13 +1,20 @@
 import { getTranslations } from "next-intl/server";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import ImageComponent from "@/components/layout/common/ImageComponent";
-import { getHomeRoutePath } from "@/utils/routes";
+import { getAboutUsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("AboutUsPage");
   return {
     title: t("title"),
     description: t("welcome"),
+    alternates: pageAlternates(locale, getAboutUsRoutePath()),
   };
 }
 

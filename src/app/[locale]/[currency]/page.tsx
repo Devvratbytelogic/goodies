@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { getGlobalSettings, getHomePage } from "@/server";
 import { defaultCurrency, toCurrency } from "@/utils/currency";
+import { pageAlternates } from "@/utils/seo";
 import BestSellerSection from "@/components/page-components/home/BestSellerSection";
 import CategorySection from "@/components/page-components/home/CategorySection";
 import InstallAppBanner from "@/components/page-components/home/InstallAppBanner";
@@ -51,6 +52,7 @@ export async function generateMetadata({
       description: twitterDescription,
       images: twitterImage ? [twitterImage] : undefined,
     },
+    alternates: pageAlternates(locale, "/"),
   };
 }
 

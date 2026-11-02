@@ -11,15 +11,23 @@ import {
   getAccountAddressRoutePath,
   getAccountCouponsRoutePath,
   getAccountOrdersRoutePath,
+  getAccountRoutePath,
   getHomeRoutePath,
   getWishlistRoutePath,
 } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("AccountPage");
   return {
     title: t("title"),
     description: t("description"),
+    alternates: pageAlternates(locale, getAccountRoutePath()),
   };
 }
 

@@ -8,12 +8,22 @@ import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
 import { getArticles } from "@/server";
 import { toCurrency } from "@/utils/currency";
 import { getBlogsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
 export const revalidate = 600;
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("BlogsPage");
-  return { title: t("title"), description: t("description") };
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: pageAlternates(locale, getBlogsRoutePath()),
+  };
 }
 
 export default async function BlogsPage({

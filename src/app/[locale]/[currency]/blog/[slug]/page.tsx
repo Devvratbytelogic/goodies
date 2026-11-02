@@ -7,7 +7,8 @@ import ImageComponent from "@/components/layout/common/ImageComponent";
 import { getArticle, getArticles, getLatestArticles } from "@/server";
 import { defaultCurrency, toCurrency } from "@/utils/currency";
 import { markdownToHtml } from "@/utils/markdown";
-import { getBlogCategoryRoutePath, getBlogsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { getBlogCategoryRoutePath, getBlogRoutePath, getBlogsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 import { Link } from "@/i18n/navigation";
 
 export const revalidate = 600;
@@ -41,8 +42,9 @@ type BlogPageProps = {
 };
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
-  const { currency, slug } = await params;
-  const article = await getArticle(toCurrency(currency), readSlug(slug));
+  const { locale, currency, slug } = await params;
+  const articleSlug = readSlug(slug);
+  const article = await getArticle(toCurrency(currency), articleSlug);
   const title = metaText(article?.meta_title) ?? article?.title;
   const description = metaText(article?.meta_description) ?? metaText(article?.description);
   const image = metaText(article?.og_image) ?? metaText(article?.image) ?? "";
@@ -52,7 +54,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title,
     description,
-    alternates: article?.canonical_url ? { canonical: article.canonical_url } : undefined,
+    alternates: pageAlternates(locale, getBlogRoutePath(articleSlug), article?.canonical_url),
     openGraph: { title: ogTitle, description: ogDescription, images: image ? [image] : undefined },
     twitter: { card: image ? "summary_large_image" : "summary", title: ogTitle, description: ogDescription, images: image ? [image] : undefined },
   };

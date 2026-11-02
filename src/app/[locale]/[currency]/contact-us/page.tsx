@@ -5,17 +5,20 @@ import ImageComponent from "@/components/layout/common/ImageComponent";
 import ContactForm from "@/components/page-components/contact/ContactForm";
 import { getGlobalSettings } from "@/server";
 import { toCurrency } from "@/utils/currency";
-import { getHomeRoutePath } from "@/utils/routes";
+import { getContactUsRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
 type ContactUsPageProps = {
-  params: Promise<{ currency: string }>;
+  params: Promise<{ locale: string; currency: string }>;
 };
 
-export async function generateMetadata() {
+export async function generateMetadata({ params }: ContactUsPageProps) {
+  const { locale } = await params;
   const t = await getTranslations("ContactUsPage");
   return {
     title: t("title"),
     description: t("getInTouch"),
+    alternates: pageAlternates(locale, getContactUsRoutePath()),
   };
 }
 

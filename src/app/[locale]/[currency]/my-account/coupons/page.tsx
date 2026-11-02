@@ -2,13 +2,20 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AccountCouponList } from "@/components/account/AccountCoupons";
 import Breadcrumbs from "@/components/layout/common/Breadcrumbs";
-import { getAccountRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { getAccountCouponsRoutePath, getAccountRoutePath, getHomeRoutePath } from "@/utils/routes";
+import { pageAlternates } from "@/utils/seo";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("AccountPage");
   return {
     title: t("coupons"),
     description: t("couponsIntro"),
+    alternates: pageAlternates(locale, getAccountCouponsRoutePath()),
   };
 }
 
