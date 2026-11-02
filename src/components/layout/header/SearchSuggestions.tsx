@@ -20,12 +20,18 @@ type SearchSuggestionsProps = {
   onPick: () => void;
 };
 
-function priceLabel(product: ProductSearchProduct) {
+function PriceLabel({ product }: { product: ProductSearchProduct }) {
   const { price, max_price: maxPrice, currency_symbol: symbol } = product.prices;
   if (product.product_type === "variable" && maxPrice > price) {
-    return `${formatAmount(price, symbol)} – ${formatAmount(maxPrice, symbol)}`;
+    return (
+      <>
+        <bdi>{formatAmount(price, symbol)}</bdi>
+        {" – "}
+        <bdi>{formatAmount(maxPrice, symbol)}</bdi>
+      </>
+    );
   }
-  return formatAmount(price, symbol);
+  return <bdi>{formatAmount(price, symbol)}</bdi>;
 }
 
 export function SearchSuggestions({
@@ -120,7 +126,7 @@ export function SearchSuggestions({
                         <span className="line-clamp-1 text-sm font-semibold text-heading">{product.name}</span>
                         {product.category?.name ? <span className="line-clamp-1 text-xs text-muted">{product.category.name}</span> : null}
                       </span>
-                      <span className="shrink-0 text-sm font-semibold text-price">{priceLabel(product)}</span>
+                      <span className="shrink-0 text-sm font-semibold text-price"><PriceLabel product={product} /></span>
                     </Link>
                   </li>
                 );

@@ -22,14 +22,18 @@ export default function ProductPrice({ variant, variants, isVariant = false, hid
       {showRange ? (
         <>
           <span className="sr-only">{formatAmount(price, currencySymbol)} through {formatAmount(maxPrice, currencySymbol)}</span>
-          <span aria-hidden>{formatAmount(price, currencySymbol)} – {formatAmount(maxPrice, currencySymbol)}</span>
+          <span aria-hidden>
+            <bdi>{formatAmount(price, currencySymbol)}</bdi>
+            {" – "}
+            <bdi>{formatAmount(maxPrice, currencySymbol)}</bdi>
+          </span>
         </>
       ) : (
         <>
           {showMaxPrice ? (
-            <span className="me-1.5 line-through text-muted-foreground">{formatAmount(maxPrice, currencySymbol)}</span>
+            <bdi className="me-1.5 line-through text-muted-foreground">{formatAmount(maxPrice, currencySymbol)}</bdi>
           ) : null}
-          <span className="me-1.5 text-primary">{formatAmount(price, currencySymbol)}</span>
+          <bdi className="me-1.5 text-primary">{formatAmount(price, currencySymbol)}</bdi>
         </>
       )}
     </p>
