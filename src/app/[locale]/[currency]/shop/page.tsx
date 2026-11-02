@@ -29,7 +29,7 @@ export default async function ShopPage({
   const products = (allProductsData.data ?? []) as HomeProduct[];
   const limit = allProductsData.pagination?.limit || 20;
   const total = allProductsData.pagination?.count || products.length;
-
+  const totalProducts = allProductsData.allproductcount; // total product from all categories
   return (
     <ShopCatalog
       title={t("title")}
@@ -41,6 +41,7 @@ export default async function ShopPage({
       page={1}
       pageSize={limit}
       totalCount={total}
+      totalProducts={totalProducts}
       minPrice={allProductsData.lowest_price ?? 0}
       maxPrice={allProductsData.highest_price ?? 0}
       currencySymbol={allProductsData.pricing_context?.currency_symbol || "د.إ"}

@@ -100,6 +100,7 @@ export default async function ProductCategoryPage({ params }: ProductCategoryPag
         page={1}
         pageSize={limit}
         totalCount={total}
+        totalProducts={allProductsData.allproductcount}
         minPrice={allProductsData.lowest_price ?? 0}
         maxPrice={allProductsData.highest_price ?? 0}
         currencySymbol={allProductsData.pricing_context?.currency_symbol || "د.إ"}

@@ -18,10 +18,12 @@ import { DesktopNav } from "./DesktopNav";
 import { LocaleToggle } from "./LocaleToggle";
 import MobileMenu from "./MobileMenu";
 import { SearchField } from "./SearchField";
-import type { ShopCategory } from "./navigation";
+import { isActivePath, type ShopCategory } from "./navigation";
 
 const actionClass =
   "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+const activeActionClass = "bg-primary-soft text-primary";
 
 type HeaderBarProps = {
   logo: string;
@@ -50,6 +52,7 @@ function ActionLink({
   icon: Icon,
   count = 0,
   showZero = false,
+  active = false,
   className = "",
 }: {
   href: string;
@@ -57,10 +60,16 @@ function ActionLink({
   icon: IconType;
   count?: number;
   showZero?: boolean;
+  active?: boolean;
   className?: string;
 }) {
   return (
-    <Link href={href} aria-label={label} className={`${actionClass} ${className}`}>
+    <Link
+      href={href}
+      aria-label={label}
+      aria-current={active ? "page" : undefined}
+      className={`${actionClass} ${active ? activeActionClass : ""} ${className}`}
+    >
       <Icon aria-hidden className="size-5.5" />
       <CountBadge count={count} showZero={showZero} />
     </Link>
@@ -97,6 +106,8 @@ export function HeaderBar({ logo, currency, shopCategories }: HeaderBarProps) {
   const { token } = useAuth();
   const openLogin = useOpenLogin();
   const pathname = usePathname();
+  const accountActive = isActivePath(pathname, getAccountRoutePath().replace(/\/$/, ""));
+  const wishlistActive = isActivePath(pathname, getWishlistRoutePath());
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
@@ -166,6 +177,7 @@ export function HeaderBar({ logo, currency, shopCategories }: HeaderBarProps) {
                 label={t("wishlistLabel", { count: wishlistCount })}
                 icon={LuHeart}
                 count={wishlistCount}
+                active={wishlistActive}
               />
               <MiniCart className="-me-2" />
             </div>
@@ -196,11 +208,22 @@ export function HeaderBar({ logo, currency, shopCategories }: HeaderBarProps) {
               </button>
 
               {token ? (
-                <Link href={getAccountRoutePath()} aria-label={t("account")} className={actionClass}>
+                <Link
+                  href={getAccountRoutePath()}
+                  aria-label={t("account")}
+                  aria-current={accountActive ? "page" : undefined}
+                  className={`${actionClass} ${accountActive ? activeActionClass : ""}`}
+                >
                   <LuUser aria-hidden className="size-5.5" />
                 </Link>
               ) : (
-                <button type="button" onClick={openLogin} aria-label={t("account")} className={actionClass}>
+                <button
+                  type="button"
+                  onClick={openLogin}
+                  aria-label={t("account")}
+                  aria-current={accountActive ? "page" : undefined}
+                  className={`${actionClass} ${accountActive ? activeActionClass : ""}`}
+                >
                   <LuUser aria-hidden className="size-5.5" />
                 </button>
               )}
@@ -209,6 +232,7 @@ export function HeaderBar({ logo, currency, shopCategories }: HeaderBarProps) {
                 label={t("wishlistLabel", { count: wishlistCount })}
                 icon={LuHeart}
                 count={wishlistCount}
+                active={wishlistActive}
               />
               <MiniCart />
 

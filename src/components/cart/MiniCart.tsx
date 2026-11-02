@@ -3,7 +3,10 @@
 import { useTranslations } from "next-intl";
 import { LuShoppingCart } from "react-icons/lu";
 import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
+import { isActivePath } from "@/components/layout/header/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useCartCount } from "@/store/endpoints/cartApi";
+import { getCartRoutePath } from "@/utils/routes";
 
 const actionClass =
   "relative flex size-10 items-center justify-center rounded-full text-accent-deep transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -23,15 +26,17 @@ export default function MiniCart({ className = "" }: { className?: string }) {
   const header = useTranslations("Header");
   const { open, openCart } = useCartDrawer();
   const count = useCartCount();
+  const onCartPage = isActivePath(usePathname(), getCartRoutePath());
 
   return (
     <button
       type="button"
       aria-label={header("cartLabel", { count })}
+      aria-current={onCartPage ? "page" : undefined}
       aria-expanded={open}
       aria-controls="cart-drawer"
       onClick={openCart}
-      className={`${actionClass} ${className} ${open ? "bg-primary-soft text-primary" : ""}`}
+      className={`${actionClass} ${className} ${open || onCartPage ? "bg-primary-soft text-primary" : ""}`}
     >
       <LuShoppingCart aria-hidden className="size-5.5" />
       <CountBadge count={count} />

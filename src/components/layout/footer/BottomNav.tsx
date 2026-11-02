@@ -59,7 +59,8 @@ export function BottomNav() {
       >
         <ul className="grid h-14 grid-cols-5">
           {items.map(({ href, key, icon: Icon }) => {
-            const active = key === "cart" ? cartOpen || isActivePath(pathname, href) : isActivePath(pathname, href);
+            const path = href.replace(/\/$/, "") || href;
+            const active = key === "cart" ? cartOpen || isActivePath(pathname, path) : isActivePath(pathname, path);
             const label =
               key === "cart"
                 ? tHeader("cartLabel", { count: cartCount })
@@ -72,7 +73,7 @@ export function BottomNav() {
             }`;
             const icon = (
               <>
-                <span className="relative">
+                <span className={`relative flex size-8 items-center justify-center rounded-full ${active ? "bg-primary-soft" : ""}`}>
                   <Icon
                     aria-hidden
                     className={`size-5.5 ${active && key === "favorites" ? "fill-current" : ""}`}

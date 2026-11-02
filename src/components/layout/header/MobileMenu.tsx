@@ -55,8 +55,11 @@ const sectionLabelClass =
 const itemClass =
   "relative flex w-full items-center gap-3 rounded-xl px-3 py-3 text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary overflow-hidden";
 
-const iconWrapClass =
-  "flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-soft text-accent-deep";
+function iconWrapClass(active: boolean) {
+  return `relative flex size-9 shrink-0 items-center justify-center rounded-full ${
+    active ? "bg-primary text-primary-foreground" : "bg-surface-soft text-accent-deep"
+  }`;
+}
 
 const shopChildLinkClass =
   "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary";
@@ -103,7 +106,7 @@ function MenuItemLink({
   const content = (
     <>
       <NavIndicator active={active} />
-      <span className={`${iconWrapClass} relative`}>
+      <span className={iconWrapClass(active)}>
         <Icon
           aria-hidden
           className={`size-4.5 ${fillIconWhenActive && active ? "fill-current" : ""}`}
@@ -293,7 +296,7 @@ export default function MobileMenu({
                         className={`${itemClass} flex-1`}
                       >
                         <NavIndicator active={highlighted} />
-                        <span className={iconWrapClass}>
+                        <span className={iconWrapClass(active)}>
                           <item.icon aria-hidden className="size-4.5" />
                         </span>
                         <span className="flex-1 text-start">{t(item.key)}</span>
@@ -372,7 +375,7 @@ export default function MobileMenu({
                       : countKey === "wishlist"
                         ? wishlistCount
                         : 0;
-                  const active = isActivePath(pathname, href);
+                  const active = isActivePath(pathname, href.replace(/\/$/, "") || href);
                   const ariaLabel =
                     countKey === "cart"
                       ? tHeader("cartLabel", { count })

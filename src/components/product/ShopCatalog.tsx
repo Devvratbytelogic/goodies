@@ -17,6 +17,7 @@ type ShopCatalogProps = {
   page?: number;
   pageSize?: number;
   totalCount?: number;
+  totalProducts?: number;
   minPrice?: number;
   maxPrice?: number;
   currencySymbol?: string;
@@ -31,6 +32,7 @@ export default async function ShopCatalog({
   page = 1,
   pageSize,
   totalCount,
+  totalProducts,
   minPrice,
   maxPrice,
   currencySymbol,
@@ -65,7 +67,7 @@ export default async function ShopCatalog({
         removeSortLabel={t("removeSort")}
         title={t("categories")}
         allLabel={t("allProducts")}
-        total={total}
+        total={totalProducts ?? total}
         activeCategoryId={activeCategoryId}
         showing={t("showing", { from, to, total })}
         currency={currency}

@@ -8,6 +8,7 @@ export interface AllProductsApiResponse {
 }
 export interface AllProductsData {
     data?: (AllProductsProduct)[] | null;
+    allproductcount: number;
     pagination: Pagination;
     filters: Filters;
     pricing_context: PricingContext;
