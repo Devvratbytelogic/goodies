@@ -343,6 +343,7 @@
     "phoneNumber": "Phone Number",
     "emailAddress": "Email Address",
     "message": "Message",
+    "submitting": "Sending…",
     "required": "This field is required",
     "emailInvalid": "Enter a valid email address",
     "phoneInvalid": "Enter a valid phone number",

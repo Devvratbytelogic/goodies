@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
 import { RequiredMark } from "@/components/form/RequiredMark";
+import { usePostContactMutation } from "@/store/endpoints/userApi";
 import { contactUsValidationSchema } from "@/validations";
 
 type ContactFormValues = InferType<typeof contactUsValidationSchema>;
@@ -24,12 +25,25 @@ const labelClassName = "block text-[13px] font-semibold text-heading";
 
 export default function ContactForm() {
   const t = useTranslations("ContactUsPage");
+  const [postContact] = usePostContactMutation();
 
   const formik = useFormik<ContactFormValues>({
     initialValues,
     validationSchema: contactUsValidationSchema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values, helpers) => {
+      try {
+        const result = await postContact({
+          first_name: values.firstName.trim(),
+          last_name: values.lastName.trim(),
+          email: values.email.trim(),
+          phone_number: values.phone.trim(),
+          message: values.message.trim(),
+        }).unwrap();
+        if (result?.success === false) return;
+        helpers.resetForm();
+      } catch {
+        // The API layer already shows the error toast.
+      }
     },
   });
 
@@ -152,10 +166,10 @@ export default function ContactForm() {
         <div className="sm:col-span-2 sm:pt-1">
           <button
             type="submit"
-            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
             disabled={formik.isSubmitting}
           >
-            {t("title")}
+            {formik.isSubmitting ? t("submitting") : t("title")}
           </button>
         </div>
       </div>

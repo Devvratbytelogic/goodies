@@ -343,6 +343,7 @@
     "phoneNumber": "رقم الهاتف",
     "emailAddress": "البريد الإلكتروني",
     "message": "الرسالة",
+    "submitting": "جارٍ الإرسال…",
     "required": "هذا الحقل مطلوب",
     "emailInvalid": "أدخل بريدًا إلكترونيًا صحيحًا",
     "phoneInvalid": "أدخل رقم هاتف صحيحًا",

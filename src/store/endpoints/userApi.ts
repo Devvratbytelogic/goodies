@@ -39,6 +39,16 @@ export const userApi = api.injectEndpoints({
         params: { country },
       }),
     }),
+    postContact: build.mutation<
+      { success?: boolean; message?: string },
+      { first_name: string; last_name: string; email: string; phone_number: string; message: string }
+    >({
+      query: (body) => ({
+        url: "/user/post-contact-us",
+        method: "POST",
+        body,
+      }),
+    }),
     getMyReviews: build.query<MyReviewsData, MyReviewsArgs | void>({
       query: (args) => {
         const { page = 1, limit = 10 } = args ?? {};
@@ -57,4 +67,5 @@ export const {
   useChangePasswordMutation,
   useGetMyReviewsQuery,
   useSubscribeMutation,
+  usePostContactMutation,
 } = userApi;
