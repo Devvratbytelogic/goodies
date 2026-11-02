@@ -50,7 +50,8 @@ export default function TabbyCheckout({ billingAddressId, shippingAddressId, cou
       setError(t("tabbyRejected"));
     } catch (error) {
       console.error("Error creating Tabby session", error);
-      setError(t("tabbyError"));
+      const message = (error as { data?: { message?: string } })?.data?.message;
+      setError(message || t("tabbyError"));
     }
   }
 

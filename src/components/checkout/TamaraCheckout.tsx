@@ -49,7 +49,8 @@ export default function TamaraCheckout({ billingAddressId, shippingAddressId, sh
       setError(t("tamaraError"));
     } catch (error) {
       console.error("Error creating Tamara checkout", error);
-      setError(t("tamaraError"));
+      const message = (error as { data?: { message?: string } })?.data?.message;
+      setError(message || t("tamaraError"));
     }
   }
 

@@ -12,15 +12,18 @@ type PaymentMethodsProps = {
   variant?: "default" | "sheet";
   /** Settings default — shown as a badge, not auto-selected. */
   primaryMethod?: string | null;
+  showTamara?: boolean;
 };
 
-export default function PaymentMethods({ value, onChange, variant = "default", primaryMethod = null }: PaymentMethodsProps) {
+export default function PaymentMethods({ value, onChange, variant = "default", primaryMethod = null, showTamara = false }: PaymentMethodsProps) {
   const t = useTranslations("CheckoutClassicPage");
   // The default method reuses the page cart. Another method needs its own totals.
   const cartMethod = primaryMethod == null ? (value ?? undefined) : !value || value === primaryMethod ? undefined : value;
   const { data: cart } = useGetCartQuery(cartMethod);
   const cod = cart?.summary?.cod_status ? cart.cod_method : null;
-  const methods = (["cod", "ziina", "tabby", "tamara"] as const).filter((method) => method !== "cod" || cod);
+  const methods = (["cod", "ziina", "tabby", "tamara"] as const).filter(
+    (method) => (method !== "cod" || cod) && (method !== "tamara" || showTamara),
+  );
   const sheet = variant === "sheet";
 
   return (

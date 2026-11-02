@@ -46,6 +46,7 @@ export default function CheckoutPayment({
     null;
   const selectedAddress = addresses.find((address) => address._id === selectedId) ?? null;
   const country = selectedAddress?.country_code ?? "AE";
+  const showTamara = selectedAddress?.country_code === "AE" && selectedAddress.country === "United Arab Emirates";
   const showCodFooter = paymentMethod === "cod";
 
   return (
@@ -63,6 +64,7 @@ export default function CheckoutPayment({
               variant="sheet"
               value={paymentMethod}
               primaryMethod={defaultPaymentMethod}
+              showTamara={showTamara}
               onChange={onPaymentMethodChange}
             />
 
@@ -93,7 +95,7 @@ export default function CheckoutPayment({
               />
             ) : null}
 
-            {paymentMethod === "tamara" ? (
+            {paymentMethod === "tamara" && showTamara ? (
               <TamaraCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}

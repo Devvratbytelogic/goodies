@@ -195,7 +195,9 @@ export default function CheckoutForm({
   const [addingFor, setAddingFor] = useState<"billing" | "shipping">("billing");
   // With "ship to a different address" on, shipping stays on its own pick.
   const shippingId = shipToDifferent ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId) : selectedId;
-  const shippingCountry = addresses.find((address) => address._id === shippingId)?.country_code ?? "AE";
+  const shippingAddress = addresses.find((address) => address._id === shippingId) ?? null;
+  const shippingCountry = shippingAddress?.country_code ?? "AE";
+  const showTamara = shippingAddress?.country_code === "AE" && shippingAddress.country === "United Arab Emirates";
   const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const [isDefault, setIsDefault] = useState(false);
   const [postalCode, setPostalCode] = useState("");
@@ -436,7 +438,7 @@ export default function CheckoutForm({
           </div>
         ) : null}
 
-        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} onChange={onPaymentMethodChange} /> : null}
+        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} showTamara={showTamara} onChange={onPaymentMethodChange} /> : null}
 
         {selectedId && !shippingAvailable ? (
           <p role="alert" className="mt-4 text-sm font-medium text-primary">
@@ -448,9 +450,9 @@ export default function CheckoutForm({
           <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} />
         ) : paymentMethod === "ziina" ? (
           <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
-        ) : paymentMethod === "tamara" ? (
+        ) : paymentMethod === "tamara" && showTamara ? (
           <TamaraCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
-        ) : (
+        ) : paymentMethod === "tamara" ? null : (
           <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} onPlaced={onPlaced} />
         )}
       </section>

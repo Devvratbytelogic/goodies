@@ -50,7 +50,8 @@ export default function ZiinaCheckout({ billingAddressId, shippingAddressId, shi
       setError(t("ziinaError"));
     } catch (error) {
       console.error("Error creating Ziina checkout", error);
-      setError(t("ziinaError"));
+      const message = (error as { data?: { message?: string } })?.data?.message;
+      setError(message || t("ziinaError"));
     }
   }
 
