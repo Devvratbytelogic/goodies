@@ -93,6 +93,7 @@ export default function ProductPurchase({ notice = "", name, isVariant, variant,
       variant_sku: item.variant_sku ?? undefined,
       quantity: picked[item.product_id._id],
     }));
+  // console.log('selectedVariant', selectedVariant);
 
   const payload = isBundle
     ? { product_id: productId, quantity, bundle_selections: bundleSelections }

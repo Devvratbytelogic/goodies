@@ -8,6 +8,7 @@ import type { InferType } from "yup";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useOpenForgot } from "@/components/auth/Forgot";
+import { useOpenOtp } from "@/components/auth/OTPScreen";
 import { useOpenRegister } from "@/components/auth/Register";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { loginValidationSchema } from "@/validations";
@@ -31,6 +32,7 @@ export default function Login() {
   const { login } = useAuth();
   const openRegister = useOpenRegister();
   const openForgot = useOpenForgot();
+  const openOtp = useOpenOtp();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const formik = useFormik<LoginValues>({
@@ -43,7 +45,12 @@ export default function Login() {
         await login(values.email.trim(), values.password);
         closeModal();
       } catch (caught) {
-        setError(caught instanceof Error && caught.message ? caught.message : t("failed"));
+        const message = caught instanceof Error && caught.message ? caught.message : t("failed");
+        if (/verify your account/i.test(message)) {
+          openOtp(values.email.trim(), "account");
+          return;
+        }
+        setError(message);
       } finally {
         helpers.setSubmitting(false);
       }

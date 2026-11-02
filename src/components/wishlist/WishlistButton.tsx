@@ -29,6 +29,9 @@ export default function WishlistButton({
   const saved = (data ?? []).some(
     (item) => item.product_id?._id === payload.product_id && (item.variant_sku ?? "") === payload.variant_sku,
   );
+  // console.log('payload', payload);
+  // console.log('data', data);
+  
   const label = saved
     ? name
       ? t("remove", { name })

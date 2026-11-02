@@ -79,7 +79,7 @@ export default function WishlistDetails() {
       <p className="text-sm text-muted">{t("count", { count: items.length })}</p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((item) => (
-          <ProductCard key={item._id} product={item.product_id} />
+          <ProductCard key={item._id} product={item.product_id} variant_sku={item.variant_sku ?? ""} />
         ))}
       </div>
     </div>

@@ -8,7 +8,7 @@ import { getProductRoutePath } from "@/utils/routes";
 import { HomeProduct } from "@/server/types/Home";
 
 
-export default function ProductCard({ product }: { product: HomeProduct }) {
+export default function ProductCard({ product, variant_sku }: { product: HomeProduct, variant_sku?: string }) {
   const t = useTranslations("ProductCard");
   const name = product?.title ?? "";
   const isBundle = product?.product_type === "bundle";
@@ -28,7 +28,7 @@ export default function ProductCard({ product }: { product: HomeProduct }) {
 
   const wishlistPayload = {
     product_id: product._id,
-    variant_sku: "",
+    variant_sku: variant_sku ?? "",
   };
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
