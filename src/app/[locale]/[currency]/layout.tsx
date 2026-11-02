@@ -53,7 +53,7 @@ export default async function CurrencyLayout({
       <div className="flex min-h-full flex-1 flex-col">
         <Header logo={settings?.logo || ''} currency={country} headerTextFirst={settings?.header_text_first?.trim() || ''} headerTextSecond={settings?.header_text_second?.trim() || ''} />
         <main className="flex-1">{children}</main>
-        <Footer logo={settings?.logo || ''} description={settings?.platformDescription?.trim() || ''} categories={shopCategories} contact={contact} />
+        <Footer logo={settings?.logo || ''} description={settings?.platformDescription?.trim() || ''} categories={shopCategories} contact={contact} country={country} />
         <BottomNav />
         <WhatsAppFloatingButton href={contact.whatsapp} />
         <ScrollToTopButton />

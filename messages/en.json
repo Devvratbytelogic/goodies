@@ -821,6 +821,13 @@
     "blogs": "Blogs",
     "contactUs": "Contact us",
     "contact": "Contact",
+    "newsletter": "Newsletter",
+    "newsletterHint": "New flavours and offers, straight to your inbox.",
+    "emailPlaceholder": "Email address",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing…",
+    "required": "Enter your email address",
+    "emailInvalid": "Enter a valid email address",
     "location": "Dubai, UAE",
     "copyright": "© Goodiesfruits. {year} All Right Reserved || Developed By <developer>Bytelogic Technologies</developer>",
     "madeWithLove": "Made with love in the UAE"

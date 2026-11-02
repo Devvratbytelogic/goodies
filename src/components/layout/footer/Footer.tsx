@@ -4,6 +4,7 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp, FaXTwitter, FaYoutube 
 import { LuHeart, LuMail, LuMapPin, LuPhone } from "react-icons/lu";
 import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
+import NewsletterForm from "@/components/layout/footer/NewsletterForm";
 import {
   getAboutUsRoutePath,
   getBlogsRoutePath,
@@ -56,7 +57,7 @@ function socialLinks(contact: FooterContact): { key: SocialKey; href: string; ic
 const columnTitleClass =
   "text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-deep";
 const footerLinkClass =
-  "text-sm text-muted transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "text-sm text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 const socialButtonClass =
   "flex size-10 items-center justify-center rounded-full bg-background text-primary shadow-[0_4px_12px_rgba(15,23,42,0.06)] ring-1 ring-border/70 transition-colors hover:bg-primary hover:text-primary-foreground hover:ring-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
@@ -132,7 +133,7 @@ function ContactList({ contact }: { contact: FooterContact }) {
         </li>
       ) : null}
       {contact.address.trim() ? (
-        <li className="inline-flex items-center gap-2.5 text-sm text-muted">
+        <li className="inline-flex items-center gap-2.5 text-sm text-foreground">
           <LuMapPin aria-hidden className="size-4 shrink-0 text-primary" />
           {contact.address}
         </li>
@@ -258,7 +259,7 @@ function MobileFooter({ contact, description }: { contact: FooterContact; descri
   );
 }
 
-export default function Footer({ logo, description, categories, contact }: { logo: string; description: string; categories: FooterCategory[]; contact: FooterContact }) {
+export default function Footer({ logo, description, categories, contact, country }: { logo: string; description: string; categories: FooterCategory[]; contact: FooterContact; country: string }) {
   const t = useTranslations("Footer");
   const year = new Date().getFullYear();
   const shopLinks = [
@@ -267,13 +268,13 @@ export default function Footer({ logo, description, categories, contact }: { log
   ];
 
   return (
-    <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface">
+    <footer className="mt-auto border-t border-border/40 bg-linear-to-b from-primary-soft/40 via-background to-surface lg:from-primary-soft/80 lg:via-background lg:to-accent/10">
       <MobileFooter contact={contact} description={description} />
 
       <div className="container hidden gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid lg:gap-8 lg:py-14 xl:grid-cols-4">
         <div>
           <BrandMark logo={logo} logoClassName="h-30! w-auto" />
-          <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
+          <p className="mt-2 text-sm leading-relaxed text-foreground">{description}</p>
           <SocialLinks contact={contact} />
         </div>
 
@@ -312,6 +313,16 @@ export default function Footer({ logo, description, categories, contact }: { log
           <div className="mt-4">
             <ContactList contact={contact} />
           </div>
+        </div>
+      </div>
+
+      <div className="container pb-5 lg:pb-10">
+        <div className="flex flex-col gap-3 rounded-2xl bg-background px-4 py-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)] ring-1 ring-border/60 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-5 sm:shadow-none">
+          <div className="max-w-sm">
+            <h2 className={columnTitleClass}>{t("newsletter")}</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted">{t("newsletterHint")}</p>
+          </div>
+          <NewsletterForm country={country} />
         </div>
       </div>
 

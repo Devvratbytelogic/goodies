@@ -30,6 +30,10 @@ export const forgotValidationSchema = Yup.object({
   email: emailString("required", "emailInvalid"),
 });
 
+export const newsletterValidationSchema = Yup.object({
+  email: emailString("required", "emailInvalid"),
+});
+
 export const otpValidationSchema = Yup.object({
   code: Yup.string().required("required").matches(/^\d{6}$/, "invalid"),
 });

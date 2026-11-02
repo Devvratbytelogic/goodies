@@ -821,6 +821,13 @@
     "blogs": "المدونة",
     "contactUs": "اتصل بنا",
     "contact": "تواصل معنا",
+    "newsletter": "النشرة البريدية",
+    "newsletterHint": "نكهات وعروض جديدة تصل إلى بريدك.",
+    "emailPlaceholder": "البريد الإلكتروني",
+    "subscribe": "اشترك",
+    "subscribing": "جارٍ الاشتراك…",
+    "required": "أدخل بريدك الإلكتروني",
+    "emailInvalid": "أدخل بريداً إلكترونياً صالحاً",
     "location": "دبي، الإمارات",
     "copyright": "© Goodiesfruits. {year} جميع الحقوق محفوظة || تطوير <developer>Bytelogic Technologies</developer>",
     "madeWithLove": "صُنع بحب في الإمارات"
