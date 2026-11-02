@@ -1,18 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState, type ChangeEvent, type FocusEvent } from "react";
+import Country from "country-state-city/lib/country";
+import State from "country-state-city/lib/state";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { LuCamera, LuEye, LuEyeOff, LuX } from "react-icons/lu";
 import type { InferType } from "yup";
 import { ProfileAvatar } from "@/components/account/AccountProfileSummary";
+import RegisterLocation from "@/components/auth/RegisterLocation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AccountProfileFormSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { useRouter } from "@/i18n/navigation";
+import type { UserProfile } from "@/server/types/user";
 import { useChangePasswordMutation, useDeleteUserAccountMutation, useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/store/endpoints/userApi";
 import { getHomeRoutePath } from "@/utils/routes";
 import { changePasswordValidationSchema, profileValidationSchema } from "@/validations";
+
+function locationFromProfile(profile: UserProfile | null | undefined) {
+  const country =
+    profile?.country_code || Country.getAllCountries().find((item) => item.name === profile?.country)?.isoCode || "";
+  const state =
+    profile?.state_code ||
+    State.getStatesOfCountry(country).find((item) => item.name === profile?.state || item.isoCode === profile?.state)?.isoCode ||
+    "";
+
+  return { country, state };
+}
 
 type ProfileValues = InferType<typeof profileValidationSchema>;
 type PasswordValues = InferType<typeof changePasswordValidationSchema>;
@@ -46,19 +61,28 @@ export default function ProfileForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const location = locationFromProfile(profile);
   const profileForm = useFormik<ProfileValues>({
     initialValues: {
       firstName: profile?.name ?? "",
       lastName: profile?.last_name ?? "",
       email: profile?.email ?? "",
       phone: profile?.phone_number ?? "",
+      country: location.country,
+      state: location.state,
     },
     enableReinitialize: true,
     validationSchema: profileValidationSchema,
     onSubmit: async (values) => {
+      const countryCode = values.country ?? "";
+      const stateCode = values.state ?? "";
       const body = new FormData();
       body.append("name", values.firstName.trim());
       body.append("last_name", values.lastName.trim());
+      body.append("country", Country.getCountryByCode(countryCode)?.name ?? "");
+      body.append("country_code", countryCode);
+      body.append("state", State.getStatesOfCountry(countryCode).find((item) => item.isoCode === stateCode)?.name ?? "");
+      body.append("state_code", stateCode);
       if (photoFile.current) body.append("profile_pic", photoFile.current);
       else if (!photo) body.append("profile_pic", "");
 
@@ -248,6 +272,34 @@ export default function ProfileForm() {
               className={`${fieldClassName} mt-1 cursor-default text-muted`}
             />
           </label>
+          <div className="sm:col-span-2">
+            <RegisterLocation
+              idPrefix="profile"
+              className="grid gap-4 sm:grid-cols-2"
+              country={profileForm.values.country ?? ""}
+              state={profileForm.values.state ?? ""}
+              countryLabel={t("country")}
+              stateLabel={t("state")}
+              countryError={profileError("country")}
+              stateError={profileError("state")}
+              labelClassName={labelClassName}
+              onCountryChange={(country) => {
+                setProfileSaved(false);
+                void profileForm.setFieldValue("country", country);
+                void profileForm.setFieldValue("state", "");
+              }}
+              onStateChange={(state) => {
+                setProfileSaved(false);
+                void profileForm.setFieldValue("state", state);
+              }}
+              onCountryBlur={() => {
+                void profileForm.setFieldTouched("country", true);
+              }}
+              onStateBlur={() => {
+                void profileForm.setFieldTouched("state", true);
+              }}
+            />
+          </div>
         </div>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button

@@ -406,6 +406,8 @@ export function AccountProfileFormSkeleton({ quiet = false }: { quiet?: boolean 
         <Field />
         <Field />
         <Field />
+        <Field />
+        <Field />
       </div>
       <Bone className="mt-5 h-10 w-32 rounded-full" />
     </>

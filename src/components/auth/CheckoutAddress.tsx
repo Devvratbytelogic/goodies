@@ -159,6 +159,7 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
   const [editingAddress, setEditingAddress] = useState<AddressEntity | null>(null);
   const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const [postalCode, setPostalCode] = useState("");
+  const [isDefault, setIsDefault] = useState(false);
   const [continuing, setContinuing] = useState(false);
 
   const selectedId = pickedId ?? addresses.find((address) => address.is_selected)?._id ?? addresses.find((address) => address.is_default)?._id ?? null;
@@ -175,13 +176,13 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
         if (editingAddress) {
           await updateAddress({
             addressId: editingAddress._id,
-            ...toAddressPayload(values, phoneCountryCode, editingAddress.is_default, postalCode),
+            ...toAddressPayload(values, phoneCountryCode, isDefault, postalCode),
           }).unwrap();
           setPickedId(editingAddress._id);
           closeForm();
         } else {
           const created = await addAddress({
-            ...toAddressPayload(values, phoneCountryCode, addresses.length === 0, postalCode),
+            ...toAddressPayload(values, phoneCountryCode, addresses.length === 0 || isDefault, postalCode),
             is_selected: true,
           }).unwrap();
           if (created?._id) setPickedId(created._id);
@@ -205,6 +206,7 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
     formik.resetForm({ values: formInitialValues });
     setPhoneCountryCode(phoneFromProfile(profile).dial);
     setPostalCode("");
+    setIsDefault(addresses.length === 0);
     setShowForm(true);
   }
 
@@ -222,6 +224,7 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
       },
     });
     setPostalCode(address.postal_code ?? "");
+    setIsDefault(address.is_default);
     setEditingAddress(address);
     setShowForm(true);
   }
@@ -241,6 +244,7 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
     formik.resetForm({ values: formInitialValues });
     setPhoneCountryCode(phoneFromProfile(profile).dial);
     setPostalCode("");
+    setIsDefault(false);
   }
 
   const countryOptions = useMemo<SelectOption[]>(
@@ -406,6 +410,16 @@ export default function CheckoutAddress({ onDone, header }: { onDone?: () => voi
         </div>
 
         <div className={footerClassName}>
+          <label className="flex cursor-pointer items-center gap-2.5 text-sm font-semibold text-heading">
+            <input
+              type="checkbox"
+              checked={addresses.length === 0 || isDefault}
+              disabled={addresses.length === 0}
+              onChange={(event) => setIsDefault(event.target.checked)}
+              className="size-4 accent-primary disabled:cursor-default"
+            />
+            {fields("setDefault")}
+          </label>
           <button
             type="submit"
             disabled={formik.isSubmitting}

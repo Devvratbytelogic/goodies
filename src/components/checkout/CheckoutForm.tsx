@@ -438,7 +438,9 @@ export default function CheckoutForm({
           </div>
         ) : null}
 
-        {addresses.length > 0 ? <PaymentMethods value={paymentMethod} showTamara={showTamara} onChange={onPaymentMethodChange} /> : null}
+        {addresses.length > 0 ? (
+          <PaymentMethods value={paymentMethod} showTamara={showTamara} disabled={!shippingAvailable} onChange={onPaymentMethodChange} />
+        ) : null}
 
         {selectedId && !shippingAvailable ? (
           <p role="alert" className="mt-4 text-sm font-medium text-primary">

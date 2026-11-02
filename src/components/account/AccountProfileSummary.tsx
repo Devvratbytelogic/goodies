@@ -26,6 +26,7 @@ export function AccountProfileSummary() {
   const t = useTranslations("AccountPage");
   const { data: profile, isLoading, isUninitialized } = useAccountUser();
   const initials = `${profile?.name?.[0] ?? ""}${profile?.last_name?.[0] ?? ""}`;
+  const location = [profile?.state, profile?.country].filter(Boolean).join(", ");
 
   if (!profile && (isLoading || isUninitialized)) return <AccountProfileCardSkeleton />;
 
@@ -52,6 +53,7 @@ export function AccountProfileSummary() {
       <p className="mt-3 text-sm text-heading" dir="ltr">
         {profile?.phone_number}
       </p>
+      {location ? <p className="mt-1 text-sm text-muted">{location}</p> : null}
     </section>
   );
 }
@@ -60,6 +62,9 @@ export function AccountDefaultAddress() {
   const t = useTranslations("AccountPage");
   const { data: profile, isLoading, isUninitialized } = useAccountUser();
   const address = profile?.address;
+  const hasAddress = Boolean(
+    address && [address.street_address, address.city, address.state, address.country, address.first_name].some((part) => part?.trim()),
+  );
 
   if (!profile && (isLoading || isUninitialized)) return <AccountDefaultAddressSkeleton />;
 
@@ -71,10 +76,10 @@ export function AccountDefaultAddress() {
           href={getAccountAddressRoutePath()}
           className="text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          {t("viewAll")}
+          {hasAddress ? t("viewAll") : t("addAddress")}
         </Link>
       </div>
-      {address ? (
+      {hasAddress && address ? (
         <>
           <p className="mt-3 text-sm font-medium text-heading">
             {address.first_name} {address.last_name}
@@ -89,7 +94,9 @@ export function AccountDefaultAddress() {
           </p>
           {address.email ? <p className="text-sm text-muted">{address.email}</p> : null}
         </>
-      ) : null}
+      ) : (
+        <p className="mt-3 text-sm text-muted">{t("noDefaultAddress")}</p>
+      )}
     </section>
   );
 }

@@ -21,6 +21,8 @@ type RegisterLocationProps = {
   onStateChange: (state: string) => void;
   onCountryBlur: () => void;
   onStateBlur: () => void;
+  idPrefix?: string;
+  className?: string;
 };
 
 function selectStyles(invalid: boolean): StylesConfig<SelectOption, false> {
@@ -110,7 +112,11 @@ export default function RegisterLocation({
   onStateChange,
   onCountryBlur,
   onStateBlur,
+  idPrefix = "register",
+  className = "grid grid-cols-2 gap-3",
 }: RegisterLocationProps) {
+  const countryId = `${idPrefix}-country`;
+  const stateId = `${idPrefix}-state`;
   const t = useTranslations("Register");
   const locale = useLocale();
   const countries = useMemo(
@@ -129,15 +135,15 @@ export default function RegisterLocation({
   const stateValue = states.find((option) => option.value === state) ?? null;
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className={className}>
       <div>
-        <label htmlFor="register-country" className={labelClassName}>
+        <label htmlFor={countryId} className={labelClassName}>
           {countryLabel}
           <RequiredMark />
         </label>
         <Select<SelectOption, false>
-          instanceId="register-country"
-          inputId="register-country"
+          instanceId={countryId}
+          inputId={countryId}
           name="country"
           options={countries}
           value={countryValue}
@@ -149,23 +155,23 @@ export default function RegisterLocation({
           menuPortalTarget={document.body}
           menuPosition="fixed"
           aria-invalid={Boolean(countryError)}
-          aria-errormessage={countryError ? "register-country-error" : undefined}
+          aria-errormessage={countryError ? `${countryId}-error` : undefined}
           noOptionsMessage={() => t("noOptions")}
         />
         {countryError ? (
-          <p id="register-country-error" className="mt-1.5 text-xs font-normal text-primary">
+          <p id={`${countryId}-error`} className="mt-1.5 text-xs font-normal text-primary">
             {countryError}
           </p>
         ) : null}
       </div>
       <div>
-        <label htmlFor="register-state" className={labelClassName}>
+        <label htmlFor={stateId} className={labelClassName}>
           {stateLabel}
           {states.length > 0 ? <RequiredMark /> : null}
         </label>
         <Select<SelectOption, false>
-          instanceId="register-state"
-          inputId="register-state"
+          instanceId={stateId}
+          inputId={stateId}
           name="state"
           options={states}
           value={stateValue}
@@ -179,11 +185,11 @@ export default function RegisterLocation({
           menuPortalTarget={document.body}
           menuPosition="fixed"
           aria-invalid={Boolean(stateError)}
-          aria-errormessage={stateError ? "register-state-error" : undefined}
+          aria-errormessage={stateError ? `${stateId}-error` : undefined}
           noOptionsMessage={() => t("noOptions")}
         />
         {stateError ? (
-          <p id="register-state-error" className="mt-1.5 text-xs font-normal text-primary">
+          <p id={`${stateId}-error`} className="mt-1.5 text-xs font-normal text-primary">
             {stateError}
           </p>
         ) : null}

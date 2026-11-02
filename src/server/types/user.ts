@@ -20,6 +20,7 @@ export interface UserProfile {
     country: string;
     phone_country_code: string;
     country_code: string;
+    state: string;
     state_code: string;
     createdAt: string;
     updatedAt: string;

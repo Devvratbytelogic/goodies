@@ -65,6 +65,7 @@ export default function CheckoutPayment({
               value={paymentMethod}
               primaryMethod={defaultPaymentMethod}
               showTamara={showTamara}
+              disabled={!shippingAvailable}
               onChange={onPaymentMethodChange}
             />
 
@@ -74,7 +75,7 @@ export default function CheckoutPayment({
               </p>
             ) : null}
 
-            {paymentMethod === "tabby" ? (
+            {shippingAvailable && paymentMethod === "tabby" ? (
               <TabbyCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}
@@ -85,7 +86,7 @@ export default function CheckoutPayment({
               />
             ) : null}
 
-            {paymentMethod === "ziina" ? (
+            {shippingAvailable && paymentMethod === "ziina" ? (
               <ZiinaCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}
@@ -95,7 +96,7 @@ export default function CheckoutPayment({
               />
             ) : null}
 
-            {paymentMethod === "tamara" && showTamara ? (
+            {shippingAvailable && paymentMethod === "tamara" && showTamara ? (
               <TamaraCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}
@@ -108,7 +109,7 @@ export default function CheckoutPayment({
         </div>
       </div>
 
-      {showCodFooter ? (
+      {shippingAvailable && showCodFooter ? (
         <div className={footerClassName}>
           <CodCheckout
             totalsMethod={cartMethod ?? null}

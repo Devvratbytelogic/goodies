@@ -13,9 +13,10 @@ type PaymentMethodsProps = {
   /** Settings default — shown as a badge, not auto-selected. */
   primaryMethod?: string | null;
   showTamara?: boolean;
+  disabled?: boolean;
 };
 
-export default function PaymentMethods({ value, onChange, variant = "default", primaryMethod = null, showTamara = false }: PaymentMethodsProps) {
+export default function PaymentMethods({ value, onChange, variant = "default", primaryMethod = null, showTamara = false, disabled = false }: PaymentMethodsProps) {
   const t = useTranslations("CheckoutClassicPage");
   // The default method reuses the page cart. Another method needs its own totals.
   const cartMethod = primaryMethod == null ? (value ?? undefined) : !value || value === primaryMethod ? undefined : value;
@@ -29,7 +30,7 @@ export default function PaymentMethods({ value, onChange, variant = "default", p
   return (
     <div className={sheet ? "grid gap-3" : "mt-6 border-t border-border pt-5"}>
       {sheet ? null : <h2 className="text-base font-bold">{t("paymentMethod")}</h2>}
-      <div className={sheet ? "grid gap-3" : "mt-4 grid gap-3"} role="radiogroup" aria-label={t("paymentMethod")}>
+      <div className={sheet ? "grid gap-3" : "mt-4 grid gap-3"} role="radiogroup" aria-label={t("paymentMethod")} aria-disabled={disabled || undefined}>
         {methods.map((method) => {
           const selected = value === method;
           const isPrimary = primaryMethod === method;
@@ -39,15 +40,16 @@ export default function PaymentMethods({ value, onChange, variant = "default", p
           return (
             <label
               key={method}
-              className={`flex cursor-pointer items-start gap-3 rounded-xl border ${sheet ? "p-3.5" : "p-4"} ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
+              className={`flex items-start gap-3 rounded-xl border ${sheet ? "p-3.5" : "p-4"} ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"} ${selected ? "border-primary bg-primary-soft" : "border-border"}`}
             >
               <input
                 type="radio"
                 name={sheet ? "checkout-auth-payment-method" : "payment-method"}
                 value={method}
                 checked={selected}
+                disabled={disabled}
                 onChange={() => onChange(method)}
-                className="mt-1 size-4 accent-primary"
+                className="mt-1 size-4 accent-primary disabled:cursor-not-allowed"
               />
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-2">

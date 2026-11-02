@@ -43,24 +43,7 @@ export const resetPasswordValidationSchema = Yup.object({
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
 
-export const profileValidationSchema = Yup.object({
-  firstName: requiredString("required", 40),
-  lastName: requiredString("required", 40),
-  email: emailString("required", "emailInvalid"),
-  phone: phoneString("required", "phoneInvalid"),
-});
-
-export const changePasswordValidationSchema = Yup.object({
-  currentPassword: Yup.string().required("required"),
-  password: passwordString().notOneOf([Yup.ref("currentPassword")], "passwordSame"),
-  confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
-});
-
-export const registerValidationSchema = Yup.object({
-  firstName: requiredString("required", 40),
-  lastName: requiredString("required", 40),
-  email: emailString("required", "emailInvalid"),
-  phone: Yup.string().required("required").matches(/^\d{8,15}$/, "phoneInvalid"),
+const locationFields = {
   country: Yup.string().trim().required("required"),
   state: Yup.string()
     .trim()
@@ -74,6 +57,28 @@ export const registerValidationSchema = Yup.object({
 
       return Boolean(value && states.some((state) => state.isoCode === value));
     }),
+};
+
+export const profileValidationSchema = Yup.object({
+  firstName: requiredString("required", 40),
+  lastName: requiredString("required", 40),
+  email: emailString("required", "emailInvalid"),
+  phone: phoneString("required", "phoneInvalid"),
+  ...locationFields,
+});
+
+export const changePasswordValidationSchema = Yup.object({
+  currentPassword: Yup.string().required("required"),
+  password: passwordString().notOneOf([Yup.ref("currentPassword")], "passwordSame"),
+  confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
+});
+
+export const registerValidationSchema = Yup.object({
+  firstName: requiredString("required", 40),
+  lastName: requiredString("required", 40),
+  email: emailString("required", "emailInvalid"),
+  phone: Yup.string().required("required").matches(/^\d{8,15}$/, "phoneInvalid"),
+  ...locationFields,
   password: passwordString(),
   confirmPassword: Yup.string().required("required").oneOf([Yup.ref("password")], "passwordMismatch"),
 });
