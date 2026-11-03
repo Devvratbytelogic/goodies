@@ -9,6 +9,7 @@ import { BundleItemsEntity, SizesEntity, Variant, VariantsEntity } from "@/serve
 import { formatAmount } from "@/utils/price";
 import BundleProductCard from "./BundleProductCard";
 import TabbyPromo from "./TabbyPromo";
+import TamaraPromo from "./TamaraPromo";
 
 type ProductPurchaseProps = {
   notice?: string;
@@ -261,16 +262,8 @@ export default function ProductPurchase({ notice = "", name, isVariant, variant,
       </div>
 
       <div className="mt-4 space-y-3">
-        <TabbyPromo price={price} currencySymbol={currencySymbol} />
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-3 text-sm sm:px-4">
-          <p className="text-foreground">
-            <strong>{formatAmount(price / 4, currencySymbol)}</strong>
-            {t("tamaraRest")} <span className="underline">{t("moreOptions")}</span>
-          </p>
-          <span className="shrink-0 rounded-md bg-linear-to-r from-[#ff8a00] via-[#ff4d8d] to-[#7c3aed] px-2 py-1 text-sm font-bold text-white">
-            tamara
-          </span>
-        </div>
+        <TabbyPromo price={price * quantity} currencySymbol={currencySymbol} />
+        <TamaraPromo price={price * quantity} />
       </div>
 
       {notice ? (

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 const cookieName = "origin";
 const sessionMinutes = 30;
 const searchEngines = ["google", "bing", "yahoo", "duckduckgo", "baidu", "yandex", "ecosia"];
+const paymentGateways = ["ziina.com", "tabby.ai", "tamara.co"];
 
 const cookieOptions = {
   expires: 180,
@@ -35,6 +36,10 @@ function isHost(host: string, name: string) {
   return host === name || host.endsWith(`.${name}`);
 }
 
+function isPaymentGateway(host: string) {
+  return paymentGateways.some((name) => isHost(host, name));
+}
+
 // Ads still append a click id and open inside the app when the ad URL has no utm_source.
 function adSource(params: URLSearchParams, referrer: string) {
   const browser = navigator.userAgent.toLowerCase();
@@ -53,6 +58,9 @@ function currentVisit(): Attribution | undefined {
   }
 
   const referrer = hostName(document.referrer);
+  // A payment return is the same visit. It must not become the order origin.
+  if (isPaymentGateway(referrer)) return undefined;
+
   const ad = adSource(params, referrer);
   if (ad) return { type: "utm", source: ad, at: Date.now() };
 
@@ -69,6 +77,7 @@ function readAttribution(): Attribution | undefined {
   if (!raw) return undefined;
   try {
     const saved = JSON.parse(raw) as Attribution;
+    if (saved?.type === "referral" && isPaymentGateway(saved.source)) return undefined;
     if (saved?.type && saved.source) return saved;
   } catch {
     return undefined;
