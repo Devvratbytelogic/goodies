@@ -49,6 +49,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "Metadata" });
   const settings = await getGlobalSettings(defaultCurrency);
   const brand = settings?.platformName?.trim() || t("title");
+  const keywords = settings?.meta_keywords?.trim();
   const googleVerification = settings?.search_console?.trim();
   const metaVerification = settings?.meta_domain_verification?.trim();
 
@@ -58,6 +59,7 @@ export async function generateMetadata({
     ),
     applicationName: brand,
     title: brand,
+    keywords: keywords || undefined,
     category: "shopping",
     verification: {
       ...(googleVerification ? { google: googleVerification } : {}),

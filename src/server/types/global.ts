@@ -31,6 +31,9 @@ export interface GlobalData {
   phone: string;
   whatsapp_number: string;
   default_payment_method: string | 'ziina' | 'tamara' | 'tabby';
+  tabby_enable: boolean;
+  tamara_enable: boolean;
+  ziina_enable: boolean;
   schema_markup: string;
   search_console: string;
   instagram_link: string;
@@ -47,7 +50,6 @@ export interface GlobalData {
   icon_image: string;
   logo: string;
   home_page_banner: string;
-  cod_enable: boolean;
   linkdin_logo?: null;
   x_logo?: null;
   instagram_logo?: null;

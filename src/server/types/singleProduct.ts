@@ -49,6 +49,7 @@ export interface SingleProductData {
   view_count: number;
   meta_title: string;
   meta_description?: null;
+  meta_keywords?: string | null;
   og_title: string;
   og_description?: null;
   og_image: string;

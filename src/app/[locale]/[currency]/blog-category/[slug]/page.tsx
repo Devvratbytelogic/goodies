@@ -38,16 +38,37 @@ type BlogCategoryPageProps = {
   searchParams: Promise<{ page?: string; search?: string }>;
 };
 
+function metaText(value?: string | null) {
+  const text = value?.trim();
+  return text || undefined;
+}
+
 export async function generateMetadata({ params }: BlogCategoryPageProps): Promise<Metadata> {
   const { locale, currency, slug } = await params;
   const categorySlug = readSlug(slug);
   const category = await getBlogCategory(toCurrency(currency), categorySlug);
   if (!category?.name) return {};
-  const title = category.meta_title?.trim() || category.name;
-  const description = category.meta_description?.trim() || category.description?.trim() || undefined;
+
+  const title = metaText(category.meta_title) ?? category.name;
+  const description = metaText(category.meta_description) ?? metaText(category.description);
+  const image = metaText(category.og_image);
+  const keywords = metaText(category.meta_keywords);
+
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
+    openGraph: {
+      title: metaText(category.og_title) ?? title,
+      description: metaText(category.og_description) ?? description,
+      images: image ? [image] : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title: metaText(category.og_title) ?? title,
+      description: metaText(category.og_description) ?? description,
+      images: image ? [image] : undefined,
+    },
     alternates: pageAlternates(locale, getBlogCategoryRoutePath(categorySlug)),
   };
 }
@@ -64,7 +85,7 @@ export default async function BlogCategoryPage({ params, searchParams }: BlogCat
 
   const articles = category.blogs ?? [];
   const totalPages = category.totalPages || 1;
-  const schema = category.schema?.trim();
+  const schema = category.schema?.trim() || category.schema_markup?.trim();
   const jsonLd = schema && /^[\[{]/.test(schema) ? schema : "";
   const t = await getTranslations("BlogsPage");
   const nav = await getTranslations("Nav");

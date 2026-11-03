@@ -48,10 +48,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     metaText(product.description);
   const image = metaText(product.og_image) ?? metaText(product.thumbnail);
   const twitterImage = metaText(product.twitter_image) ?? image;
+  const keywords = metaText(product.meta_keywords);
 
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
     openGraph: {
       title: metaText(product.og_title) ?? title,
       description: metaText(product.og_description) ?? description,

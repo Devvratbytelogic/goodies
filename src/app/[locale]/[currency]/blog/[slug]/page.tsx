@@ -50,11 +50,13 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const image = metaText(article?.og_image) ?? metaText(article?.image) ?? "";
   const ogTitle = metaText(article?.og_title) ?? title;
   const ogDescription = metaText(article?.og_description) ?? description;
+  const keywords = metaText(article?.meta_keywords);
 
   return {
     title,
     description,
-    alternates: pageAlternates(locale, getBlogRoutePath(articleSlug), article?.canonical_url),
+    ...(keywords ? { keywords } : {}),
+    alternates: pageAlternates(locale, getBlogRoutePath(articleSlug)),
     openGraph: { title: ogTitle, description: ogDescription, images: image ? [image] : undefined },
     twitter: { card: image ? "summary_large_image" : "summary", title: ogTitle, description: ogDescription, images: image ? [image] : undefined },
   };

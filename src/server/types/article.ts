@@ -14,7 +14,6 @@ export interface ArticleCategory {
   status?: boolean;
   description?: string | null;
   createdAt?: string;
-  canonical_url?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_keywords?: string | null;
@@ -23,6 +22,7 @@ export interface ArticleCategory {
   og_type?: string | null;
   og_image?: string | null;
   schema?: string | null;
+  schema_markup?: string | null;
 }
 
 export interface BlogCategoryResponseData extends ArticleCategory {
@@ -51,7 +51,6 @@ export interface Article {
   category?: ArticleCategory | string | null;
   description?: string | null;
   createdBy?: ArticleAuthor | null;
-  canonical_url?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_keywords?: string | null;

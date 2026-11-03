@@ -10,14 +10,9 @@ export function canonicalPath(locale: string, path = "/") {
   return trimmed === "/" ? `/${locale}` : `/${locale}${trimmed}`;
 }
 
-export function pageAlternates(
-  locale: string,
-  path: string,
-  canonicalOverride?: string | null,
-): Metadata["alternates"] {
-  const override = canonicalOverride?.trim();
+export function pageAlternates(locale: string, path: string): Metadata["alternates"] {
   return {
-    canonical: override || canonicalPath(locale, path),
+    canonical: canonicalPath(locale, path),
     languages: {
       en: canonicalPath("en", path),
       ar: canonicalPath("ar", path),

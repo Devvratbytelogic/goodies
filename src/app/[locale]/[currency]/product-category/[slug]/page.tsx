@@ -52,10 +52,12 @@ export async function generateMetadata({ params }: ProductCategoryPageProps): Pr
   const description = metaText(category.meta_description) ?? metaText(category.description);
   const image = metaText(category.og_image) ?? metaText(category.image);
   const twitterImage = metaText(category.twitter_image) ?? image;
+  const keywords = metaText(category.meta_keywords);
 
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
     openGraph: {
       title: metaText(category.og_title) ?? title,
       description: metaText(category.og_description) ?? description,
