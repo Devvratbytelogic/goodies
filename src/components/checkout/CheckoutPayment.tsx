@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import CodCheckout from "@/components/checkout/CodCheckout";
-import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import PaymentMethods, { type EnabledGateways, type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import TabbyCheckout from "@/components/checkout/TabbyCheckout";
 import TamaraCheckout from "@/components/checkout/TamaraCheckout";
 import ZiinaCheckout from "@/components/checkout/ZiinaCheckout";
@@ -15,6 +15,7 @@ type CheckoutPaymentProps = {
   header?: ReactNode;
   paymentMethod: PaymentMethod | null;
   defaultPaymentMethod?: string | null;
+  enabled: EnabledGateways;
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onPlaced?: (order: PlacedOrder) => void;
 };
@@ -29,6 +30,7 @@ export default function CheckoutPayment({
   header,
   paymentMethod,
   defaultPaymentMethod = null,
+  enabled,
   onPaymentMethodChange,
   onPlaced,
 }: CheckoutPaymentProps) {
@@ -46,7 +48,6 @@ export default function CheckoutPayment({
     null;
   const selectedAddress = addresses.find((address) => address._id === selectedId) ?? null;
   const country = selectedAddress?.country_code ?? "AE";
-  const showTamara = selectedAddress?.country_code === "AE" && selectedAddress.country === "United Arab Emirates";
   const showCodFooter = paymentMethod === "cod";
 
   return (
@@ -64,7 +65,7 @@ export default function CheckoutPayment({
               variant="sheet"
               value={paymentMethod}
               primaryMethod={defaultPaymentMethod}
-              showTamara={showTamara}
+              enabled={enabled}
               disabled={!shippingAvailable}
               onChange={onPaymentMethodChange}
             />
@@ -75,7 +76,7 @@ export default function CheckoutPayment({
               </p>
             ) : null}
 
-            {shippingAvailable && paymentMethod === "tabby" ? (
+            {shippingAvailable && paymentMethod === "tabby" && enabled.tabby ? (
               <TabbyCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}
@@ -86,7 +87,7 @@ export default function CheckoutPayment({
               />
             ) : null}
 
-            {shippingAvailable && paymentMethod === "ziina" ? (
+            {shippingAvailable && paymentMethod === "ziina" && enabled.ziina ? (
               <ZiinaCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}
@@ -96,7 +97,7 @@ export default function CheckoutPayment({
               />
             ) : null}
 
-            {shippingAvailable && paymentMethod === "tamara" && showTamara ? (
+            {shippingAvailable && paymentMethod === "tamara" && enabled.tamara ? (
               <TamaraCheckout
                 autoStart
                 totalsMethod={cartMethod ?? null}

@@ -69,6 +69,11 @@ export default async function CheckoutClassicPage({
   const [notices, settings] = await Promise.all([getPageNoticeSettings(country), getGlobalSettings(country)]);
   const checkoutNotice = notices?.checkout_notice_enabled ? notices.checkout_notice?.trim() : "";
   const defaultPaymentMethod = settings?.default_payment_method?.trim().toLowerCase() || "ziina";
+  const enabled = {
+    tabby: settings?.tabby_enable === true,
+    tamara: settings?.tamara_enable === true,
+    ziina: settings?.ziina_enable === true,
+  };
 
   return (
     <div className="container section_y_space">
@@ -99,7 +104,7 @@ export default async function CheckoutClassicPage({
           />
         </div>
       ) : (
-        <CheckoutView shopHref={getShopRoutePath()} defaultPaymentMethod={defaultPaymentMethod} />
+        <CheckoutView shopHref={getShopRoutePath()} defaultPaymentMethod={defaultPaymentMethod} enabled={enabled} />
       )}
     </div>
   );

@@ -348,7 +348,10 @@
     "emailInvalid": "أدخل بريدًا إلكترونيًا صحيحًا",
     "phoneInvalid": "أدخل رقم هاتف صحيحًا",
     "invalidText": "يُسمح بالحروف والأرقام وعلامات الترقيم الأساسية فقط",
-    "tooLong": "هذا الحقل طويل جدًا"
+    "tooLong": "هذا الحقل طويل جدًا",
+    "nameInvalid": "أدخل اسمك بشكل صحيح",
+    "messageTooShort": "الرسالة قصيرة جدًا. استخدم {min} أحرف على الأقل",
+    "messageLimit": "{count}/{max} · {min} أحرف على الأقل"
   },
   "CartPage": {
     "title": "السلة",
@@ -505,6 +508,7 @@
     "downloadInvoiceError": "تعذّر تنزيل الفاتورة. يرجى المحاولة مرة أخرى.",
     "placedOn": "تاريخ الطلب {date}",
     "orderItems": "المنتجات",
+    "address": "العنوان",
     "shipTo": "عنوان الشحن",
     "tracking": "التتبع",
     "trackingNumber": "رقم التتبع",

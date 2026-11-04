@@ -6,22 +6,25 @@ import { useEffect, useState } from "react";
 import CartSummary from "@/components/cart/CartSummary";
 import CheckoutForm from "@/components/checkout/CheckoutForm";
 import PaymentReturn from "@/components/checkout/PaymentReturn";
-import { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import { type EnabledGateways, type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import { rememberSwitchedMethod } from "@/components/checkout/usePlaceWhenSignedIn";
 import { PlacedOrder } from "@/server/types/order";
 import { useGetCartQuery } from "@/store/endpoints/cartApi";
 import { getCheckoutClassicRoutePath } from "@/utils/routes";
 
-function startingMethod(value?: string): PaymentMethod {
-  if (value === "tabby" || value === "ziina" || value === "tamara") return value;
-  return "ziina";
+function startingMethod(value: string | undefined, enabled: EnabledGateways): PaymentMethod {
+  if ((value === "tabby" || value === "ziina" || value === "tamara") && enabled[value]) return value;
+  if (enabled.ziina) return "ziina";
+  if (enabled.tabby) return "tabby";
+  if (enabled.tamara) return "tamara";
+  return "cod";
 }
 
-export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopHref: string; defaultPaymentMethod?: string }) {
+export default function CheckoutView({ shopHref, defaultPaymentMethod, enabled }: { shopHref: string; defaultPaymentMethod?: string; enabled: EnabledGateways }) {
   // const { token, ready } = useAuth();
   // const [showAuth, setShowAuth] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
-  const defaultMethod = startingMethod(defaultPaymentMethod);
+  const defaultMethod = startingMethod(defaultPaymentMethod, enabled);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(defaultMethod);
   const { data: cart } = useGetCartQuery(paymentMethod);
   const shippingAvailable = cart?.summary?.shipping_rate_available !== false;
@@ -62,7 +65,7 @@ export default function CheckoutView({ shopHref, defaultPaymentMethod }: { shopH
         /> */}
       {/* ) : null} */}
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
-        <CheckoutForm paymentMethod={paymentMethod} shippingAvailable={shippingAvailable} onPaymentMethodChange={onPaymentMethodChange} onPlaced={setPlacedOrder} />
+        <CheckoutForm paymentMethod={paymentMethod} enabled={enabled} shippingAvailable={shippingAvailable} onPaymentMethodChange={onPaymentMethodChange} onPlaced={setPlacedOrder} />
         <CartSummary showItems paymentMethod={paymentMethod} />
       </div>
     </>

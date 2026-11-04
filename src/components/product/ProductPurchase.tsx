@@ -226,29 +226,19 @@ export default function ProductPurchase({ notice = "", name, isVariant, variant,
             {t("chooseSize")}
           </p>
         ) : null}
-        {outOfStock ? (
-          <div role="status" className="rounded-xl border border-border bg-surface p-4">
-            <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
-              {t("outOfStock")}
-            </span>
-            <p className="mt-2 text-sm text-foreground">
-              {isVariant && !allSizesSoldOut ? t("outOfStockSize") : t("outOfStockProduct")}
-            </p>
-          </div>
-        ) : (
-          <PurchaseActions
-            name={name}
-            quantity={quantity}
-            maxQuantity={maxQuantity}
-            disabled={addDisabled}
-            needsSize={needsSize}
-            payload={payload}
-            onQuantityChange={(next) => {
-              setQuantity(next);
-              setAdded(false);
-            }}
-          />
-        )}
+        <PurchaseActions
+          name={name}
+          quantity={quantity}
+          maxQuantity={maxQuantity}
+          disabled={addDisabled}
+          needsSize={needsSize}
+          soldOutNote={outOfStock ? (isVariant && !allSizesSoldOut ? t("outOfStockSize") : t("outOfStockProduct")) : null}
+          payload={payload}
+          onQuantityChange={(next) => {
+            setQuantity(next);
+            setAdded(false);
+          }}
+        />
         {!outOfStock && stockReached ? (
           <p aria-live="polite" className="mt-3 text-sm font-medium text-primary">
             {t("bundleStockLimit", { count: maxQuantity })}

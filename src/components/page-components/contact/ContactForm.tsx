@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import type { InferType } from "yup";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { usePostContactMutation } from "@/store/endpoints/userApi";
-import { contactUsValidationSchema } from "@/validations";
+import { contactMessageMax, contactMessageMin, contactUsValidationSchema } from "@/validations";
 
 type ContactFormValues = InferType<typeof contactUsValidationSchema>;
-type ValidationMessageKey = "required" | "emailInvalid" | "phoneInvalid" | "invalidText" | "tooLong";
+type ValidationMessageKey = "required" | "emailInvalid" | "phoneInvalid" | "invalidText" | "tooLong" | "nameInvalid";
 
 const initialValues: ContactFormValues = {
   firstName: "",
@@ -49,8 +49,12 @@ export default function ContactForm() {
 
   function fieldError(name: keyof ContactFormValues) {
     const error = formik.touched[name] ? formik.errors[name] : undefined;
-    return error ? t(error as ValidationMessageKey) : undefined;
+    if (!error) return undefined;
+    if (error === "messageTooShort") return t("messageTooShort", { min: contactMessageMin });
+    return t(error as ValidationMessageKey);
   }
+
+  const messageCount = formik.values.message.length;
 
   return (
     <form
@@ -150,13 +154,17 @@ export default function ContactForm() {
           <textarea
             name="message"
             rows={5}
+            maxLength={contactMessageMax}
             value={formik.values.message}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             aria-invalid={Boolean(fieldError("message"))}
-            aria-describedby={fieldError("message") ? "message-error" : undefined}
+            aria-describedby={fieldError("message") ? "message-error message-limit" : "message-limit"}
             className={`${fieldClassName} h-auto min-h-32 resize-y py-3`}
           />
+          <p id="message-limit" className={`mt-1.5 text-xs ${messageCount >= contactMessageMax ? "font-medium text-primary" : "text-muted"}`}>
+            {t("messageLimit", { count: messageCount, min: contactMessageMin, max: contactMessageMax })}
+          </p>
           {fieldError("message") ? (
             <p id="message-error" className="mt-1.5 text-xs font-medium text-primary">
               {fieldError("message")}

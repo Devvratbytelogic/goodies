@@ -46,6 +46,11 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
   const [couponCelebration, setCouponCelebration] = useState<CouponCelebration | null>(null);
   const visible = open && !dismissed;
   const defaultPaymentMethod = settings?.default_payment_method?.trim().toLowerCase() || null;
+  const enabled = {
+    tabby: settings?.tabby_enable === true,
+    tamara: settings?.tamara_enable === true,
+    ziina: settings?.ziina_enable === true,
+  };
   const cartMethod = paymentMethod && paymentMethod !== defaultPaymentMethod ? paymentMethod : undefined;
 
   useEffect(() => {
@@ -190,6 +195,7 @@ export default function CheckoutAuth({ open = true, onClose }: CheckoutAuthProps
             header={orderSummary}
             paymentMethod={paymentMethod}
             defaultPaymentMethod={defaultPaymentMethod}
+            enabled={enabled}
             onPaymentMethodChange={setPaymentMethod}
             onPlaced={handlePlaced}
           />

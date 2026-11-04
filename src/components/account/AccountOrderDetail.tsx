@@ -111,6 +111,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
   const banner = order.status_banner;
   const discount = (summary?.discount_amount ?? 0) > 0 ? summary?.discount_amount ?? 0 : summary?.coupon_discount ?? 0;
   const label = (value: string) => readableStatus(value, t);
+  const address = order.shipping_address ?? order.billing_address;
 
   async function onDownload() {
     if (!order?.order_id || downloading) return;
@@ -302,14 +303,9 @@ export default function AccountOrderDetail({ id }: { id: string }) {
         </div>
       </div>
 
-      {order.shipping_address || order.billing_address ? (
-        <section
-          className={`overflow-hidden rounded-2xl border border-border bg-background ${
-            order.shipping_address && order.billing_address ? "grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0" : ""
-          }`}
-        >
-          {order.shipping_address ? <AddressCard title={t("shipTo")} address={order.shipping_address} /> : null}
-          {order.billing_address ? <AddressCard title={t("billingAddress")} address={order.billing_address} /> : null}
+      {address ? (
+        <section className="overflow-hidden rounded-2xl border border-border bg-background">
+          <AddressCard title={t("address")} address={address} />
         </section>
       ) : null}
 

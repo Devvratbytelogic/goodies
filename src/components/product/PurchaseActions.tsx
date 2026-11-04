@@ -19,6 +19,7 @@ type PurchaseActionsProps = {
   maxQuantity: number;
   disabled: boolean;
   needsSize: boolean;
+  soldOutNote?: string | null;
   payload: PurchasePayload;
   onQuantityChange: (quantity: number) => void;
 };
@@ -30,11 +31,32 @@ function PurchaseControls({
   maxQuantity,
   disabled,
   needsSize,
+  soldOutNote = null,
   payload,
   onQuantityChange,
   bar = false,
 }: PurchaseActionsProps & { inputId: string; bar?: boolean }) {
   const t = useTranslations("ProductPage");
+
+  if (soldOutNote) {
+    if (bar) {
+      return (
+        <div className="flex">
+          <p role="status" className="inline-flex h-10 w-full items-center justify-center rounded-full border border-primary bg-surface px-3 text-sm font-semibold text-primary lg:ms-auto lg:h-11 lg:w-auto lg:px-6">
+            {t("outOfStock")}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div role="status" className="rounded-xl border border-border bg-surface p-4">
+        <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">{t("outOfStock")}</span>
+        <p className="mt-2 text-sm text-foreground">{soldOutNote}</p>
+      </div>
+    );
+  }
+
   const stepButton =
     "inline-flex size-9 items-center justify-center rounded-full text-heading transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-border @max-[22rem]:size-8 lg:size-11";
 

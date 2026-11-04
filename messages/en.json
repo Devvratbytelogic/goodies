@@ -348,7 +348,10 @@
     "emailInvalid": "Enter a valid email address",
     "phoneInvalid": "Enter a valid phone number",
     "invalidText": "Letters, numbers, and basic punctuation only",
-    "tooLong": "This field is too long"
+    "tooLong": "This field is too long",
+    "nameInvalid": "Enter your name correctly",
+    "messageTooShort": "Your message is too short. Use at least {min} characters",
+    "messageLimit": "{count}/{max} · at least {min} characters"
   },
   "CartPage": {
     "title": "Cart",
@@ -505,6 +508,7 @@
     "downloadInvoiceError": "We could not download the invoice. Please try again.",
     "placedOn": "Placed {date}",
     "orderItems": "Items",
+    "address": "Address",
     "shipTo": "Shipping address",
     "tracking": "Tracking",
     "trackingNumber": "Tracking number",

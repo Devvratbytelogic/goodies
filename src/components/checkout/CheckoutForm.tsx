@@ -13,7 +13,7 @@ import { useOpenOtp } from "@/components/auth/OTPScreen";
 import PhoneField from "@/components/auth/PhoneField";
 import CodCheckout from "@/components/checkout/CodCheckout";
 import DeleteAddressConfirm from "@/components/checkout/DeleteAddressConfirm";
-import PaymentMethods, { type PaymentMethod } from "@/components/checkout/PaymentMethods";
+import PaymentMethods, { type EnabledGateways, type PaymentMethod } from "@/components/checkout/PaymentMethods";
 import TabbyCheckout from "@/components/checkout/TabbyCheckout";
 import TamaraCheckout from "@/components/checkout/TamaraCheckout";
 import ZiinaCheckout from "@/components/checkout/ZiinaCheckout";
@@ -164,11 +164,13 @@ function AddressLines({ address, defaultLabel }: { address: AddressEntity; defau
 
 export default function CheckoutForm({
   paymentMethod,
+  enabled,
   shippingAvailable,
   onPaymentMethodChange,
   onPlaced,
 }: {
   paymentMethod: PaymentMethod;
+  enabled: EnabledGateways;
   shippingAvailable: boolean;
   onPaymentMethodChange: (method: PaymentMethod) => void;
   onPlaced: (order: PlacedOrder) => void;
@@ -197,7 +199,6 @@ export default function CheckoutForm({
   const shippingId = shipToDifferent ? (addresses.find((address) => address._id === shippingPickedId)?._id ?? selectedId) : selectedId;
   const shippingAddress = addresses.find((address) => address._id === shippingId) ?? null;
   const shippingCountry = shippingAddress?.country_code ?? "AE";
-  const showTamara = shippingAddress?.country_code === "AE" && shippingAddress.country === "United Arab Emirates";
   const [phoneCountryCode, setPhoneCountryCode] = useState("971");
   const [isDefault, setIsDefault] = useState(false);
   const [postalCode, setPostalCode] = useState("");
@@ -439,7 +440,7 @@ export default function CheckoutForm({
         ) : null}
 
         {addresses.length > 0 ? (
-          <PaymentMethods value={paymentMethod} showTamara={showTamara} disabled={!shippingAvailable} onChange={onPaymentMethodChange} />
+          <PaymentMethods value={paymentMethod} enabled={enabled} disabled={!shippingAvailable} onChange={onPaymentMethodChange} />
         ) : null}
 
         {selectedId && !shippingAvailable ? (
@@ -448,15 +449,15 @@ export default function CheckoutForm({
           </p>
         ) : null}
 
-        {paymentMethod === "tabby" ? (
+        {paymentMethod === "tabby" && enabled.tabby ? (
           <TabbyCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} />
-        ) : paymentMethod === "ziina" ? (
+        ) : paymentMethod === "ziina" && enabled.ziina ? (
           <ZiinaCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
-        ) : paymentMethod === "tamara" && showTamara ? (
+        ) : paymentMethod === "tamara" && enabled.tamara ? (
           <TamaraCheckout billingAddressId={selectedId} shippingAddressId={shippingId} shippingAvailable={shippingAvailable} />
-        ) : paymentMethod === "tamara" ? null : (
+        ) : paymentMethod === "cod" ? (
           <CodCheckout billingAddressId={selectedId} shippingAddressId={shippingId} country={shippingCountry} shippingAvailable={shippingAvailable} onPlaced={onPlaced} />
-        )}
+        ) : null}
       </section>
     );
   }

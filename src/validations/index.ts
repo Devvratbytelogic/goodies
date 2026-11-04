@@ -94,12 +94,33 @@ export const productReviewValidationSchema = Yup.object({
   email: emailString("required", "emailInvalid"),
 });
 
+export const contactMessageMin = 10;
+export const contactMessageMax = 500;
+
+const personName = () =>
+  Yup.string()
+    .trim()
+    .required("required")
+    .max(40, "tooLong")
+    .test("name", "nameInvalid", (value) => {
+      if (!value) return false;
+      const letters = value.match(/\p{L}/gu) ?? [];
+      if (letters.length < 2) return false;
+      return /^[\p{L}\p{M}\p{N}\s.'’-]+$/u.test(value);
+    });
+
 export const contactUsValidationSchema = Yup.object({
-  firstName: requiredString("required", 40),
-  lastName: requiredString("required", 40),
+  firstName: personName(),
+  lastName: personName(),
   phone: phoneString("required", "phoneInvalid"),
   email: emailString("required", "emailInvalid"),
-  message: requiredString("required", 500),
+  message: Yup.string()
+    .trim()
+    .required("required")
+    .min(contactMessageMin, "messageTooShort")
+    .max(contactMessageMax, "tooLong")
+    .matches(SAFE_TEXT, "invalidText")
+    .test("no-script", "invalidText", (value) => !value || !SCRIPT_PATTERN.test(value)),
 });
 
 export const cancelOrderValidationSchema = Yup.object({
