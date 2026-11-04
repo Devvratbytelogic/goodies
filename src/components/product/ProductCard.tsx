@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import ProductPrice from "@/components/product/ProductPrice";
-import WishlistButton from "@/components/wishlist/WishlistButton";
+// import WishlistButton from "@/components/wishlist/WishlistButton";
 import { getProductRoutePath } from "@/utils/routes";
 import { HomeProduct } from "@/server/types/Home";
 
@@ -26,17 +26,17 @@ export default function ProductCard({ product, variant_sku }: { product: HomePro
     variant_sku: "",
   };
 
-  const wishlistPayload = {
-    product_id: product._id,
-    variant_sku: variant_sku ?? "",
-  };
+  // const wishlistPayload = {
+  //   product_id: product._id,
+  //   variant_sku: variant_sku ?? "",
+  // };
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border/50 bg-background sm:rounded-2xl">
-      <WishlistButton
+      {/* <WishlistButton
         name={name}
         payload={wishlistPayload}
         className="absolute inset-e-2.5 top-2.5 z-10 sm:inset-e-3 sm:top-3"
-      />
+      /> */}
       <Link
         href={getProductRoutePath(product.slug)}
         className="flex flex-1 flex-col focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
