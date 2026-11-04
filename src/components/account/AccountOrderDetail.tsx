@@ -161,6 +161,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
           <ul className="divide-y divide-border">
             {items.map((item) => {
               const image = item.image || item.thumbnail || "";
+              const pieces = item.bundle_items ?? [];
               const requested = !item.cancelled && Boolean(item.is_cancel_requested);
               const note = [item.reason, item.description].filter(Boolean).join(". ");
               const title = (
@@ -168,7 +169,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
               );
 
               return (
-                <li key={item.item_id} className={`flex items-center gap-3 px-4 py-3 sm:px-5 ${item.cancelled ? "bg-surface-muted" : ""}`}>
+                <li key={item.item_id} className={`flex gap-3 px-4 py-3 sm:px-5 ${pieces.length ? "items-start" : "items-center"} ${item.cancelled ? "bg-surface-muted" : ""}`}>
                   <div className={`relative size-16 shrink-0 overflow-hidden rounded-xl bg-surface ring-1 ring-border/70 ${item.cancelled ? "opacity-70 grayscale" : ""}`}>
                     {item.slug ? (
                       <Link
@@ -207,6 +208,33 @@ export default function AccountOrderDetail({ id }: { id: string }) {
                       </p>
                     ) : null}
                     {note && !item.cancelled ? <p className="mt-0.5 text-sm text-muted">{note}</p> : null}
+                    {pieces.length > 0 ? (
+                      <div className="mt-2">
+                        <p className="text-xs font-semibold text-heading">{t("bundleItems")}</p>
+                        <ul className="mt-1.5 grid gap-1.5">
+                          {pieces.map((piece) => (
+                            <li key={`${piece.product_id}-${piece.variant_sku ?? ""}`} className="flex items-center gap-2">
+                              <span className="relative size-8 shrink-0 overflow-hidden rounded-md bg-surface ring-1 ring-border/70">
+                                <ImageComponent src={piece.image || ""} alt="" width={64} height={64} sizes="32px" objectFit="cover" />
+                              </span>
+                              <span className="min-w-0">
+                                {piece.slug ? (
+                                  <Link href={getProductRoutePath(piece.slug)} className="line-clamp-2 text-xs font-medium text-heading hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                    {piece.title}
+                                  </Link>
+                                ) : (
+                                  <span className="line-clamp-2 text-xs font-medium text-heading">{piece.title}</span>
+                                )}
+                                <span className="block text-xs text-muted">
+                                  {piece.size ? `${piece.size} · ` : ""}
+                                  {t("lineQuantity", { count: piece.quantity })}
+                                </span>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
                   <p className={`shrink-0 text-sm font-semibold tabular-nums ${item.cancelled ? "text-red-700 line-through" : "text-price"}`}>
                     {formatAmount(item.line_total, item.currency_symbol || currency)}

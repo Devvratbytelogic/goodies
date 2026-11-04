@@ -103,6 +103,17 @@ export interface OrderDetailsResponse {
     timestamp: string;
 }
 
+export interface OrderBundleItem {
+    product_id: string;
+    title: string;
+    slug?: string | null;
+    image?: string | null;
+    product_type?: string | null;
+    quantity: number;
+    variant_sku?: string | null;
+    size?: string | null;
+}
+
 export interface OrderDetailsItem {
     item_id: string;
     product_id?: string;
@@ -117,6 +128,7 @@ export interface OrderDetailsItem {
     line_total: number;
     currency?: string;
     currency_symbol?: string;
+    bundle_items?: OrderBundleItem[] | null;
     variants?: unknown[] | null;
     is_variant?: boolean | null;
     variant?: UserOrderItemVariant | null;

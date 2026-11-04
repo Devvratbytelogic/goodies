@@ -563,6 +563,7 @@
     "returnRequests": "طلبات الإرجاع",
     "orderError": "تعذّر تحميل هذا الطلب.",
     "lineQuantity": "الكمية {count}",
+    "bundleItems": "يتضمن",
     "items": "{count, plural, one {منتج واحد} two {منتجان} few {# منتجات} other {# منتجًا}}",
     "statusProcessing": "قيد التجهيز",
     "statusShipped": "تم الشحن",

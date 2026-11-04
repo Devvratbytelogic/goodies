@@ -563,6 +563,7 @@
     "returnRequests": "Return requests",
     "orderError": "We could not load this order.",
     "lineQuantity": "Qty {count}",
+    "bundleItems": "Includes",
     "items": "{count, plural, one {# item} other {# items}}",
     "statusProcessing": "Processing",
     "statusShipped": "Shipped",
