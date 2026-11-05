@@ -70,10 +70,13 @@ export default function ProductPurchase({ notice = "", name, isVariant, variant,
       : availableQuantity(stockManage, variant?.stock ?? 0);
 
   const stockReached = quantity >= maxQuantity;
-  const price = selectedVariant?.price ?? variant?.price ?? 0;
-  const maxPrice = selectedVariant?.max_price ?? variant?.max_price ?? 0;
+  const loneVariant = variants.length === 1 ? variants[0] : undefined;
+  const pricedVariant = selectedVariant ?? loneVariant;
+  const price = pricedVariant?.price ?? variant?.price ?? 0;
+  const maxPrice = pricedVariant?.max_price ?? variant?.max_price ?? 0;
   const needsSize = sizes.length > 0 && !sizeName;
-  const showRange = isVariant && !sizeName && !isBundle;
+  const showRange =
+    isVariant && !isBundle && !pricedVariant && (variant?.max_price ?? 0) > (variant?.price ?? 0);
   const showMaxPrice = !isBundle && !showRange && maxPrice > 0 && maxPrice !== price;
 
   function priceLabel() {

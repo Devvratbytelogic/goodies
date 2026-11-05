@@ -11,7 +11,9 @@ const requiredString = (required: string, max: number) =>
     .matches(SAFE_TEXT, "invalidText")
     .test("no-script", "invalidText", (value) => !value || !SCRIPT_PATTERN.test(value));
 const phoneString = (required: string, phoneInvalid: string) => Yup.string().trim().required(required).matches(/^[+]?[\d\s()-]{7,20}$/, phoneInvalid);
-const emailString = (required: string, emailInvalid: string) => Yup.string().trim().required(required).email(emailInvalid);
+// Require a real domain ending (example.com). Yup's email() accepts "name@gmail".
+const EMAIL_PATTERN = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+const emailString = (required: string, emailInvalid: string) => Yup.string().trim().required(required).matches(EMAIL_PATTERN, emailInvalid);
 const passwordString = () =>
   Yup.string()
     .required("required")

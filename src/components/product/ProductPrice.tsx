@@ -12,10 +12,14 @@ interface ProductPriceProps {
 }
 export default function ProductPrice({ variant, variants, isVariant = false, hideMaxPrice = false, currencySymbol = "", className = "mt-1.5 text-base font-semibold text-price",
 }: ProductPriceProps) {
-  const price = variant?.price ?? 0;
-  const maxPrice = variant?.max_price ?? 0;
-  const showRange = isVariant && !hideMaxPrice;
-  const showMaxPrice = !hideMaxPrice && maxPrice > 0 && maxPrice !== price;
+  const options = variants?.filter((item) => item != null) ?? [];
+  // One variant: its max_price is the compare-at price.
+  // Several variants: the summary max_price is the highest selling price.
+  const single = isVariant && options.length === 1 ? options[0] : undefined;
+  const price = single?.price ?? variant?.price ?? 0;
+  const maxPrice = single?.max_price ?? variant?.max_price ?? 0;
+  const showRange = isVariant && !single && !hideMaxPrice && maxPrice > price;
+  const showMaxPrice = !hideMaxPrice && !showRange && maxPrice > 0 && maxPrice !== price;
 
   return (
     <p className={className}>
