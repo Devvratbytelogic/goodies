@@ -10,6 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AccountOrderDetailSkeleton } from "@/components/skeletons/AccountSkeletons";
 import { useDownloadOrderInvoiceMutation, useGetOrderDetailsQuery } from "@/store/endpoints/orderApi";
+import { useGetGlobalSettingsQuery } from "@/store/endpoints/settingsApi";
 import type { OrderDetailsAddress } from "@/server/types/order";
 import { formatAmount } from "@/utils/price";
 import { getProductRoutePath } from "@/utils/routes";
@@ -91,6 +92,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
   const t = useTranslations("AccountPage");
   const { token } = useAuth();
   const { data: order, isLoading, isUninitialized, isError } = useGetOrderDetailsQuery(id, { skip: !token });
+  const { data: settings } = useGetGlobalSettingsQuery();
   const [downloadInvoice, { isLoading: downloading }] = useDownloadOrderInvoiceMutation();
   const [pdfError, setPdfError] = useState(false);
 
@@ -112,6 +114,7 @@ export default function AccountOrderDetail({ id }: { id: string }) {
   const discount = (summary?.discount_amount ?? 0) > 0 ? summary?.discount_amount ?? 0 : summary?.coupon_discount ?? 0;
   const label = (value: string) => readableStatus(value, t);
   const address = order.shipping_address ?? order.billing_address;
+  const supportEmail = settings?.email?.trim() || "";
 
   async function onDownload() {
     if (!order?.order_id || downloading) return;
@@ -339,6 +342,17 @@ export default function AccountOrderDetail({ id }: { id: string }) {
 
       <OrderRequestList title={t("cancellationRequests")} requests={order.cancellation_requests ?? []} label={label} currency={currency} />
       <OrderRequestList title={t("returnRequests")} requests={order.return_replacement_requests ?? []} label={label} currency={currency} />
+      {supportEmail ? (
+        <p className="text-center text-sm text-muted">
+          {t("emailSupport")}{" "}
+          <a
+            href={`mailto:${supportEmail}`}
+            className="font-medium text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            {supportEmail}
+          </a>
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { LuMinus, LuPlus, LuShoppingBag, LuTrash2, LuX } from "react-icons/lu";
 import CheckoutAuth from "@/components/auth/CheckoutAuth";
 import { useCartDrawer } from "@/components/cart/CartDrawerProvider";
 import RemoveCartItemConfirm from "@/components/cart/RemoveCartItemConfirm";
+import CartDrawerSkeleton from "@/components/skeletons/CartDrawerSkeleton";
 import ImageComponent from "@/components/layout/common/ImageComponent";
 import { useModal } from "@/components/layout/common/ModalProvider";
 import { Link } from "@/i18n/navigation";
@@ -116,9 +117,7 @@ export default function CartDrawer() {
           </div>
 
           {isLoading ? (
-            <div className="flex-1 px-5 py-8 text-center text-sm text-muted" aria-busy="true">
-              {cartText("loading")}
-            </div>
+            <CartDrawerSkeleton label={cartText("loading")} />
           ) : items.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center px-5 py-10 text-center">
               <span className="inline-flex size-16 items-center justify-center rounded-full bg-primary-soft text-primary">
