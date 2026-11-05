@@ -3,7 +3,7 @@ import { markdownToHtml } from "@/utils/markdown";
 
 export type FaqItem = {
   _id?: string;
-  id?: string;
+  id?: string | number;
   question: string;
   answer?: string | null;
   status?: boolean;
@@ -12,15 +12,16 @@ export type FaqItem = {
 type FaqListProps = {
   title?: string;
   items?: FaqItem[] | null;
+  className?: string;
 };
 
-export default function FaqList({ title, items }: FaqListProps) {
+export default function FaqList({ title, items, className }: FaqListProps) {
   const faqs = (items ?? []).filter((faq) => faq.question?.trim() && faq.status !== false);
 
   if (faqs.length === 0) return null;
 
   return (
-    <section className="container mb-10">
+    <section className={className ?? "container mb-10"}>
       {title ? <h2 className="text-xl font-bold tracking-tight text-heading">{title}</h2> : null}
       <div className={`overflow-hidden rounded-2xl border border-border ${title ? "mt-4" : ""}`}>
         {faqs.map((faq, index) => (

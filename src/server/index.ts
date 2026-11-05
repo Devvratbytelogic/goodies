@@ -8,6 +8,7 @@ import { ProductListItem } from "./types/products";
 import { SingleProductData } from "./types/singleProduct";
 import { SingleCategoryApiResponseData } from "./types/singleCategory";
 import { Article, ArticleCategory, ArticlesResponseData, BlogCategoryResponseData } from "./types/article";
+import { GlobalFaq } from "./types/faq";
 
 function productSlug(slug: string) {
   try {
@@ -119,6 +120,25 @@ export function getProduct(country: string, slug: string) {
     // "products" is already cleared on save, so bundle pages refresh with the edited item.
     { tags: ["products", `product:${decoded}`], revalidate: 600 },
   )();
+}
+
+export function getFaqs(country: string) {
+  return unstable_cache(
+    () => getData<GlobalFaq[]>("/user/faqs", country),
+    ["faqs", country],
+    { tags: ["faqs"], revalidate: 600 },
+  )();
+}
+
+export async function getFaqList(country: string) {
+  try {
+    return (await getFaqs(country)) ?? [];
+  } catch (error) {
+    const digest = typeof error === "object" && error && "digest" in error ? String(error.digest) : "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw error;
+    console.error(`faqs failed: ${error instanceof Error ? error.message : "request failed"}`);
+    return [];
+  }
 }
 
 export function getArticles(country: string, page = 1, search?: string) {

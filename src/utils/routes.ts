@@ -19,6 +19,10 @@ export function getContactUsRoutePath(): string {
   return "/contact-us";
 }
 
+export function getFaqRoutePath(): string {
+  return "/faq";
+}
+
 export function getCartRoutePath(): string {
   return "/cart";
 }

@@ -9,6 +9,7 @@ import {
   getAboutUsRoutePath,
   getBlogsRoutePath,
   getContactUsRoutePath,
+  getFaqRoutePath,
   getHomeRoutePath,
   getShopRoutePath,
   getWishlistRoutePath,
@@ -36,6 +37,7 @@ const quickLinks = [
   { key: "aboutUs" as const, href: getAboutUsRoutePath() },
   { key: "shop" as const, href: getShopRoutePath() },
   { key: "blogs" as const, href: getBlogsRoutePath() },
+  { key: "faqs" as const, href: getFaqRoutePath() },
   { key: "wishlist" as const, href: getWishlistRoutePath() },
   { key: "contactUs" as const, href: getContactUsRoutePath() },
 ];

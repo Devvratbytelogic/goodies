@@ -353,6 +353,11 @@
     "messageTooShort": "Your message is too short. Use at least {min} characters",
     "messageLimit": "{count}/{max} · at least {min} characters"
   },
+  "FaqPage": {
+    "title": "FAQs",
+    "description": "Answers to common questions about Goodies.",
+    "empty": "No questions yet. Check back soon."
+  },
   "CartPage": {
     "title": "Cart",
     "description": "A sample Goodies cart with the same items for every visitor.",
@@ -829,6 +834,7 @@
     "aboutUs": "About us",
     "wishlist": "Wishlist",
     "blogs": "Blogs",
+    "faqs": "FAQs",
     "contactUs": "Contact us",
     "contact": "Contact",
     "newsletter": "Newsletter",

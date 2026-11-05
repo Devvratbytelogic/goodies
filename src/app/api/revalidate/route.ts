@@ -54,6 +54,10 @@ function targetFor(page: RequestPage) {
     return { tag: "category", paths: [] };
   }
 
+  if (name === "faqs") {
+    return { tag: "faqs", paths: ["/faq", "/ar/faq"] };
+  }
+
   if (name === "articles") {
     return { tag: "articles", paths: ["/blogs", "/ar/blogs"] };
   }

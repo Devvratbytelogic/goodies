@@ -353,6 +353,11 @@
     "messageTooShort": "الرسالة قصيرة جدًا. استخدم {min} أحرف على الأقل",
     "messageLimit": "{count}/{max} · {min} أحرف على الأقل"
   },
+  "FaqPage": {
+    "title": "الأسئلة الشائعة",
+    "description": "إجابات عن الأسئلة الشائعة حول Goodies.",
+    "empty": "لا توجد أسئلة بعد. عُد لاحقًا."
+  },
   "CartPage": {
     "title": "السلة",
     "description": "سلة Goodies نموذجية بنفس المنتجات لكل الزوار.",
@@ -829,6 +834,7 @@
     "aboutUs": "من نحن",
     "wishlist": "المفضلة",
     "blogs": "المدونة",
+    "faqs": "الأسئلة الشائعة",
     "contactUs": "اتصل بنا",
     "contact": "تواصل معنا",
     "newsletter": "النشرة البريدية",
