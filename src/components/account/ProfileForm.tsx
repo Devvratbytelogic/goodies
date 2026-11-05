@@ -16,6 +16,7 @@ import { useRouter } from "@/i18n/navigation";
 import type { UserProfile } from "@/server/types/user";
 import { useChangePasswordMutation, useDeleteUserAccountMutation, useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/store/endpoints/userApi";
 import { getHomeRoutePath } from "@/utils/routes";
+import { showToast } from "@/utils/toast";
 import { changePasswordValidationSchema, profileValidationSchema } from "@/validations";
 
 function locationFromProfile(profile: UserProfile | null | undefined) {
@@ -54,7 +55,6 @@ export default function ProfileForm() {
   const photoTouched = useRef(false);
   const [photo, setPhoto] = useState<string | null>(profile?.profile_pic ?? null);
   const [photoError, setPhotoError] = useState<string>();
-  const [profileSaved, setProfileSaved] = useState(false);
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showCurrent, setShowCurrent] = useState(false);
@@ -90,9 +90,13 @@ export default function ProfileForm() {
         await updateUserProfile(body).unwrap();
         photoFile.current = null;
         photoTouched.current = false;
-        setProfileSaved(true);
-      } catch {
-        setProfileSaved(false);
+        showToast("success", t("profileSaved"));
+      } catch (error) {
+        const message =
+          error && typeof error === "object" && "data" in error
+            ? (error as { data?: { message?: string } }).data?.message
+            : undefined;
+        showToast("error", message || t("profileSaveFailed"));
       }
     },
   });
@@ -139,8 +143,6 @@ export default function ProfileForm() {
   }
 
   function onPhotoChange(file: File | undefined) {
-    setProfileSaved(false);
-
     if (!file) {
       return;
     }
@@ -203,7 +205,6 @@ export default function ProfileForm() {
                 photoTouched.current = true;
                 setPhoto(null);
                 setPhotoError(undefined);
-                setProfileSaved(false);
               }}
               className="absolute -inset-e-1 -top-1 z-20 flex size-7 items-center justify-center rounded-full border-2 border-background bg-background text-heading shadow-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
@@ -220,10 +221,7 @@ export default function ProfileForm() {
               name="firstName"
               autoComplete="given-name"
               value={profileForm.values.firstName}
-              onChange={(event) => {
-                setProfileSaved(false);
-                profileForm.handleChange(event);
-              }}
+              onChange={profileForm.handleChange}
               onBlur={profileForm.handleBlur}
               aria-invalid={Boolean(profileError("firstName"))}
               className={`${fieldClassName} mt-1`}
@@ -237,10 +235,7 @@ export default function ProfileForm() {
               name="lastName"
               autoComplete="family-name"
               value={profileForm.values.lastName}
-              onChange={(event) => {
-                setProfileSaved(false);
-                profileForm.handleChange(event);
-              }}
+              onChange={profileForm.handleChange}
               onBlur={profileForm.handleBlur}
               aria-invalid={Boolean(profileError("lastName"))}
               className={`${fieldClassName} mt-1`}
@@ -284,12 +279,10 @@ export default function ProfileForm() {
               stateError={profileError("state")}
               labelClassName={labelClassName}
               onCountryChange={(country) => {
-                setProfileSaved(false);
                 void profileForm.setFieldValue("country", country);
                 void profileForm.setFieldValue("state", "");
               }}
               onStateChange={(state) => {
-                setProfileSaved(false);
                 void profileForm.setFieldValue("state", state);
               }}
               onCountryBlur={() => {
@@ -309,11 +302,6 @@ export default function ProfileForm() {
           >
             {t("save")}
           </button>
-          {profileSaved ? (
-            <p role="status" className="text-sm font-medium text-accent-deep">
-              {t("profileSaved")}
-            </p>
-          ) : null}
         </div>
       </form>
       )}
